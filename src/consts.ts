@@ -11,8 +11,8 @@ export const SOCIALS = {
   github: 'https://github.com/jpquinn1',
   linkedin: 'https://www.linkedin.com/in/joepquinn',
   email: 'mailto:joepaquinn@gmail.com',
-  phone: 'tel:+16145920684',
-  phoneDisplay: '614-592-0684',
+  phone: '',
+  phoneDisplay: '',
   // Resume button opens the styled web resume page.
   resume: '/resume',
   // The downloadable source file (lives in public/docs/).
