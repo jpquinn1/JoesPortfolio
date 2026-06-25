@@ -39,6 +39,14 @@ SAMPLED.forEach((v, i) => {
 const clamp01 = (n) => Math.min(1, Math.max(0, n));
 const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
 
+/* Camera framing. The base position/target reproduce the original desktop shot;
+   on narrow (portrait) viewports the camera dollies back along the same view
+   direction so the whole trajectory stays in frame instead of being clipped. */
+const CAM_TARGET = new THREE.Vector3(7.5, 3, 1);
+const CAM_OFFSET = new THREE.Vector3(-14.5, 3.2, 13); // base camera pos minus target
+const REF_ASPECT = 1.1; // at/above this aspect ratio framing is unchanged (fit = 1)
+const MAX_FIT = 1.9; // cap dolly-out on very tall/narrow viewports
+
 const PREFERS_REDUCED =
 	typeof window !== 'undefined' &&
 	window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -81,15 +89,30 @@ function Rig({ traceRef, traceMatRef, ballRef, ballGlowRef, gridRef, hud }) {
 			ballGlowRef.current.visible = ball && drawT > 0.01 && drawT < 0.995;
 		}
 
-		// --- Ambient camera drift (no scroll) ---
-		if (!PREFERS_REDUCED) {
-			const t = elapsed * 0.07;
-			camera.position.x = -7 + Math.sin(t) * 0.8;
-			camera.position.y = 6.2 + Math.sin(t * 0.7) * 0.25;
-			camera.position.z = 14 + Math.cos(t * 0.85) * 0.7;
-			camera.lookAt(7.5, 3, 1);
+		// --- Responsive framing + ambient camera drift (no scroll) ---
+		const aspect = state.size.width / Math.max(1, state.size.height);
+		const fit = THREE.MathUtils.clamp(
+			Math.sqrt(REF_ASPECT / aspect),
+			1,
+			MAX_FIT,
+		);
+		const drift = PREFERS_REDUCED
+			? { x: 0, y: 0, z: 0 }
+			: {
+					x: Math.sin(elapsed * 0.07) * 0.8,
+					y: Math.sin(elapsed * 0.07 * 0.7) * 0.25,
+					z: Math.cos(elapsed * 0.07 * 0.85) * 0.7,
+				};
 
-			if (gridRef.current) gridRef.current.position.x = -elapsed * 0.12;
+		camera.position.set(
+			CAM_TARGET.x + CAM_OFFSET.x * fit + drift.x,
+			CAM_TARGET.y + CAM_OFFSET.y * fit + drift.y,
+			CAM_TARGET.z + CAM_OFFSET.z * fit + drift.z,
+		);
+		camera.lookAt(CAM_TARGET);
+
+		if (!PREFERS_REDUCED && gridRef.current) {
+			gridRef.current.position.x = -elapsed * 0.12;
 		}
 
 		// --- Subtle HUD updates (throttled) ---
