@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "units": "meters",
+    "note": "x = downrange, y = height, z = lateral drift. Swap in real launch-monitor data here."
+  },
+  "points": [
+    { "x": 0, "y": 0.1, "z": 0 },
+    { "x": 15, "y": 4.2, "z": 1.1 },
+    { "x": 40, "y": 12.5, "z": 2.4 },
+    { "x": 85, "y": 20.1, "z": 4.0 },
+    { "x": 140, "y": 14.2, "z": 6.2 },
+    { "x": 220, "y": 0.2, "z": 8.0 }
+  ]
+}

@@ -1,0 +1,45 @@
+---
+title: Radar-to-Video Golf Trace Calibration System
+description: A computer vision and 3D projection project for aligning radar-generated ball trajectories with external camera footage.
+screenshot: ./radar-golf-trace-calibration.jpg
+tags:
+  - Python
+  - OpenCV
+  - ChArUco
+  - 3D Projection
+  - Radar Data
+order: 1
+featured: true
+pubDate: 2026-01-15
+---
+
+## Overview
+
+This system aligns radar-generated golf ball trajectories with footage from an
+external camera, so a true 3D ball flight can be drawn directly onto video. It
+bridges two coordinate systems — the radar's world-space and the camera's
+image-space — using camera calibration and projection math.
+
+## The Problem
+
+Radar produces accurate 3D trajectory data, but that data lives in the radar's
+coordinate frame. To overlay a trace on video, every 3D point has to be mapped
+to the correct pixel in each frame, accounting for the camera's intrinsics,
+position, and orientation relative to the radar.
+
+## Approach
+
+- **Camera calibration** with ChArUco boards to recover intrinsics and lens
+  distortion.
+- **Extrinsic estimation** to find the camera pose relative to the radar's
+  world origin.
+- **3D → 2D projection** of radar trajectory points into image space per frame.
+- **Trajectory visualization** rendered as a smooth, anti-aliased trace.
+
+## Outcome
+
+A repeatable calibration workflow that produces accurate, broadcast-style trace
+overlays from raw radar data and standard camera footage.
+
+> Replace this placeholder case study with the real write-up, diagrams, and
+> result screenshots.

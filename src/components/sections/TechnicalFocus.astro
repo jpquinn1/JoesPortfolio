@@ -1,0 +1,41 @@
+---
+const areas = [
+	{
+		title: 'Computer Vision & 3D Systems',
+		description:
+			'Camera calibration, OpenCV, ChArUco boards, coordinate systems, projection, trajectory visualization.',
+	},
+	{
+		title: 'Operations Automation',
+		description:
+			'Python scripts, AWS Lambda, API Gateway, DynamoDB, alerts, ticket enrichment, workflow automation.',
+	},
+	{
+		title: 'Field Systems & Networking',
+		description:
+			'Radar deployments, local networks, Linux systems, IP troubleshooting, range/site architecture.',
+	},
+	{
+		title: 'Monitoring & Dashboards',
+		description:
+			'Grafana, Splunk, alerting, metrics enrichment, operational visibility.',
+	},
+];
+---
+
+<section id="focus" class="mx-auto max-w-5xl scroll-mt-20 px-6 py-16">
+	<p class="section-label mb-6">Technical Focus</p>
+
+	<div class="grid gap-4 sm:grid-cols-2">
+		{
+			areas.map((area) => (
+				<div class="card p-6">
+					<h3 class="text-lg font-semibold tracking-tight">{area.title}</h3>
+					<p class="mt-2 text-sm leading-relaxed text-muted">
+						{area.description}
+					</p>
+				</div>
+			))
+		}
+	</div>
+</section>

@@ -1,0 +1,69 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+	const projects = await getCollection('projects');
+	return projects.map((project) => ({
+		params: { slug: project.id },
+		props: project,
+	}));
+}
+type Props = CollectionEntry<'projects'>;
+
+const project = Astro.props;
+const { Content } = await render(project);
+const { title, description, screenshot, tags, repo, demo } = project.data;
+---
+
+<Layout title={`${title} — Joe Quinn`} description={description}>
+	<article class="mx-auto max-w-3xl px-6 py-16">
+		<a
+			href="/#projects"
+			class="font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:text-accent"
+		>
+			← Back to projects
+		</a>
+
+		<h1 class="mt-8 text-4xl font-semibold tracking-tight sm:text-5xl">
+			{title}
+		</h1>
+		<p class="mt-4 text-lg text-muted">{description}</p>
+
+		<div class="mt-5 flex flex-wrap gap-2">
+			{tags.map((tag) => <span class="tag">{tag}</span>)}
+		</div>
+
+		{
+			(repo || demo) && (
+				<div class="mt-5 flex flex-wrap gap-4 font-mono text-xs">
+					{repo && (
+						<a href={repo} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">
+							Repository ↗
+						</a>
+					)}
+					{demo && (
+						<a href={demo} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">
+							Live demo ↗
+						</a>
+					)}
+				</div>
+			)
+		}
+
+		<div class="mt-10 overflow-hidden rounded-2xl border border-border">
+			<Image
+				src={screenshot}
+				alt={`${title} screenshot`}
+				widths={[640, 1024, 1600]}
+				sizes="(max-width: 768px) 100vw, 768px"
+				class="w-full"
+			/>
+		</div>
+
+		<div class="prose mt-12">
+			<Content />
+		</div>
+	</article>
+</Layout>

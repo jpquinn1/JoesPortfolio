@@ -1,0 +1,39 @@
+---
+import { SOCIALS } from '../../consts';
+---
+
+<section id="contact" class="mx-auto max-w-5xl scroll-mt-20 px-6 py-20">
+	<div class="card p-8 sm:p-12">
+		<p class="section-label mb-4">Contact / Resume</p>
+		<h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">
+			Let's build something.
+		</h2>
+		<p class="mt-4 max-w-xl text-muted">
+			Interested in field systems, automation, or technical operations work? Reach
+			out or grab my resume.
+		</p>
+
+		<div class="mt-8 flex flex-wrap gap-4">
+			<a
+				href={SOCIALS.email}
+				class="rounded-xl bg-accent px-5 py-2.5 font-mono text-sm font-medium text-[#04201c] transition-colors hover:bg-accent-strong"
+			>
+				Email Me
+			</a>
+			<a
+				href={SOCIALS.resume}
+				class="rounded-xl border border-border px-5 py-2.5 font-mono text-sm text-fg transition-colors hover:border-border-strong"
+			>
+				Resume ↗
+			</a>
+			<a
+				href={SOCIALS.linkedin}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="rounded-xl border border-border px-5 py-2.5 font-mono text-sm text-fg transition-colors hover:border-border-strong"
+			>
+				LinkedIn ↗
+			</a>
+		</div>
+	</div>
+</section>

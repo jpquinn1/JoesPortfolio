@@ -1,0 +1,45 @@
+---
+import { SITE_TAGLINE, SOCIALS } from '../../consts';
+import HeadshotCard from '../HeadshotCard.astro';
+---
+
+<section
+	class="relative z-10 mx-auto flex min-h-[calc(100svh-4.25rem)] max-w-5xl flex-col justify-center px-6 py-24"
+>
+	<div class="grid items-center gap-12 lg:grid-cols-[1fr_auto]">
+		<div>
+			<p class="section-label mb-5">Portfolio</p>
+
+			<h1 class="text-5xl font-semibold tracking-tight sm:text-7xl">
+				Joe Quinn
+			</h1>
+
+			<p class="mt-4 font-mono text-sm text-accent sm:text-base">
+				{SITE_TAGLINE}
+			</p>
+
+			<p class="mt-8 max-w-xl text-lg leading-relaxed text-muted">
+				I build practical software and field systems — radar data, computer
+				vision, automation, and the monitoring that keeps technical
+				operations running.
+			</p>
+
+			<div class="mt-10 flex flex-wrap items-center gap-4">
+				<a
+					href="/#projects"
+					class="rounded-xl bg-accent px-5 py-2.5 font-mono text-sm font-medium text-[#04201c] transition-colors hover:bg-accent-strong"
+				>
+					View Projects
+				</a>
+				<a
+					href={SOCIALS.resume}
+					class="rounded-xl border border-border bg-bg/40 px-5 py-2.5 font-mono text-sm text-fg backdrop-blur-sm transition-colors hover:border-border-strong"
+				>
+					Resume ↗
+				</a>
+			</div>
+		</div>
+
+		<HeadshotCard alt="Headshot of Joe Quinn" />
+	</div>
+</section>

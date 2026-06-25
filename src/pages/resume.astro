@@ -1,0 +1,274 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SOCIALS } from '../consts';
+
+// Resume data mirrors public/docs/Joe Quinn Resume 6.26 Master.pdf.
+// Update here (and re-export the PDF) whenever the resume changes.
+
+const expertise = [
+	{
+		label: 'Languages',
+		items: 'Python, TypeScript, JavaScript, Java, Bash, C++',
+	},
+	{
+		label: 'Cloud & Serverless',
+		items: 'AWS Lambda, API Gateway, DynamoDB, EventBridge, Secrets Manager, S3, Azure Blob, IAM, CloudWatch, AWS IoT Core, EC2, ECS, SQS, Kubernetes exposure',
+	},
+	{
+		label: 'Observability',
+		items: 'Grafana, Prometheus, Splunk HEC, alerting workflows, operational dashboards, telemetry pipelines',
+	},
+	{
+		label: 'Edge / Linux / IoT',
+		items: 'Raspberry Pi, Linux, MQTT, Thing Shadows, IoT Jobs, GPIO, SNMP',
+	},
+	{
+		label: 'Backend / Tools',
+		items: 'FastAPI, REST APIs, CLI tools, React, React Native, Docker, Git',
+	},
+	{
+		label: 'Configuration & Data',
+		items: 'JSON, YAML, TOML',
+	},
+	{
+		label: 'Computer Vision / 3D',
+		items: 'OpenCV calibration, camera projection, 3D-to-2D rendering, trajectory normalization & video',
+	},
+];
+
+const experience = [
+	{
+		company: 'TrackMan',
+		location: 'Phoenix, AZ',
+		dates: 'March 2026 – Present',
+		role: 'Operations Engineer — Software Development and Support',
+		summary:
+			"Develop software and operational tooling for TrackMan's golf broadcast product and radar systems. Support production troubleshooting, R&D with new software releases, observability, and support automation across AWS serverless services, Grafana/Splunk telemetry, internal Python tools, radar diagnostics, and field-deployed systems.",
+		bullets: [
+			'Owned end-to-end delivery of a Grafana-to-Zendesk ticket enrichment pipeline, including AWS deployment, DynamoDB alert-ticket state tracking, ticket deduplication logic, and SQS buffering of incoming alerts.',
+			'Built a full-stack observability dashboard for broadcast pipelines that correlates TourServer config, DataProcessor health, live websocket shot data, and container logs to detect missing/late data, pipeline misconfiguration, and radar outages. Dockerized for portability across servers.',
+			'Enhanced internal tooling and diagnostics apps with API integrations, Azure Blob storage viewers, and operator-focused UI improvements to streamline radar calibration, spectrogram analysis, and field troubleshooting. Followed proper git practices (PRs, branching, clear comments).',
+			'Built scheduled telemetry pipelines that query Grafana/Prometheus metrics, enrich device/site health data, normalize events, and forward structured metrics to Splunk HEC.',
+			'Supported radar deployment and product operations involving radar data capture, site geometry, 3D mesh/layout context, and frequency planning for multi-radar tournament broadcast environments.',
+		],
+	},
+	{
+		company: 'PGA TOUR — ShotLink',
+		location: 'Ponte Vedra Beach, FL',
+		dates: 'March 2025 – February 2026',
+		role: 'Technical Support Analyst / Development',
+		summary:
+			'Engaged in a wide variety of background operations across computer networking and DevOps, performing operations critical to the ShotLink 2.0 system and using the ShotLink API to aggregate data and automate operations.',
+		bullets: [
+			'Python tooling: boto3 (AWS), requests (HTTPS/API calls), tkinter (lightweight apps), Flask/FastAPI (small APIs), paramiko (SSH control and remote commands on course devices).',
+			'Built an AWS IoT Core fleet for consistent state monitoring with shadows and bulk OTA updates; gained experience with AWS Fleet Manager, S3, and SSM agents for device control.',
+			'Active tournament technical monitoring — staying alert to drops in network, EC2 instances, on-site cameras, and scoreboards, and notifying the on-site team in a timely manner.',
+			'Productionized a Raspberry Pi/Linux SNMP collector that polls switches, Cisco Catalyst devices, UPS units, PTP antennas, rack sensors, and PDUs, then forwards normalized metrics to Splunk HEC.',
+			'Replaced fragile manual execution with a managed systemd service (boot enablement, auto-restart, journalctl logging, environment-based config, operational control commands), improving reliability so one failed device no longer blocks the polling loop.',
+		],
+	},
+	{
+		company: 'PGA TOUR — ShotLink',
+		location: 'On-site (PGA TOUR, USGA, LPGA, Masters)',
+		dates: 'May 2024 – March 2025',
+		role: 'Field Technician',
+		summary:
+			'Assisted on-site at professional golf tournaments where ShotLink was present.',
+		bullets: [
+			'Technical troubleshooting with efficient teamwork and communication in a live production environment.',
+		],
+	},
+];
+
+const project = {
+	title: 'Radar-to-Video Golf Trace Calibration System',
+	purpose:
+		'Build a pipeline that converts golf radar trajectory data into a time-synced video trace from an externally placed camera — focused on radar-generated 3D ball flight, camera calibration, 3D-to-2D projection, and repeatable calibration workflows for sports technology applications.',
+	bullets: [
+		'Built a radar-to-video pipeline that normalizes radar and broadcast trajectory JSON into a common 3D shot model.',
+		'Built a calibration pipeline using OpenCV and ChArUco to align 3D ball-flight data with external video — applying camera intrinsics/extrinsics, pose estimation, coordinate transforms, 3D-to-2D projection, sensor fusion, and time synchronization.',
+		'Designed a FastAPI backend, CLI workflow, and React Three Fiber 3D workspace for repeatable operator calibration, camera positioning, and trace preview tooling.',
+	],
+};
+
+const coursework =
+	'Algorithms, Computer Networking, Network Security, Software Engineering, Systems, Computer Vision, Wireless Networks, Capstone: Knowledge Base Systems / RAG, Digital Logic Design, Process Engineering for Manufacturing Operations';
+
+const leadership = [
+	{
+		title: 'ROTC',
+		detail:
+			'Practiced and developed leadership and teamwork skills, setting goals and completing team tasks efficiently (2 semesters: August 2019 – May 2020).',
+	},
+	{
+		title: 'Eagle Scout Project',
+		detail:
+			'Contributed to e-waste collection and the promotion of proper disposal of electronics.',
+	},
+];
+---
+
+<Layout title="Resume — Joe Quinn" description="Resume of Joe Quinn, Operations Engineer & Technical Systems Builder.">
+	<article class="mx-auto max-w-3xl px-6 py-16">
+		<div class="flex flex-wrap items-center justify-between gap-4">
+			<a
+				href="/"
+				class="font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:text-accent"
+			>
+				← Back home
+			</a>
+			<a
+				href={SOCIALS.resumePdf}
+				download
+				class="rounded-xl bg-accent px-5 py-2.5 font-mono text-sm font-medium text-[#04201c] transition-colors hover:bg-accent-strong"
+			>
+				Download PDF ↓
+			</a>
+		</div>
+
+		<header class="mt-10 border-b border-border pb-8">
+			<p class="section-label mb-4">Resume</p>
+			<h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">
+				Joseph Quinn
+			</h1>
+			<p class="mt-3 font-mono text-sm text-accent">
+				Software / Systems Engineer — Cloud, Edge Systems, Observability
+			</p>
+
+			<div class="mt-5 flex flex-wrap gap-x-5 gap-y-2 font-mono text-xs text-muted">
+				<a href={SOCIALS.phone} class="transition-colors hover:text-accent">
+					{SOCIALS.phoneDisplay}
+				</a>
+				<a href={SOCIALS.email} class="transition-colors hover:text-accent">
+					joepaquinn@gmail.com
+				</a>
+				<a
+					href={SOCIALS.linkedin}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="transition-colors hover:text-accent"
+				>
+					linkedin.com/in/joepquinn ↗
+				</a>
+				<a
+					href={SOCIALS.github}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="transition-colors hover:text-accent"
+				>
+					github.com/jpquinn1 ↗
+				</a>
+			</div>
+
+			<p class="mt-6 max-w-2xl leading-relaxed text-muted">
+				Computer Science &amp; Engineering graduate and operations engineer
+				focused on cloud-connected sports technology systems, field-deployed
+				radar/camera infrastructure, observability automation, and live
+				production workflows. Experienced building Python, AWS, Linux,
+				Grafana/Splunk, FastAPI, React, and Raspberry Pi-based tooling for
+				real-time sports data environments where reliability, telemetry
+				visibility, and operational response matter during live events.
+			</p>
+		</header>
+
+		<section class="mt-10">
+			<h2 class="section-label mb-5">Areas of Experience / Expertise</h2>
+			<dl class="grid gap-4">
+				{
+					expertise.map((row) => (
+						<div class="grid gap-1 sm:grid-cols-[12rem_1fr] sm:gap-4">
+							<dt class="font-mono text-sm text-fg">{row.label}</dt>
+							<dd class="text-sm leading-relaxed text-muted">{row.items}</dd>
+						</div>
+					))
+				}
+			</dl>
+		</section>
+
+		<section class="mt-12">
+			<h2 class="section-label mb-5">Professional Experience</h2>
+			<div class="grid gap-8">
+				{
+					experience.map((job) => (
+						<div class="card p-6">
+							<div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+								<h3 class="text-lg font-semibold tracking-tight">
+									{job.company}
+								</h3>
+								<span class="font-mono text-xs text-faint">{job.dates}</span>
+							</div>
+							<p class="mt-1 font-mono text-sm text-accent">{job.role}</p>
+							<p class="font-mono text-xs text-faint">{job.location}</p>
+							<p class="mt-4 text-sm leading-relaxed text-muted">
+								{job.summary}
+							</p>
+							<ul class="mt-4 grid list-disc gap-2 pl-5 text-sm leading-relaxed text-muted marker:text-accent">
+								{job.bullets.map((b) => (
+									<li>{b}</li>
+								))}
+							</ul>
+						</div>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="mt-12">
+			<h2 class="section-label mb-5">Selected Technical Project</h2>
+			<div class="card p-6">
+				<h3 class="text-lg font-semibold tracking-tight">{project.title}</h3>
+				<p class="mt-3 text-sm leading-relaxed text-muted">
+					<span class="text-fg">Purpose:</span> {project.purpose}
+				</p>
+				<ul class="mt-4 grid list-disc gap-2 pl-5 text-sm leading-relaxed text-muted marker:text-accent">
+					{project.bullets.map((b) => <li>{b}</li>)}
+				</ul>
+			</div>
+		</section>
+
+		<section class="mt-12">
+			<h2 class="section-label mb-5">Education</h2>
+			<div class="card p-6">
+				<div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+					<h3 class="text-lg font-semibold tracking-tight">
+						B.S., Computer Science and Engineering
+					</h3>
+					<span class="font-mono text-xs text-faint">Graduated May 2024</span>
+				</div>
+				<p class="mt-1 font-mono text-sm text-accent">
+					The Ohio State University — Columbus, OH
+				</p>
+				<p class="mt-3 text-sm text-muted">GPA: 3.6</p>
+				<p class="mt-2 text-sm leading-relaxed text-muted">
+					<span class="text-fg">Relevant coursework:</span> {coursework}
+				</p>
+			</div>
+		</section>
+
+		<section class="mt-12">
+			<h2 class="section-label mb-5">Leadership Development</h2>
+			<div class="grid gap-4">
+				{
+					leadership.map((item) => (
+						<div>
+							<h3 class="font-mono text-sm text-fg">{item.title}</h3>
+							<p class="mt-1 text-sm leading-relaxed text-muted">
+								{item.detail}
+							</p>
+						</div>
+					))
+				}
+			</div>
+		</section>
+
+		<div class="mt-14 flex justify-center border-t border-border pt-10">
+			<a
+				href={SOCIALS.resumePdf}
+				download
+				class="rounded-xl border border-border px-5 py-2.5 font-mono text-sm text-fg transition-colors hover:border-border-strong"
+			>
+				Download PDF ↓
+			</a>
+		</div>
+	</article>
+</Layout>

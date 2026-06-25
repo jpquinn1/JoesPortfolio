@@ -1,0 +1,220 @@
+---
+interface Props {
+	src?: string;
+	alt?: string;
+	class?: string;
+}
+
+const {
+	src = '/images/joe-headshot.jpg',
+	alt = 'Headshot of Joe Quinn',
+	class: className = '',
+} = Astro.props;
+---
+
+<div class:list={['headshot-card', className]} data-headshot-card>
+	<div class="headshot-card__inner" data-headshot-inner>
+		<img
+			class="headshot-card__img"
+			src={src}
+			alt={alt}
+			width="300"
+			height="400"
+			loading="eager"
+			decoding="async"
+		/>
+		<span class="headshot-card__sheen" aria-hidden="true"></span>
+		<span class="headshot-card__glare" data-headshot-glare aria-hidden="true"></span>
+		<span class="headshot-card__ring" aria-hidden="true"></span>
+	</div>
+</div>
+
+<style>
+	.headshot-card {
+		perspective: 950px;
+		width: min(18rem, 78vw);
+		justify-self: center;
+	}
+
+	.headshot-card__inner {
+		position: relative;
+		aspect-ratio: 3 / 4;
+		border-radius: 22px;
+		border: 1px solid rgba(94, 234, 212, 0.16);
+		background: var(--color-surface, #111317);
+		box-shadow:
+			0 30px 60px -22px rgba(0, 0, 0, 0.75),
+			0 0 40px -14px rgba(45, 212, 191, 0.28);
+		overflow: hidden;
+		transform-style: preserve-3d;
+		transform: rotateX(0deg) rotateY(0deg) scale(1);
+		transition: box-shadow 300ms ease;
+		will-change: transform;
+	}
+
+	.headshot-card:hover .headshot-card__inner {
+		box-shadow:
+			0 38px 70px -22px rgba(0, 0, 0, 0.8),
+			0 0 55px -12px rgba(45, 212, 191, 0.4);
+	}
+
+	.headshot-card__img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		filter: saturate(0.92) contrast(1.02);
+	}
+
+	/* Static depth: subtle dark gradient at the bottom for richness */
+	.headshot-card__sheen {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: linear-gradient(
+			180deg,
+			rgba(5, 7, 13, 0) 55%,
+			rgba(5, 7, 13, 0.55) 100%
+		);
+	}
+
+	/* Cursor-following glare */
+	.headshot-card__glare {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 300ms ease;
+		mix-blend-mode: screen;
+		background: radial-gradient(
+			22rem 22rem at var(--mx, 50%) var(--my, 50%),
+			rgba(154, 255, 240, 0.22),
+			rgba(94, 234, 212, 0.05) 32%,
+			transparent 55%
+		);
+	}
+
+	.headshot-card__ring {
+		position: absolute;
+		inset: 0;
+		border-radius: 22px;
+		pointer-events: none;
+		box-shadow: inset 0 0 0 1px rgba(94, 234, 212, 0.1);
+	}
+
+	/* Touch / no-hover devices: gentle idle float instead of cursor tilt */
+	@media (hover: none) {
+		.headshot-card__inner {
+			animation: headshot-float 7s ease-in-out infinite;
+		}
+	}
+	@keyframes headshot-float {
+		0%,
+		100% {
+			transform: translateY(0);
+		}
+		50% {
+			transform: translateY(-7px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.headshot-card__inner {
+			animation: none;
+			transition: none;
+		}
+		.headshot-card__glare {
+			display: none;
+		}
+	}
+</style>
+
+<script>
+	type CardState = {
+		inner: HTMLElement;
+		glare: HTMLElement | null;
+		targetRX: number;
+		targetRY: number;
+		targetS: number;
+		curRX: number;
+		curRY: number;
+		curS: number;
+		raf: number | null;
+	};
+
+	const MAX_DEG = 8;
+	const EASE = 0.14;
+
+	const canTilt =
+		window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+		!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	if (canTilt) {
+		const cards =
+			document.querySelectorAll<HTMLElement>('[data-headshot-card]');
+
+		cards.forEach((card) => {
+			const inner = card.querySelector<HTMLElement>('[data-headshot-inner]');
+			if (!inner) return;
+			const glare = card.querySelector<HTMLElement>('[data-headshot-glare]');
+
+			const state: CardState = {
+				inner,
+				glare,
+				targetRX: 0,
+				targetRY: 0,
+				targetS: 1,
+				curRX: 0,
+				curRY: 0,
+				curS: 1,
+				raf: null,
+			};
+
+			const loop = () => {
+				state.curRX += (state.targetRX - state.curRX) * EASE;
+				state.curRY += (state.targetRY - state.curRY) * EASE;
+				state.curS += (state.targetS - state.curS) * EASE;
+
+				state.inner.style.transform = `rotateX(${state.curRX.toFixed(2)}deg) rotateY(${state.curRY.toFixed(2)}deg) scale(${state.curS.toFixed(3)})`;
+
+				const settled =
+					Math.abs(state.targetRX - state.curRX) < 0.01 &&
+					Math.abs(state.targetRY - state.curRY) < 0.01 &&
+					Math.abs(state.targetS - state.curS) < 0.001;
+
+				state.raf = settled ? null : requestAnimationFrame(loop);
+			};
+
+			const kick = () => {
+				if (state.raf == null) state.raf = requestAnimationFrame(loop);
+			};
+
+			card.addEventListener('pointermove', (e) => {
+				if (e.pointerType !== 'mouse') return;
+				const r = card.getBoundingClientRect();
+				const px = (e.clientX - r.left) / r.width - 0.5;
+				const py = (e.clientY - r.top) / r.height - 0.5;
+
+				state.targetRY = px * MAX_DEG * 2;
+				state.targetRX = -py * MAX_DEG * 2;
+				state.targetS = 1.03;
+
+				if (state.glare) {
+					state.glare.style.setProperty('--mx', `${(px + 0.5) * 100}%`);
+					state.glare.style.setProperty('--my', `${(py + 0.5) * 100}%`);
+					state.glare.style.opacity = '1';
+				}
+				kick();
+			});
+
+			card.addEventListener('pointerleave', () => {
+				state.targetRX = 0;
+				state.targetRY = 0;
+				state.targetS = 1;
+				if (state.glare) state.glare.style.opacity = '0';
+				kick();
+			});
+		});
+	}
+</script>
