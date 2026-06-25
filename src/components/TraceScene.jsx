@@ -222,10 +222,6 @@ export default function TraceScene() {
 			<div className="trace-bg__veil" />
 
 			<div className="trace-bg__hud">
-				<div className="hud hud--tr">
-					<span className="hud-dot" />
-					TRACE // LIVE
-				</div>
 				<div className="hud hud--br">
 					<div className="hud-row">
 						<span className="hud-key">CARRY</span>
@@ -276,20 +272,15 @@ const CSS = `
 	text-shadow: 0 1px 8px rgba(5,7,13,0.9);
 }
 .hud { position: absolute; font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; }
-.hud--tr { top: 1.5rem; right: clamp(1.25rem, 5vw, 3rem); display: flex; align-items: center; gap: 0.5rem; color: var(--color-accent, #5eead4); }
 .hud--br { bottom: 2rem; right: clamp(1.25rem, 5vw, 3rem); width: 8.5rem; }
 .hud-row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.16rem 0; border-bottom: 1px solid rgba(94,234,212,0.18); }
 .hud-key { color: var(--color-muted, #9aa1ac); }
 .hud-val { color: var(--color-fg, #e8eaed); }
 .hud-bar { margin-top: 0.55rem; height: 2px; background: rgba(94,234,212,0.22); overflow: hidden; }
 .hud-bar__fill { display: block; height: 100%; width: 100%; transform: scaleX(0); transform-origin: left; background: var(--color-accent, #5eead4); }
-.hud-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent, #5eead4); box-shadow: 0 0 9px var(--color-accent, #5eead4); animation: hud-blink 1.6s ease-in-out infinite; }
-@keyframes hud-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
 @media (max-width: 640px) {
-	.hud--br { display: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-	.hud-dot { animation: none; }
+	/* Keep the metrics panel visible, tucked into the empty bottom-right. */
+	.hud--br { bottom: 1.5rem; width: 7.5rem; font-size: 0.6rem; }
 }
 `;
