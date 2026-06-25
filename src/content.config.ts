@@ -40,4 +40,28 @@ const projects = defineCollection({
 		}),
 });
 
-export const collections = { blog, projects };
+// Personal "Life" writing. Drop Markdown/MDX files into `src/content/journal/`
+// to publish a post on the /life page. Until a file exists here, the writing
+// section on /life stays hidden (no placeholder shown).
+//
+// Example `src/content/journal/first-trip.md`:
+//   ---
+//   title: A weekend in the mountains
+//   description: Notes and photos from a trip off the grid.
+//   pubDate: 2024-06-15
+//   heroImage: ./first-trip-hero.jpg   # optional, lives next to the file
+//   ---
+//   Your post body goes here...
+const journal = defineCollection({
+	loader: glob({ base: './src/content/journal', pattern: '**/*.{md,mdx}' }),
+	schema: ({ image }) =>
+		z.object({
+			title: z.string(),
+			description: z.string(),
+			pubDate: z.coerce.date(),
+			updatedDate: z.coerce.date().optional(),
+			heroImage: z.optional(image()),
+		}),
+});
+
+export const collections = { blog, projects, journal };

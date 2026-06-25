@@ -1,0 +1,160 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+
+// ---------------------------------------------------------------------------
+// PHOTOS
+// Every image in `src/assets/personal/2024/` is picked up automatically and
+// optimized by Astro. To add more photos, just drop files into that folder
+// (or create a new year folder and add another glob below).
+// ---------------------------------------------------------------------------
+const photoModules = import.meta.glob<{ default: ImageMetadata }>(
+	'../assets/personal/2024/*.{jpeg,jpg,png,webp,avif}',
+	{ eager: true },
+);
+
+// ---------------------------------------------------------------------------
+// PHOTO METADATA  (optional — nothing here is required)
+// Add a per-photo `date` and/or `description`, keyed by the exact file name.
+// - `date`: shown as a small badge only when a photo is hovered/focused.
+// - `description`: alt text + caption revealed on hover/focus (used when set).
+// Anything omitted falls back to the defaults below, so no placeholder text is
+// ever shown on the live site.
+//
+// Example:
+//   'DSC01046.jpeg': { date: 'June 2024', description: 'Sunrise over the bay.' },
+// ---------------------------------------------------------------------------
+const PHOTO_META: Record<string, { date?: string; description?: string }> = {
+	// 'DSC00495.jpeg': { date: '', description: '' },
+};
+
+// Folder represents 2024; used when a photo has no explicit date above.
+const DEFAULT_DATE = '2024';
+
+const photos = Object.entries(photoModules)
+	.map(([path, mod]) => {
+		const file = path.split('/').pop() ?? path;
+		const meta = PHOTO_META[file] ?? {};
+		return {
+			src: mod.default,
+			file,
+			date: meta.date ?? DEFAULT_DATE,
+			description: meta.description ?? '',
+		};
+	})
+	.sort((a, b) => a.file.localeCompare(b.file));
+
+// ---------------------------------------------------------------------------
+// WRITING
+// Posts come from the `journal` content collection (src/content/journal/).
+// While that folder is empty this whole section renders nothing — there is no
+// visible placeholder. Add a Markdown/MDX file there to make it appear.
+// ---------------------------------------------------------------------------
+const posts = (await getCollection('journal')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<Layout
+	title="Life — Joe Quinn"
+	description="Photography and writing from outside of work."
+>
+	<section class="mx-auto max-w-5xl px-6 py-16 sm:py-20">
+		<p class="section-label mb-5">Life</p>
+		<h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">
+			Outside of work
+		</h1>
+		<p class="mt-4 max-w-2xl text-lg text-muted">
+			Some photography.
+		</p>
+
+		{/* ---- Writing: hidden entirely until the journal collection has posts ---- */}
+		{
+			posts.length > 0 && (
+				<div class="mt-16">
+					<p class="section-label mb-6">Writing</p>
+					<div class="grid gap-6 sm:grid-cols-2">
+						{posts.map((post) => (
+							<a
+								href={`/life/${post.id}/`}
+								class="card group block overflow-hidden"
+							>
+								{post.data.heroImage && (
+									<div class="relative aspect-[16/9] overflow-hidden border-b border-border">
+										<Image
+											src={post.data.heroImage}
+											alt={`${post.data.title} cover`}
+											widths={[480, 800, 1200]}
+											sizes="(max-width: 640px) 100vw, 50vw"
+											class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+										/>
+									</div>
+								)}
+								<div class="p-6">
+									<h3 class="text-xl font-semibold tracking-tight transition-colors group-hover:text-accent">
+										{post.data.title}
+									</h3>
+									<p class="mt-1 font-mono text-xs text-faint">
+										<FormattedDate date={post.data.pubDate} />
+									</p>
+									<p class="mt-2 text-sm leading-relaxed text-muted">
+										{post.data.description}
+									</p>
+								</div>
+							</a>
+						))}
+					</div>
+				</div>
+			)
+		}
+
+		{/* ---- Photos: masonry-style gallery, date revealed on hover/focus ---- */}
+		<div class="mt-16">
+			<p class="section-label mb-6">Photos</p>
+
+			{
+				photos.length === 0 ? (
+					<p class="text-muted">
+						No photos yet. Add images to{' '}
+						<code class="font-mono text-sm">src/assets/personal/2024/</code>.
+					</p>
+				) : (
+					<div class="gap-4 [column-fill:_balance] sm:columns-2 lg:columns-3">
+						{photos.map((photo) => (
+							<figure
+								tabindex="0"
+								class="group relative mb-4 break-inside-avoid overflow-hidden rounded-xl border border-border outline-none focus-visible:ring-2 focus-visible:ring-accent"
+							>
+								<Image
+									src={photo.src}
+									alt={photo.description || ''}
+									widths={[400, 800, 1200]}
+									sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+									loading="lazy"
+									class="block w-full"
+								/>
+
+								{/* Date (and description if provided) — only visible on hover/focus */}
+								<figcaption
+									class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100"
+								>
+									{photo.description && (
+										<span class="font-sans text-xs leading-snug text-fg/90">
+											{photo.description}
+										</span>
+									)}
+									<span class="ml-auto rounded-md bg-black/40 px-2 py-1 font-mono text-[0.7rem] tracking-wide text-fg/90 backdrop-blur-sm">
+										{photo.date}
+									</span>
+								</figcaption>
+							</figure>
+						))}
+					</div>
+				)
+			}
+		</div>
+	</section>
+</Layout>
