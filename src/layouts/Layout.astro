@@ -1,4 +1,6 @@
 ---
+import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 import BaseHead from '../components/BaseHead.astro';
 import Nav from '../components/Nav.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -23,5 +25,7 @@ const { title = SITE_TITLE, description = SITE_DESCRIPTION } = Astro.props;
 			<slot />
 		</main>
 		<SiteFooter />
+		<Analytics />
+		<SpeedInsights />
 	</body>
 </html>
