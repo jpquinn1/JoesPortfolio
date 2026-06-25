@@ -109,6 +109,12 @@ const {
 			animation: headshot-float 7s ease-in-out infinite;
 		}
 	}
+
+	/* When gyroscope tilt is active, JS drives the transform directly,
+	   so the idle float would otherwise fight the inline transform. */
+	.headshot-card__inner--gyro {
+		animation: none !important;
+	}
 	@keyframes headshot-float {
 		0%,
 		100% {
@@ -146,11 +152,16 @@ const {
 	const MAX_DEG = 8;
 	const EASE = 0.14;
 
-	const canTilt =
-		window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
-		!window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const reduceMotion = window.matchMedia(
+		'(prefers-reduced-motion: reduce)',
+	).matches;
+	const canHover = window.matchMedia(
+		'(hover: hover) and (pointer: fine)',
+	).matches;
 
-	if (canTilt) {
+	const clamp = (v: number, m: number) => Math.max(-m, Math.min(m, v));
+
+	if (!reduceMotion) {
 		const cards =
 			document.querySelectorAll<HTMLElement>('[data-headshot-card]');
 
@@ -190,31 +201,121 @@ const {
 				if (state.raf == null) state.raf = requestAnimationFrame(loop);
 			};
 
-			card.addEventListener('pointermove', (e) => {
-				if (e.pointerType !== 'mouse') return;
-				const r = card.getBoundingClientRect();
-				const px = (e.clientX - r.left) / r.width - 0.5;
-				const py = (e.clientY - r.top) / r.height - 0.5;
-
-				state.targetRY = px * MAX_DEG * 2;
-				state.targetRX = -py * MAX_DEG * 2;
-				state.targetS = 1.03;
-
-				if (state.glare) {
-					state.glare.style.setProperty('--mx', `${(px + 0.5) * 100}%`);
-					state.glare.style.setProperty('--my', `${(py + 0.5) * 100}%`);
-					state.glare.style.opacity = '1';
-				}
-				kick();
-			});
-
-			card.addEventListener('pointerleave', () => {
-				state.targetRX = 0;
-				state.targetRY = 0;
-				state.targetS = 1;
-				if (state.glare) state.glare.style.opacity = '0';
-				kick();
-			});
+			if (canHover) {
+				setupPointerTilt(card, state, kick);
+			} else {
+				setupGyroTilt(card, inner, state, kick);
+			}
 		});
+	}
+
+	function setupPointerTilt(
+		card: HTMLElement,
+		state: CardState,
+		kick: () => void,
+	) {
+		card.addEventListener('pointermove', (e) => {
+			if (e.pointerType !== 'mouse') return;
+			const r = card.getBoundingClientRect();
+			const px = (e.clientX - r.left) / r.width - 0.5;
+			const py = (e.clientY - r.top) / r.height - 0.5;
+
+			state.targetRY = px * MAX_DEG * 2;
+			state.targetRX = -py * MAX_DEG * 2;
+			state.targetS = 1.03;
+
+			if (state.glare) {
+				state.glare.style.setProperty('--mx', `${(px + 0.5) * 100}%`);
+				state.glare.style.setProperty('--my', `${(py + 0.5) * 100}%`);
+				state.glare.style.opacity = '1';
+			}
+			kick();
+		});
+
+		card.addEventListener('pointerleave', () => {
+			state.targetRX = 0;
+			state.targetRY = 0;
+			state.targetS = 1;
+			if (state.glare) state.glare.style.opacity = '0';
+			kick();
+		});
+	}
+
+	function setupGyroTilt(
+		card: HTMLElement,
+		inner: HTMLElement,
+		state: CardState,
+		kick: () => void,
+	) {
+		// Degrees of phone tilt that map to the full MAX_DEG of card rotation.
+		const RANGE = 16;
+		let baseBeta: number | null = null;
+		let baseGamma: number | null = null;
+
+		const onOrient = (e: DeviceOrientationEvent) => {
+			if (e.beta == null || e.gamma == null) return;
+
+			// In landscape, beta/gamma axes swap relative to the screen.
+			const angle =
+				(screen.orientation && screen.orientation.angle) ||
+				(window.orientation as number) ||
+				0;
+			const landscape = angle === 90 || angle === -90 || angle === 270;
+			let beta = landscape ? e.gamma : e.beta; // front/back relative to screen
+			let gamma = landscape ? e.beta : e.gamma; // left/right relative to screen
+
+			// Calibrate to however the phone is first being held.
+			if (baseBeta == null || baseGamma == null) {
+				baseBeta = beta;
+				baseGamma = gamma;
+			}
+
+			const dBeta = clamp(beta - baseBeta, RANGE);
+			const dGamma = clamp(gamma - baseGamma, RANGE);
+
+			state.targetRX = -(dBeta / RANGE) * MAX_DEG;
+			state.targetRY = (dGamma / RANGE) * MAX_DEG;
+			state.targetS = 1.02;
+
+			if (state.glare) {
+				state.glare.style.setProperty(
+					'--mx',
+					`${50 + (dGamma / RANGE) * 50}%`,
+				);
+				state.glare.style.setProperty(
+					'--my',
+					`${50 + (dBeta / RANGE) * 50}%`,
+				);
+				state.glare.style.opacity = '1';
+			}
+			kick();
+		};
+
+		const enable = () => {
+			inner.classList.add('headshot-card__inner--gyro');
+			window.addEventListener('deviceorientation', onOrient);
+		};
+
+		const DOE = window.DeviceOrientationEvent as
+			| (typeof DeviceOrientationEvent & {
+					requestPermission?: () => Promise<PermissionState>;
+			  })
+			| undefined;
+
+		if (!DOE) return;
+
+		if (typeof DOE.requestPermission === 'function') {
+			// iOS 13+: permission must be requested from a user gesture.
+			const requestOnTap = () => {
+				DOE.requestPermission!()
+					.then((res) => {
+						if (res === 'granted') enable();
+					})
+					.catch(() => {});
+			};
+			card.addEventListener('touchend', requestOnTap, { once: true });
+		} else {
+			enable();
+		}
 	}
 </script>
