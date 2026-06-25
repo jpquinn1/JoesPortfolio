@@ -27,6 +27,18 @@ coordinate frame. To overlay a trace on video, every 3D point has to be mapped
 to the correct pixel in each frame, accounting for the camera's intrinsics,
 position, and orientation relative to the radar.
 
+<figure>
+  <img
+    src="/projects/radar-golf-trace-calibration/range-setup.png"
+    alt="Camera and alignment-pole setup on the range, with the camera positioned behind the hitting area."
+    loading="lazy"
+  />
+  <figcaption>
+    Field setup: external camera positioned behind the hitting area with an
+    alignment pole used to ground the calibration geometry.
+  </figcaption>
+</figure>
+
 ## Approach
 
 - **Camera calibration** with ChArUco boards to recover intrinsics and lens
@@ -36,10 +48,42 @@ position, and orientation relative to the radar.
 - **3D → 2D projection** of radar trajectory points into image space per frame.
 - **Trajectory visualization** rendered as a smooth, anti-aliased trace.
 
+## Calibration Workspace
+
+A 3D scene workspace lets me inspect the radar trajectory, camera frustum, and
+projected trace together, then tune the virtual camera, ball start, radar
+position, and target direction until the overlay locks to the footage.
+
+<figure>
+  <img
+    src="/projects/radar-golf-trace-calibration/scene-workspace.png"
+    alt="3D scene workspace showing the radar trajectory, camera frustum, projection overlay, and calibration controls."
+    loading="lazy"
+  />
+  <figcaption>
+    The interactive 3D workspace used to align the virtual camera, radar frame,
+    and 2D projection before rendering.
+  </figcaption>
+</figure>
+
+<figure>
+  <video controls playsInline preload="metadata" muted>
+    <source src="/projects/radar-golf-trace-calibration/app-demo.mp4" type="video/mp4" />
+  </video>
+  <figcaption>App demo: walking through the calibration and tracing workflow.</figcaption>
+</figure>
+
 ## Outcome
 
 A repeatable calibration workflow that produces accurate, broadcast-style trace
 overlays from raw radar data and standard camera footage.
 
-> Replace this placeholder case study with the real write-up, diagrams, and
-> result screenshots.
+<figure>
+  <video controls playsInline preload="metadata" muted>
+    <source src="/projects/radar-golf-trace-calibration/final-trace.mp4" type="video/mp4" />
+  </video>
+  <figcaption>
+    Final result: the radar trajectory projected and drawn onto the camera
+    footage as a broadcast-style trace.
+  </figcaption>
+</figure>
