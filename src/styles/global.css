@@ -192,6 +192,20 @@
   margin: 2.5rem 0;
 }
 
+/* Brief highlight when jumping to a photo from the Featured strip */
+@keyframes photo-flash {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(94, 234, 212, 0);
+  }
+  20% {
+    box-shadow: 0 0 0 3px rgba(94, 234, 212, 0.9);
+  }
+}
+.photo-flash {
+  animation: photo-flash 1.6s ease-out;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

@@ -45,7 +45,9 @@ JoesPortfolio/
     ├── content.config.ts     # Defines the "shape" of projects + blog posts
     ├── styles/global.css     # Colors, fonts, reusable .card/.tag/.section-label, prose
     ├── assets/               # Optimized images (project shots, blog heroes…)
-    │   └── personal/2024/    #   ← LIFE PAGE PHOTOS live here
+    │   └── personal/         #   ← LIFE PAGE PHOTOS/VIDEOS — one folder per trip/year
+    │       ├── 2024/         #     each subfolder becomes a gallery section
+    │       └── seattle-2025/ #     (photos + videos live together here)
     ├── components/
     │   ├── Nav.astro         # Top navigation bar  ← EDIT TO ADD/REMOVE NAV LINKS
     │   ├── SiteFooter.astro  # Footer
@@ -95,46 +97,109 @@ npm run build      # production build into dist/ (catches errors)
 The Life page (`/life`) has two parts: a **photo gallery** and a **writing/blog** section.
 The page file is `src/pages/life.astro` and it's heavily commented.
 
+The gallery is **folder-driven**: every subfolder inside `src/assets/personal/`
+becomes its own section on the page (a trip or a year). Each photo is **clickable**
+to open a full-screen, zoomed-in view (the "lightbox") with left/right arrows and
+keyboard navigation (`←` `→` to move, `Esc` to close). Sections are **collapsible**
+with a sticky header so you can quickly jump between groupings.
+
 ### 4a. Add more photos
 
-1. Drop your image files into **`src/assets/personal/2024/`** (or make a new year
-   folder — see note below). Supported: `.jpeg .jpg .png .webp .avif`.
-2. That's it. Every image in that folder is picked up automatically, optimized, and
-   shown in the gallery. No code change needed to simply add photos.
+1. Drop your image files into a folder under **`src/assets/personal/`**. Use the
+   existing `2024/` folder, or make a new one (see "Add a trip" below).
+   Supported: `.jpeg .jpg .png .webp .avif`.
+2. That's it. Every image in any subfolder is picked up automatically, optimized, and
+   shown under that folder's section. No code change needed to simply add photos.
 
 The page grabs them with this line (no need to list files by hand):
 
 ```ts
 const photoModules = import.meta.glob(
-  '../assets/personal/2024/*.{jpeg,jpg,png,webp,avif}',
+  '../assets/personal/**/*.{jpeg,jpg,png,webp,avif}',
   { eager: true },
 );
 ```
 
-**Adding a new year folder** (e.g. 2025): create `src/assets/personal/2025/`, then in
-`src/pages/life.astro` add a second `import.meta.glob('../assets/personal/2025/...')`
-and merge it into the `photos` list. (Ask for help here if unsure — it's a 3-line change.)
+### 4b. Add a trip (a new photo group)
 
-### 4b. Give a photo a date or description (optional)
+1. Create a folder, e.g. **`src/assets/personal/patagonia-2025/`**, and drop the
+   photos (and/or videos) in. It immediately appears as its own collapsible section,
+   titled with the folder name.
+2. **(Optional but recommended)** give it a nice title, a subtitle, and control where
+   it appears by adding one entry to the `GROUP_META` map near the top of
+   `src/pages/life.astro`. Keys are the **exact folder name**:
 
-By default each photo shows just the year **`2024`**, and only when you hover or tap it.
-To customize, edit the `PHOTO_META` map near the top of `src/pages/life.astro`. Keys are
-the **exact file names**:
+```ts
+const GROUP_META = {
+  '2024': { title: '2024', order: 100 },
+  'patagonia-2025': {
+    title: 'Patagonia',
+    subtitle: 'Argentina · March 2025',  // optional small line in the header
+    order: 1,                            // lower number = section appears first
+  },
+};
+```
+
+- `title` → the heading shown above the gallery (defaults to the folder name).
+- `subtitle` → smaller line under the title; great for "Location · Month Year".
+- `order` → lower numbers appear first. Unlisted folders default to `50`.
+
+### 4c. Add a video to a trip
+
+Videos live in the **same trip folders** as photos and show up inline with a play
+badge; clicking opens them full-screen with playback controls.
+
+1. Drop the file into a trip folder, e.g. `src/assets/personal/seattle-2025/`.
+   Supported: `.mp4 .webm .mov .m4v`.
+2. **Use `.mp4` (H.264 video + AAC audio) whenever possible** — it's the format that
+   plays reliably across all browsers. iPhone `.mov` files often *won't* play in
+   Firefox, so convert them first.
+
+**Converting a `.mov` (or anything) to web-friendly `.mp4`:** this uses
+[`ffmpeg`](https://ffmpeg.org) (install once with `brew install ffmpeg`).
+
+```bash
+# If the video is already H.264 + AAC (most iPhone clips), this is a fast,
+# lossless container swap — no quality loss, no re-encoding:
+ffmpeg -i input.mov -c copy -movflags +faststart output.mp4
+
+# If that errors about codecs, re-encode instead (slower, slight quality change):
+ffmpeg -i input.mov -c:v libx264 -crf 20 -c:a aac -movflags +faststart output.mp4
+```
+
+Then delete the original `.mov` and keep only the `.mp4` in the folder. The
+`+faststart` flag lets the video start playing before it's fully downloaded.
+
+> **Tip:** unlike photos, videos are **not** auto-optimized/compressed by the site —
+> they're served as-is. Keep clips short and reasonably sized.
+
+### 4d. Give a photo or video a date or description (optional)
+
+By default a photo or video shows no caption. To add a date and/or description (shown
+on hover/focus, and as the caption in the zoomed-in lightbox), edit the `PHOTO_META`
+map near the top of `src/pages/life.astro`. Keys are the **exact file names** (works
+for both images and videos):
 
 ```ts
 const PHOTO_META = {
-  'DSC01046.jpeg': { date: 'June 2024', description: 'Sunrise over the bay.' },
-  'IMG_3579.jpeg': { date: 'Aug 2024',  description: 'Backpacking trip.' },
+  'DSC01046.jpeg':       { date: 'June 2024', description: 'Sunrise over the bay.' },
+  'IMG_3579.jpeg':       { date: 'Aug 2024',  description: 'Backpacking trip.' },
+  'z-fishtosspikes.mp4': { date: 'June 2025', description: 'Fish toss at Pike Place.' },
 };
 ```
 
 - `date` → shown in the small badge that appears on hover/focus. Any text works
   (`"2024"`, `"June 2024"`, `"06/2024"`).
-- `description` → used as the photo's alt text **and** shown as a caption on hover/focus.
-- Anything you leave out falls back to the defaults, so the live site never shows
-  empty placeholder text.
+- `description` → used as the alt text **and** shown as a caption on hover/focus and
+  in the lightbox.
+- Anything you leave out is simply omitted, so the live site never shows empty
+  placeholder text.
 
-### 4c. Add a blog post
+> **Ordering within a section:** photos and videos are sorted by file name. To force an
+> order, prefix file names with numbers (`01-…`, `02-…`) or a letter (e.g. `z-…` pushes
+> an item to the end).
+
+### 4e. Add a blog post
 
 Blog posts are Markdown/MDX files in **`src/content/journal/`**. Until you add one, the
 "Writing" section is **completely hidden** (no empty placeholder).
@@ -280,8 +345,10 @@ npm run build && npm run preview
 
 | Goal | Go to |
 | --- | --- |
-| Add photos to the Life page | `src/assets/personal/2024/` (just drop files in) |
-| Caption / date a photo | `PHOTO_META` in `src/pages/life.astro` |
+| Add photos to the Life page | drop files in a folder under `src/assets/personal/` |
+| Add a new trip section | new folder in `src/assets/personal/` + optional `GROUP_META` entry |
+| Add a video to the Life page | drop an `.mp4` in a trip folder (convert `.mov` → `.mp4` first) |
+| Caption / date a photo or video | `PHOTO_META` in `src/pages/life.astro` |
 | Write a Life blog post | new `.md` file in `src/content/journal/` |
 | Change my name / bio links | `src/consts.ts` |
 | Edit the homepage intro | `src/components/sections/Hero.astro` |

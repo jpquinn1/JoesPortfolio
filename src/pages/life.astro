@@ -155,6 +155,30 @@ const photoGroups = Array.from(groupsMap.entries())
 
 const hasPhotos = allMedia.length > 0;
 
+// Stable DOM id for a single photo/video, so we can scroll straight to it.
+const mediaId = (file: string) =>
+	'photo-' + file.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '-');
+
+const groupTitleByKey = new Map(photoGroups.map((g) => [g.key, g.title]));
+
+// ---------------------------------------------------------------------------
+// FEATURED PHOTOS  (optional)
+// A horizontal strip at the top of the gallery. List the exact file names in
+// the order you want them shown; clicking one jumps to that photo inside its
+// group (expanding the group if needed). Files that don't exist are skipped.
+// ---------------------------------------------------------------------------
+const FEATURED = [
+	'35E4342A-79E8-488E-8099-473D04738C1B.jpeg',
+	'day6_OSUvsWU-036.jpeg',
+	'seattlefavs-35.jpeg',
+	'day5_OSUvsWU-049.jpeg',
+	'DSC02470.jpeg',
+];
+const mediaByFile = new Map(allMedia.map((m) => [m.file, m]));
+const featuredItems = FEATURED.map((f) => mediaByFile.get(f)).filter(
+	(m): m is MediaItem => Boolean(m),
+);
+
 // ---------------------------------------------------------------------------
 // WRITING
 // Posts come from the `journal` content collection (src/content/journal/).
@@ -235,8 +259,89 @@ const posts = (await getCollection('journal')).sort(
 						).
 					</p>
 				) : (
-					photoGroups.map((group) => (
-						<details class="group/section mt-8 first:mt-0" open>
+					<>
+						{/* Quick-nav chips: hint that other groups exist + jump to them */}
+						{photoGroups.length > 1 && (
+							<nav
+								aria-label="Jump to a photo group"
+								class="mb-8 flex flex-nowrap gap-2 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex-wrap [&::-webkit-scrollbar]:hidden"
+							>
+								{photoGroups.map((group) => (
+									<a
+										href={`#group-${group.key}`}
+										data-group-jump={`group-${group.key}`}
+										class="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-1.5 font-mono text-xs text-muted transition-colors hover:border-accent hover:text-fg"
+									>
+										<span>{group.title}</span>
+										<span class="rounded-full bg-bg/70 px-1.5 text-[0.65rem] text-faint">
+											{group.items.length}
+										</span>
+									</a>
+								))}
+							</nav>
+						)}
+
+						{/* Featured strip: a horizontal scroll of highlight photos */}
+						{featuredItems.length > 0 && (
+							<div class="mb-12">
+								<p class="mb-3 font-mono text-xs uppercase tracking-widest text-faint">
+									Featured
+								</p>
+								<div class="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+									{featuredItems.map((item) => (
+										<button
+											type="button"
+											data-photo-jump={mediaId(item.file)}
+											aria-label={`View ${item.description || item.file} in ${groupTitleByKey.get(item.groupKey) ?? ''}`}
+											class="group/feat relative aspect-[3/2] h-40 shrink-0 snap-start overflow-hidden rounded-xl border border-border outline-none transition-colors hover:border-accent focus-visible:ring-2 focus-visible:ring-accent sm:h-48"
+										>
+											{item.type === 'video' ? (
+												<video
+													src={`${item.src}#t=0.1`}
+													muted
+													playsinline
+													preload="metadata"
+													class="h-full w-full object-cover transition-transform duration-300 group-hover/feat:scale-105"
+												/>
+											) : (
+												<Image
+													src={item.src}
+													alt={item.description || ''}
+													widths={[320, 640]}
+													sizes="(max-width: 640px) 60vw, 18rem"
+													loading="eager"
+													class="h-full w-full object-cover transition-transform duration-300 group-hover/feat:scale-105"
+												/>
+											)}
+											<span class="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/75 via-black/20 to-transparent p-2.5">
+												<span class="font-mono text-[0.7rem] tracking-wide text-fg/90">
+													{groupTitleByKey.get(item.groupKey)}
+												</span>
+												<svg
+													class="size-3.5 shrink-0 text-fg/80 transition-transform duration-200 group-hover/feat:translate-x-0.5"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2.5"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													aria-hidden="true"
+												>
+													<path d="M5 12h14M13 6l6 6-6 6" />
+												</svg>
+											</span>
+										</button>
+									))}
+								</div>
+							</div>
+						)}
+
+						{photoGroups.map((group, i) => (
+							<details
+								id={`group-${group.key}`}
+								class="group/section mt-8 scroll-mt-24 first:mt-0"
+								open={i === 0}
+							>
 							<summary class="sticky top-[3.25rem] z-30 -mx-6 mb-5 flex cursor-pointer list-none items-center justify-between gap-4 border-b border-border bg-bg/80 px-6 py-3 backdrop-blur-md transition-colors hover:border-border-strong [&::-webkit-details-marker]:hidden">
 								<span class="flex items-center gap-3">
 									<svg
@@ -269,6 +374,7 @@ const posts = (await getCollection('journal')).sort(
 								{group.items.map((item) => (
 									<button
 										type="button"
+										id={mediaId(item.file)}
 										data-lightbox
 										data-lightbox-type={item.type}
 										data-lightbox-src={
@@ -278,7 +384,7 @@ const posts = (await getCollection('journal')).sort(
 										data-lightbox-caption={[item.description, item.date]
 											.filter(Boolean)
 											.join(' · ')}
-										class="group relative mb-4 block w-full cursor-zoom-in break-inside-avoid overflow-hidden rounded-xl border border-border text-left outline-none transition-colors hover:border-border-strong focus-visible:ring-2 focus-visible:ring-accent"
+										class="group relative mb-4 block w-full scroll-mt-28 cursor-zoom-in break-inside-avoid overflow-hidden rounded-xl border border-border text-left outline-none transition-colors hover:border-border-strong focus-visible:ring-2 focus-visible:ring-accent"
 									>
 										{item.type === 'video' ? (
 											<>
@@ -331,11 +437,53 @@ const posts = (await getCollection('journal')).sort(
 								))}
 							</div>
 						</details>
-					))
+						))}
+					</>
 				)
 			}
 		</div>
 	</section>
 
 	<Lightbox />
+
+	<script>
+		// Quick-nav: expand the target group/photo (if collapsed) and smooth-scroll
+		// to it. Vertical offset is handled by `scroll-mt-*` so the sticky nav and
+		// section header don't cover the target.
+		const prefersReduced = window.matchMedia(
+			'(prefers-reduced-motion: reduce)',
+		).matches;
+		const behavior: ScrollBehavior = prefersReduced ? 'auto' : 'smooth';
+
+		const jumpTo = (id: string | undefined, flash: boolean) => {
+			const target = id ? document.getElementById(id) : null;
+			if (!target) return;
+			target.closest('details')?.setAttribute('open', '');
+			target.scrollIntoView({ behavior, block: 'start' });
+			if (flash) {
+				target.classList.add('photo-flash');
+				window.setTimeout(() => target.classList.remove('photo-flash'), 1600);
+			}
+		};
+
+		// Chips jump to a whole group.
+		document
+			.querySelectorAll<HTMLElement>('[data-group-jump]')
+			.forEach((el) =>
+				el.addEventListener('click', (e) => {
+					e.preventDefault();
+					jumpTo(el.dataset.groupJump, false);
+				}),
+			);
+
+		// Featured photos jump to that specific photo inside its group.
+		document
+			.querySelectorAll<HTMLElement>('[data-photo-jump]')
+			.forEach((el) =>
+				el.addEventListener('click', (e) => {
+					e.preventDefault();
+					jumpTo(el.dataset.photoJump, true);
+				}),
+			);
+	</script>
 </Layout>
