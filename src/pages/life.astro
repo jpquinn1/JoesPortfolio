@@ -28,6 +28,13 @@ const photoModules = import.meta.glob<{ default: ImageMetadata }>(
 	{ eager: true },
 );
 
+// Videos drop into the same trip folders alongside photos. Use web-friendly
+// containers/codecs: .mp4 (H.264 + AAC) is the most compatible across browsers.
+const videoModules = import.meta.glob<{ default: string }>(
+	'../assets/personal/**/*.{mp4,webm,mov,m4v}',
+	{ eager: true },
+);
+
 // ---------------------------------------------------------------------------
 // GROUP METADATA  (optional — nothing here is required)
 // Keyed by the folder name directly containing the photos.
@@ -62,16 +69,41 @@ const PHOTO_META: Record<string, { date?: string; description?: string }> = {
 	// 'DSC00495.jpeg': { date: '', description: '' },
 };
 
-// Build the full photo list, including a high-res `large` URL for the lightbox.
-const allPhotos = await Promise.all(
+// Pulls the containing-folder name (the group key) and file name from a path.
+const partsOf = (path: string) => {
+	const parts = path.split('/');
+	const file = parts.pop() ?? path;
+	const groupKey = parts[parts.length - 1] ?? 'misc';
+	return { file, groupKey };
+};
+
+type ImageItem = {
+	type: 'image';
+	src: ImageMetadata;
+	large: string;
+	file: string;
+	groupKey: string;
+	date: string;
+	description: string;
+};
+type VideoItem = {
+	type: 'video';
+	src: string;
+	file: string;
+	groupKey: string;
+	date: string;
+	description: string;
+};
+type MediaItem = ImageItem | VideoItem;
+
+// Images: build a high-res `large` URL used by the lightbox.
+const imageItems: ImageItem[] = await Promise.all(
 	Object.entries(photoModules).map(async ([path, mod]) => {
-		const parts = path.split('/');
-		const file = parts.pop() ?? path;
-		// The folder immediately containing the file is the group key.
-		const groupKey = parts[parts.length - 1] ?? 'misc';
+		const { file, groupKey } = partsOf(path);
 		const meta = PHOTO_META[file] ?? {};
 		const large = await getImage({ src: mod.default, width: 1600 });
 		return {
+			type: 'image',
 			src: mod.default,
 			large: large.src,
 			file,
@@ -82,12 +114,30 @@ const allPhotos = await Promise.all(
 	}),
 );
 
-// Group photos by folder, then sort sections by `order`.
-const groupsMap = new Map<string, typeof allPhotos>();
-for (const photo of allPhotos) {
-	const list = groupsMap.get(photo.groupKey) ?? [];
-	list.push(photo);
-	groupsMap.set(photo.groupKey, list);
+// Videos: served as-is (no Astro image optimization for video).
+const videoItems: VideoItem[] = Object.entries(videoModules).map(
+	([path, mod]) => {
+		const { file, groupKey } = partsOf(path);
+		const meta = PHOTO_META[file] ?? {};
+		return {
+			type: 'video',
+			src: mod.default,
+			file,
+			groupKey,
+			date: meta.date ?? '',
+			description: meta.description ?? '',
+		};
+	},
+);
+
+const allMedia: MediaItem[] = [...imageItems, ...videoItems];
+
+// Group media by folder, then sort sections by `order`.
+const groupsMap = new Map<string, MediaItem[]>();
+for (const item of allMedia) {
+	const list = groupsMap.get(item.groupKey) ?? [];
+	list.push(item);
+	groupsMap.set(item.groupKey, list);
 }
 
 const photoGroups = Array.from(groupsMap.entries())
@@ -98,12 +148,12 @@ const photoGroups = Array.from(groupsMap.entries())
 			title: cfg.title ?? key,
 			subtitle: cfg.subtitle ?? '',
 			order: cfg.order ?? 50,
-			photos: items.sort((a, b) => a.file.localeCompare(b.file)),
+			items: items.sort((a, b) => a.file.localeCompare(b.file)),
 		};
 	})
 	.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
 
-const hasPhotos = allPhotos.length > 0;
+const hasPhotos = allMedia.length > 0;
 
 // ---------------------------------------------------------------------------
 // WRITING
@@ -205,7 +255,7 @@ const posts = (await getCollection('journal')).sort(
 										{group.title}
 									</h2>
 									<span class="rounded-md bg-surface px-2 py-0.5 font-mono text-[0.7rem] text-faint">
-										{group.photos.length}
+										{group.items.length}
 									</span>
 								</span>
 								{group.subtitle && (
@@ -216,36 +266,64 @@ const posts = (await getCollection('journal')).sort(
 							</summary>
 
 							<div class="gap-4 [column-fill:_balance] sm:columns-2 lg:columns-3">
-								{group.photos.map((photo) => (
+								{group.items.map((item) => (
 									<button
 										type="button"
 										data-lightbox
-										data-lightbox-src={photo.large}
-										data-lightbox-alt={photo.description || group.title}
-										data-lightbox-caption={[photo.description, photo.date]
+										data-lightbox-type={item.type}
+										data-lightbox-src={
+											item.type === 'video' ? item.src : item.large
+										}
+										data-lightbox-alt={item.description || group.title}
+										data-lightbox-caption={[item.description, item.date]
 											.filter(Boolean)
 											.join(' · ')}
 										class="group relative mb-4 block w-full cursor-zoom-in break-inside-avoid overflow-hidden rounded-xl border border-border text-left outline-none transition-colors hover:border-border-strong focus-visible:ring-2 focus-visible:ring-accent"
 									>
-										<Image
-											src={photo.src}
-											alt={photo.description || ''}
-											widths={[400, 800, 1200]}
-											sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-											loading="lazy"
-											class="block w-full transition-transform duration-300 group-hover:scale-[1.03]"
-										/>
+										{item.type === 'video' ? (
+											<>
+												<video
+													src={`${item.src}#t=0.1`}
+													muted
+													playsinline
+													preload="metadata"
+													class="block w-full transition-transform duration-300 group-hover:scale-[1.03]"
+												/>
+												{/* Play badge so it's clearly a video */}
+												<span class="pointer-events-none absolute inset-0 flex items-center justify-center">
+													<span class="flex size-14 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm transition-transform duration-200 group-hover:scale-110">
+														<svg
+															class="size-6 translate-x-0.5 text-fg"
+															viewBox="0 0 24 24"
+															fill="currentColor"
+															aria-hidden="true"
+														>
+															<path d="M8 5v14l11-7z" />
+														</svg>
+													</span>
+												</span>
+											</>
+										) : (
+											<Image
+												src={item.src}
+												alt={item.description || ''}
+												widths={[400, 800, 1200]}
+												sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+												loading="lazy"
+												class="block w-full transition-transform duration-300 group-hover:scale-[1.03]"
+											/>
+										)}
 
 										{/* Date + description — only visible on hover/focus */}
 										<span class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
-											{photo.description && (
+											{item.description && (
 												<span class="font-sans text-xs leading-snug text-fg/90">
-													{photo.description}
+													{item.description}
 												</span>
 											)}
-											{photo.date && (
+											{item.date && (
 												<span class="ml-auto rounded-md bg-black/40 px-2 py-1 font-mono text-[0.7rem] tracking-wide text-fg/90 backdrop-blur-sm">
-													{photo.date}
+													{item.date}
 												</span>
 											)}
 										</span>

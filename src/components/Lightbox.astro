@@ -4,9 +4,10 @@
 // Any element on the page rendered with these data attributes becomes a
 // clickable trigger that opens a full-screen, zoomed-in view:
 //   data-lightbox            -> marks the element as a trigger
-//   data-lightbox-src        -> full/high-res image URL to display
+//   data-lightbox-type       -> "image" (default) or "video"
+//   data-lightbox-src        -> full/high-res image URL, or video URL
 //   data-lightbox-alt        -> alt text for the large image
-//   data-lightbox-caption    -> optional caption shown under the image
+//   data-lightbox-caption    -> optional caption shown under the image/video
 //
 // Triggers are collected in DOM order, so prev/next walks the whole page
 // (across every trip / gallery section) naturally.
@@ -41,6 +42,7 @@
 
 	<figure class="lightbox__stage">
 		<img class="lightbox__img" alt="" decoding="async" />
+		<video class="lightbox__video" controls playsinline></video>
 		<figcaption class="lightbox__caption"></figcaption>
 	</figure>
 </div>
@@ -75,7 +77,8 @@
 		max-height: 100%;
 	}
 
-	.lightbox__img {
+	.lightbox__img,
+	.lightbox__video {
 		max-width: min(92vw, 1600px);
 		max-height: 82vh;
 		width: auto;
@@ -84,6 +87,11 @@
 		border: 1px solid var(--color-border);
 		box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
 		object-fit: contain;
+	}
+
+	.lightbox__video {
+		display: none;
+		background: #000;
 	}
 
 	.lightbox__caption {
@@ -165,6 +173,9 @@
 
 	if (lb) {
 		const img = lb.querySelector('.lightbox__img') as HTMLImageElement | null;
+		const video = lb.querySelector(
+			'.lightbox__video',
+		) as HTMLVideoElement | null;
 		const caption = lb.querySelector(
 			'.lightbox__caption',
 		) as HTMLElement | null;
@@ -176,10 +187,31 @@
 
 		const open = (index: number) => {
 			const el = triggers[index];
-			if (!el || !img) return;
+			if (!el) return;
 			current = index;
-			img.src = el.dataset.lightboxSrc ?? '';
-			img.alt = el.dataset.lightboxAlt ?? '';
+			const src = el.dataset.lightboxSrc ?? '';
+			const isVideo = el.dataset.lightboxType === 'video';
+
+			if (isVideo && video) {
+				if (img) {
+					img.style.display = 'none';
+					img.src = '';
+				}
+				video.style.display = 'block';
+				video.src = src;
+				video.play().catch(() => {});
+			} else if (img) {
+				if (video) {
+					video.pause();
+					video.removeAttribute('src');
+					video.load();
+					video.style.display = 'none';
+				}
+				img.style.display = 'block';
+				img.src = src;
+				img.alt = el.dataset.lightboxAlt ?? '';
+			}
+
 			if (caption) caption.textContent = el.dataset.lightboxCaption ?? '';
 			lb.classList.add('is-open');
 			lb.classList.toggle('is-single', triggers.length < 2);
@@ -193,6 +225,11 @@
 			document.body.style.overflow = '';
 			current = -1;
 			if (img) img.src = '';
+			if (video) {
+				video.pause();
+				video.removeAttribute('src');
+				video.load();
+			}
 		};
 
 		const step = (delta: number) => {
