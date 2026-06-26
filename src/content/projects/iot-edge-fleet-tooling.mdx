@@ -1,0 +1,80 @@
+---
+title: Raspberry Pi Edge Fleet Tooling & AWS IoT Operations
+description: A practical edge-device operations project for Raspberry Pi field systems — provisioning, remote configuration, OTA updates, monitoring, and physical-device workflows.
+screenshot: ./iot-edge-fleet-tooling.png
+tags:
+  - Raspberry Pi
+  - AWS IoT Core
+  - Python
+  - MQTT
+  - OTA Updates
+  - TypeScript CLI
+order: 2
+featured: true
+pubDate: 2026-02-20
+---
+
+## Overview
+
+This is an edge-device operations project for Raspberry Pi-based field systems
+deployed at live sports field systems. It focuses on the practical engineering
+glue needed to run a fleet of physical devices: provisioning new hardware,
+syncing configuration through the cloud, delivering over-the-air updates,
+collecting telemetry, and tying device assignments back to the spreadsheets the
+field teams already use.
+
+Rather than a single polished product, it's a collection of cooperating
+pieces — on-device agents, runbooks, CLI tooling, and OTA packaging — that make
+operating real hardware in the field repeatable and observable.
+
+## The Problem
+
+Field devices are messy to operate: each Raspberry Pi needs to be provisioned,
+configured, kept up to date, and monitored, often from a distance and across
+many physical locations. Configuration drifts, assignments change from event to
+event, and pushing code to devices by hand doesn't scale. The goal was to bridge
+newer AWS IoT workflows with existing Pi scripts and local config paths into one
+operational toolchain.
+
+## Approach
+
+- **Device provisioning** — a phased workflow from a fresh Raspberry Pi to a
+  fully managed, OTA-capable device, documented in runbooks.
+- **Cloud configuration sync** — device config is driven through AWS IoT Core
+  using MQTT topics, certificates, and Thing Shadows (desired vs. reported
+  state).
+- **OTA updates** — update artifacts are distributed via S3 with SHA256
+  verification, orchestrated through AWS IoT Jobs and Job Templates and triggered
+  by MQTT bootstrap commands.
+- **On-device services** — Python services running as systemd units handle GPIO
+  relay control, temperature/humidity sensing, J1939 CAN bus battery data,
+  Victron power data, and local API-style control.
+- **Telemetry & monitoring** — devices emit metrics for monitoring and alerting,
+  so fleet health is observable from a distance.
+
+## Assignment Workflow
+
+Field assignments still live in spreadsheets, so the tooling pulls and parses
+that assignment data and transforms it into AWS IoT shadow update payloads —
+letting the existing spreadsheet-driven process drive cloud configuration
+without forcing teams to change how they work day to day.
+
+## Fleet CLI
+
+A TypeScript CLI wraps the fleet API for everyday operations: listing devices,
+patching configuration, setting relay desired-state, and creating rollout jobs.
+It gives operators a fast, scriptable way to act on the fleet without touching
+each device individually.
+
+## Outcome
+
+A practical operations toolchain — provisioning runbooks, device agents, OTA
+packaging, telemetry, and CLI tooling — that turns ad-hoc field-device work into
+a repeatable, monitored workflow bridging Raspberry Pi hardware and AWS IoT.
+
+## In Progress
+
+A fuller "Assignments App" intended to replace the spreadsheet workflow is
+captured as a future direction in the runbooks, and the broader fleet platform
+(API, device agent, UI, and infrastructure helpers) continues to grow as more of
+the manual operations are folded into the toolchain.
