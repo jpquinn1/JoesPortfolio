@@ -1,28 +1,59 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import Lightbox from '../components/Lightbox.astro';
 
 // ---------------------------------------------------------------------------
-// PHOTOS
-// Every image in `src/assets/personal/2024/` is picked up automatically and
-// optimized by Astro. To add more photos, just drop files into that folder
-// (or create a new year folder and add another glob below).
+// PHOTOS — organized into "groups" (trips and years)
+//
+// The gallery is folder-driven: every subfolder inside `src/assets/personal/`
+// becomes its own section on this page, using that folder's name as the key.
+//
+//   src/assets/personal/2024/...            -> a "2024" section
+//   src/assets/personal/japan-2025/...      -> a "japan-2025" section
+//
+// To add a new TRIP:
+//   1. Create a folder, e.g. `src/assets/personal/patagonia-2025/`
+//   2. Drop the photos into it.
+//   3. (Optional) Add an entry to GROUP_META below to give it a nice title,
+//      a subtitle (location / date), and control where it appears.
+//
+// All images are optimized by Astro automatically.
 // ---------------------------------------------------------------------------
 const photoModules = import.meta.glob<{ default: ImageMetadata }>(
-	'../assets/personal/2024/*.{jpeg,jpg,png,webp,avif}',
+	'../assets/personal/**/*.{jpeg,jpg,png,webp,avif}',
 	{ eager: true },
 );
+
+// ---------------------------------------------------------------------------
+// GROUP METADATA  (optional — nothing here is required)
+// Keyed by the folder name directly containing the photos.
+// - `title`:    heading shown above the gallery (defaults to the folder name).
+// - `subtitle`: smaller line under the title — great for "Location · Month Year".
+// - `order`:    lower numbers appear first. Unlisted groups default to 50.
+//
+// Example trip:
+//   'patagonia-2025': {
+//     title: 'Patagonia',
+//     subtitle: 'Argentina · March 2025',
+//     order: 1,
+//   },
+// ---------------------------------------------------------------------------
+const GROUP_META: Record<
+	string,
+	{ title?: string; subtitle?: string; order?: number }
+> = {
+	'2024': { title: '2024', order: 100 },
+};
 
 // ---------------------------------------------------------------------------
 // PHOTO METADATA  (optional — nothing here is required)
 // Add a per-photo `date` and/or `description`, keyed by the exact file name.
 // - `date`: shown as a small badge only when a photo is hovered/focused.
-// - `description`: alt text + caption revealed on hover/focus (used when set).
-// Anything omitted falls back to the defaults below, so no placeholder text is
-// ever shown on the live site.
+// - `description`: alt text + caption revealed on hover/focus + in the lightbox.
 //
 // Example:
 //   'DSC01046.jpeg': { date: 'June 2024', description: 'Sunrise over the bay.' },
@@ -31,21 +62,48 @@ const PHOTO_META: Record<string, { date?: string; description?: string }> = {
 	// 'DSC00495.jpeg': { date: '', description: '' },
 };
 
-// Folder represents 2024; used when a photo has no explicit date above.
-const DEFAULT_DATE = '2024';
-
-const photos = Object.entries(photoModules)
-	.map(([path, mod]) => {
-		const file = path.split('/').pop() ?? path;
+// Build the full photo list, including a high-res `large` URL for the lightbox.
+const allPhotos = await Promise.all(
+	Object.entries(photoModules).map(async ([path, mod]) => {
+		const parts = path.split('/');
+		const file = parts.pop() ?? path;
+		// The folder immediately containing the file is the group key.
+		const groupKey = parts[parts.length - 1] ?? 'misc';
 		const meta = PHOTO_META[file] ?? {};
+		const large = await getImage({ src: mod.default, width: 1600 });
 		return {
 			src: mod.default,
+			large: large.src,
 			file,
-			date: meta.date ?? DEFAULT_DATE,
+			groupKey,
+			date: meta.date ?? '',
 			description: meta.description ?? '',
 		};
+	}),
+);
+
+// Group photos by folder, then sort sections by `order`.
+const groupsMap = new Map<string, typeof allPhotos>();
+for (const photo of allPhotos) {
+	const list = groupsMap.get(photo.groupKey) ?? [];
+	list.push(photo);
+	groupsMap.set(photo.groupKey, list);
+}
+
+const photoGroups = Array.from(groupsMap.entries())
+	.map(([key, items]) => {
+		const cfg = GROUP_META[key] ?? {};
+		return {
+			key,
+			title: cfg.title ?? key,
+			subtitle: cfg.subtitle ?? '',
+			order: cfg.order ?? 50,
+			photos: items.sort((a, b) => a.file.localeCompare(b.file)),
+		};
 	})
-	.sort((a, b) => a.file.localeCompare(b.file));
+	.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+
+const hasPhotos = allPhotos.length > 0;
 
 // ---------------------------------------------------------------------------
 // WRITING
@@ -111,50 +169,95 @@ const posts = (await getCollection('journal')).sort(
 			)
 		}
 
-		{/* ---- Photos: masonry-style gallery, date revealed on hover/focus ---- */}
+		{/* ---- Photos: grouped by trip/year, click any image to zoom ---- */}
 		<div class="mt-16">
 			<p class="section-label mb-6">Photos</p>
 
 			{
-				photos.length === 0 ? (
+				!hasPhotos ? (
 					<p class="text-muted">
 						No photos yet. Add images to{' '}
-						<code class="font-mono text-sm">src/assets/personal/2024/</code>.
+						<code class="font-mono text-sm">src/assets/personal/2024/</code>{' '}
+						(or a new trip folder like{' '}
+						<code class="font-mono text-sm">
+							src/assets/personal/patagonia-2025/
+						</code>
+						).
 					</p>
 				) : (
-					<div class="gap-4 [column-fill:_balance] sm:columns-2 lg:columns-3">
-						{photos.map((photo) => (
-							<figure
-								tabindex="0"
-								class="group relative mb-4 break-inside-avoid overflow-hidden rounded-xl border border-border outline-none focus-visible:ring-2 focus-visible:ring-accent"
-							>
-								<Image
-									src={photo.src}
-									alt={photo.description || ''}
-									widths={[400, 800, 1200]}
-									sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-									loading="lazy"
-									class="block w-full"
-								/>
-
-								{/* Date (and description if provided) — only visible on hover/focus */}
-								<figcaption
-									class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus:opacity-100 group-focus-within:opacity-100"
-								>
-									{photo.description && (
-										<span class="font-sans text-xs leading-snug text-fg/90">
-											{photo.description}
-										</span>
-									)}
-									<span class="ml-auto rounded-md bg-black/40 px-2 py-1 font-mono text-[0.7rem] tracking-wide text-fg/90 backdrop-blur-sm">
-										{photo.date}
+					photoGroups.map((group) => (
+						<details class="group/section mt-8 first:mt-0" open>
+							<summary class="sticky top-[3.25rem] z-30 -mx-6 mb-5 flex cursor-pointer list-none items-center justify-between gap-4 border-b border-border bg-bg/80 px-6 py-3 backdrop-blur-md transition-colors hover:border-border-strong [&::-webkit-details-marker]:hidden">
+								<span class="flex items-center gap-3">
+									<svg
+										class="size-4 shrink-0 text-faint transition-transform duration-200 group-open/section:rotate-90"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2.5"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										aria-hidden="true"
+									>
+										<path d="M9 6l6 6-6 6" />
+									</svg>
+									<h2 class="text-2xl font-semibold tracking-tight">
+										{group.title}
+									</h2>
+									<span class="rounded-md bg-surface px-2 py-0.5 font-mono text-[0.7rem] text-faint">
+										{group.photos.length}
 									</span>
-								</figcaption>
-							</figure>
-						))}
-					</div>
+								</span>
+								{group.subtitle && (
+									<span class="font-mono text-xs tracking-wide text-faint">
+										{group.subtitle}
+									</span>
+								)}
+							</summary>
+
+							<div class="gap-4 [column-fill:_balance] sm:columns-2 lg:columns-3">
+								{group.photos.map((photo) => (
+									<button
+										type="button"
+										data-lightbox
+										data-lightbox-src={photo.large}
+										data-lightbox-alt={photo.description || group.title}
+										data-lightbox-caption={[photo.description, photo.date]
+											.filter(Boolean)
+											.join(' · ')}
+										class="group relative mb-4 block w-full cursor-zoom-in break-inside-avoid overflow-hidden rounded-xl border border-border text-left outline-none transition-colors hover:border-border-strong focus-visible:ring-2 focus-visible:ring-accent"
+									>
+										<Image
+											src={photo.src}
+											alt={photo.description || ''}
+											widths={[400, 800, 1200]}
+											sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+											loading="lazy"
+											class="block w-full transition-transform duration-300 group-hover:scale-[1.03]"
+										/>
+
+										{/* Date + description — only visible on hover/focus */}
+										<span class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-black/70 via-black/20 to-transparent p-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+											{photo.description && (
+												<span class="font-sans text-xs leading-snug text-fg/90">
+													{photo.description}
+												</span>
+											)}
+											{photo.date && (
+												<span class="ml-auto rounded-md bg-black/40 px-2 py-1 font-mono text-[0.7rem] tracking-wide text-fg/90 backdrop-blur-sm">
+													{photo.date}
+												</span>
+											)}
+										</span>
+									</button>
+								))}
+							</div>
+						</details>
+					))
 				)
 			}
 		</div>
 	</section>
+
+	<Lightbox />
 </Layout>
