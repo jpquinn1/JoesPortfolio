@@ -380,6 +380,10 @@ const posts = (await getCollection('journal')).sort(
 										data-lightbox-src={
 											item.type === 'video' ? item.src : item.large
 										}
+										data-share-src={
+											item.type === 'video' ? item.src : item.src.src
+										}
+										data-share-file={item.file}
 										data-lightbox-alt={item.description || group.title}
 										data-lightbox-caption={[item.description, item.date]
 											.filter(Boolean)

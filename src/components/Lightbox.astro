@@ -8,6 +8,9 @@
 //   data-lightbox-src        -> full/high-res image URL, or video URL
 //   data-lightbox-alt        -> alt text for the large image
 //   data-lightbox-caption    -> optional caption shown under the image/video
+//   data-share-src           -> optional original-file URL for the Share button
+//                               (falls back to hiding the button if absent)
+//   data-share-file          -> filename used when sharing/downloading
 //
 // Triggers are collected in DOM order, so prev/next walks the whole page
 // (across every trip / gallery section) naturally.
@@ -45,6 +48,28 @@
 		<video class="lightbox__video" controls playsinline></video>
 		<figcaption class="lightbox__caption"></figcaption>
 	</figure>
+
+	<button
+		type="button"
+		class="lightbox__share"
+		data-lightbox-share
+		aria-label="Share this photo or video"
+	>
+		<svg
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			aria-hidden="true"
+		>
+			<path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7" />
+			<path d="M16 6l-4-4-4 4" />
+			<path d="M12 2v13" />
+		</svg>
+		<span data-share-label>Share</span>
+	</button>
 </div>
 
 <style>
@@ -107,7 +132,8 @@
 	}
 
 	.lightbox__close,
-	.lightbox__nav {
+	.lightbox__nav,
+	.lightbox__share {
 		position: absolute;
 		display: flex;
 		align-items: center;
@@ -123,7 +149,8 @@
 	}
 
 	.lightbox__close:hover,
-	.lightbox__nav:hover {
+	.lightbox__nav:hover,
+	.lightbox__share:hover:not(:disabled) {
 		background: rgba(255, 255, 255, 0.12);
 		border-color: var(--color-border-strong);
 	}
@@ -161,6 +188,34 @@
 		display: none;
 	}
 
+	.lightbox__share {
+		left: 50%;
+		transform: translateX(-50%);
+		/* Sits above the iOS home indicator via the safe-area inset. */
+		bottom: calc(
+			clamp(0.75rem, 2vw, 1.5rem) + env(safe-area-inset-bottom, 0px)
+		);
+		gap: 0.5rem;
+		min-height: 2.75rem;
+		padding: 0.6rem 1.2rem;
+		font-size: 0.875rem;
+		backdrop-filter: blur(6px);
+	}
+
+	.lightbox__share svg {
+		width: 1.05rem;
+		height: 1.05rem;
+	}
+
+	.lightbox__share:disabled {
+		opacity: 0.6;
+		cursor: wait;
+	}
+
+	.lightbox__share.is-hidden {
+		display: none;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.lightbox {
 			transition: none;
@@ -169,6 +224,8 @@
 </style>
 
 <script>
+	import { shareMedia } from '../scripts/share-media';
+
 	const lb = document.getElementById('lightbox');
 
 	if (lb) {
@@ -179,11 +236,24 @@
 		const caption = lb.querySelector(
 			'.lightbox__caption',
 		) as HTMLElement | null;
+		const shareBtn = lb.querySelector(
+			'[data-lightbox-share]',
+		) as HTMLButtonElement | null;
+		const shareLabel = shareBtn?.querySelector(
+			'[data-share-label]',
+		) as HTMLElement | null;
 		const triggers = Array.from(
 			document.querySelectorAll<HTMLElement>('[data-lightbox]'),
 		);
 
 		let current = -1;
+
+		const resetShareButton = (el: HTMLElement) => {
+			if (!shareBtn) return;
+			shareBtn.classList.toggle('is-hidden', !el.dataset.shareSrc);
+			shareBtn.disabled = false;
+			if (shareLabel) shareLabel.textContent = 'Share';
+		};
 
 		const open = (index: number) => {
 			const el = triggers[index];
@@ -213,6 +283,7 @@
 			}
 
 			if (caption) caption.textContent = el.dataset.lightboxCaption ?? '';
+			resetShareButton(el);
 			lb.classList.add('is-open');
 			lb.classList.toggle('is-single', triggers.length < 2);
 			lb.setAttribute('aria-hidden', 'false');
@@ -254,6 +325,34 @@
 		lb.querySelector('[data-lightbox-next]')?.addEventListener('click', () =>
 			step(1),
 		);
+
+		// Share the *original* media file (never the resized lightbox rendition)
+		// through the native share sheet, or download it where unsupported.
+		shareBtn?.addEventListener('click', async () => {
+			const el = triggers[current];
+			const src = el?.dataset.shareSrc;
+			if (!el || !src || shareBtn.disabled) return;
+
+			const filename =
+				el.dataset.shareFile || src.split('/').pop() || 'media';
+
+			shareBtn.disabled = true;
+			if (shareLabel) shareLabel.textContent = 'Preparing…';
+			try {
+				await shareMedia(src, filename);
+				if (shareLabel) shareLabel.textContent = 'Share';
+			} catch (err) {
+				console.error('Share failed:', err);
+				if (shareLabel) {
+					shareLabel.textContent = 'Couldn’t share';
+					window.setTimeout(() => {
+						if (shareLabel) shareLabel.textContent = 'Share';
+					}, 2000);
+				}
+			} finally {
+				shareBtn.disabled = false;
+			}
+		});
 
 		// Click on the dark backdrop (but not the image/controls) closes it.
 		lb.addEventListener('click', (e) => {
