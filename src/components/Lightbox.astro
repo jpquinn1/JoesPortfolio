@@ -224,7 +224,7 @@
 </style>
 
 <script>
-	import { shareMedia } from '../scripts/share-media';
+	import { prepareMediaFile, shareMedia } from '../scripts/share-media';
 
 	const lb = document.getElementById('lightbox');
 
@@ -248,11 +248,26 @@
 
 		let current = -1;
 
+		const shareFilename = (el: HTMLElement) =>
+			el.dataset.shareFile ||
+			el.dataset.shareSrc?.split('/').pop() ||
+			'media';
+
 		const resetShareButton = (el: HTMLElement) => {
 			if (!shareBtn) return;
 			shareBtn.classList.toggle('is-hidden', !el.dataset.shareSrc);
 			shareBtn.disabled = false;
 			if (shareLabel) shareLabel.textContent = 'Share';
+
+			// Videos are large enough that fetching them on tap can outlast the
+			// tap's share permission on iOS. They're already streaming for
+			// playback, so warm the share file now; by the time someone taps
+			// Share it resolves instantly. (Images stay lazy — they're small.)
+			if (el.dataset.lightboxType === 'video' && el.dataset.shareSrc) {
+				prepareMediaFile(el.dataset.shareSrc, shareFilename(el)).catch(
+					() => {},
+				);
+			}
 		};
 
 		const open = (index: number) => {
@@ -333,14 +348,18 @@
 			const src = el?.dataset.shareSrc;
 			if (!el || !src || shareBtn.disabled) return;
 
-			const filename =
-				el.dataset.shareFile || src.split('/').pop() || 'media';
-
 			shareBtn.disabled = true;
 			if (shareLabel) shareLabel.textContent = 'Preparing…';
 			try {
-				await shareMedia(src, filename);
-				if (shareLabel) shareLabel.textContent = 'Share';
+				const outcome = await shareMedia(src, shareFilename(el));
+				if (shareLabel) {
+					// 'retry': the download took long enough that iOS no longer
+					// trusts the original tap. The file is cached now, so a second
+					// tap opens the share sheet instantly — say so instead of
+					// failing silently.
+					shareLabel.textContent =
+						outcome === 'retry' ? 'Ready — tap to share' : 'Share';
+				}
 			} catch (err) {
 				console.error('Share failed:', err);
 				if (shareLabel) {
