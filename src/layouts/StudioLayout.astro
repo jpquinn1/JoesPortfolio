@@ -1,0 +1,79 @@
+---
+import { Font } from 'astro:assets';
+import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
+import { brand, contact, founder, services } from '../data/studio';
+import '../styles/studio.css';
+interface Props { title?: string; description?: string; }
+const { title = `${brand.name} — ${brand.headline}`, description = `${brand.description} ${brand.locationLine}` } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const image = new URL(`${brand.basePath}/social-preview.png`, Astro.site);
+const [wordmarkName, ...wordmarkDescriptor] = brand.name.split(' ');
+const founderFirstName = founder.name.split(' ')[0];
+const [city, region] = brand.location.split(',').map((part) => part.trim());
+const nav = [{label:'Services',id:'services'},{label:'Work',id:'work'},{label:'Capabilities',id:'capabilities'},{label:'About',id:'about'},{label:'Contact',id:'contact'}];
+const schema = { '@context':'https://schema.org', '@type':'ProfessionalService', name:brand.name, url:new URL(brand.basePath,Astro.site).href, description, image:image.href, email:contact.email, founder:{'@type':'Person',name:founder.name,url:new URL(founder.portfolioHref,Astro.site).href}, address:{'@type':'PostalAddress',addressLocality:city,addressRegion:region,addressCountry:'US'}, hasOfferCatalog:{'@type':'OfferCatalog',name:'Software engineering services',itemListElement:services.map(service=>({'@type':'Offer',itemOffered:{'@type':'Service',name:service.title}}))} };
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title><meta name="description" content={description} />
+    <meta name="theme-color" content="#252A2C" />
+    <link rel="canonical" href={canonical} /><link rel="icon" type="image/svg+xml" href={`${brand.basePath}/mark.svg`} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" /><meta property="og:site_name" content={brand.name} />
+    <meta property="og:title" content={title} /><meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} /><meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${brand.name}. ${brand.headline}`} />
+    <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} /><meta name="twitter:image" content={image} />
+    <Font cssVariable="--font-inter" preload /><Font cssVariable="--font-jetbrains-mono" />
+    <script type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g,'\\u003c')} />
+    <script is:inline>
+      window.webAnalyticsBeforeSend = function (event) {
+        return event.type === 'pageview' ? { ...event, url: event.url.split('?')[0].split('#')[0] } : null;
+      };
+      window.speedInsightsBeforeSend = function (event) {
+        return { ...event, url: event.url.split('?')[0].split('#')[0] };
+      };
+    </script>
+  </head>
+  <body class="studio-body">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="studio-header">
+      <nav class="studio-shell studio-nav" aria-label="Studio navigation">
+        <a class="studio-wordmark" href={brand.basePath} aria-label={`${brand.name} home`}>
+          <svg width="35" height="35" viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="4" y="4" width="29" height="29" rx="9" stroke="currentColor" stroke-width="3" /><path d="M24 24L36 36" stroke="currentColor" stroke-width="3" /></svg>
+          <span>{wordmarkName.toUpperCase()}<span>{wordmarkDescriptor.join(' ').toUpperCase()}</span></span>
+        </a>
+        <div class="studio-nav-links">{nav.map(link=><a href={`${brand.basePath}#${link.id}`}>{link.label}</a>)}</div>
+        <a class="studio-button nav-cta" href={`${brand.basePath}#contact`}>Discuss a project <span aria-hidden="true">↗</span></a>
+        <details class="studio-mobile-nav">
+          <summary>Menu <span aria-hidden="true">+</span></summary>
+          <div>{nav.map(link=><a href={`${brand.basePath}#${link.id}`}>{link.label}</a>)}<a href={founder.portfolioHref}>{founderFirstName}’s portfolio ↗</a></div>
+        </details>
+      </nav>
+    </header>
+    <main id="main-content"><slot /></main>
+    <footer class="studio-footer">
+      <div class="studio-shell footer-top"><a class="footer-brand" href={brand.basePath}>{brand.name}<span>Practical software. Connected operations.</span></a><div><a href={`${brand.basePath}#contact`}>Let’s talk ↗</a><a href={founder.portfolioHref}>{founderFirstName}’s technical portfolio ↗</a></div></div>
+      <div class="studio-shell footer-bottom"><p>© {new Date().getFullYear()} {founder.name} · {brand.location}</p><a href={`${brand.basePath}/privacy`}>Privacy</a><span>Independent by design.</span></div>
+    </footer>
+    <Analytics />
+    <SpeedInsights />
+    <script>
+      document.querySelectorAll('.studio-mobile-nav a').forEach(link => link.addEventListener('click', () => {
+        document.querySelector('.studio-mobile-nav')?.removeAttribute('open');
+      }));
+      document.querySelector('.studio-mobile-nav')?.addEventListener('keydown', (event) => {
+        if ((event as KeyboardEvent).key === 'Escape') {
+          const menu = event.currentTarget as HTMLDetailsElement;
+          menu.open = false;
+          menu.querySelector('summary')?.focus();
+        }
+      });
+    </script>
+  </body>
+</html>

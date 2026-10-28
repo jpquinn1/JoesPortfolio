@@ -1,0 +1,190 @@
+---
+import { SOCIALS } from '../../consts';
+
+interface Props {
+  deliveryEnabled?: boolean;
+}
+
+const { deliveryEnabled = import.meta.env.STUDIO_CONTACT_DELIVERY === 'enabled' && Boolean(import.meta.env.RESEND_API_KEY && import.meta.env.STUDIO_CONTACT_FROM) } = Astro.props;
+const email = SOCIALS.email.replace('mailto:', '');
+---
+
+<div class="contact-panel" data-studio-contact data-delivery={String(deliveryEnabled)} data-email={email}>
+  <form hidden aria-label="Discuss a project" novalidate>
+    <div class="contact-fields">
+      <div class="field">
+        <label for="studio-name">Your name <span aria-hidden="true">*</span></label>
+        <input id="studio-name" name="name" type="text" autocomplete="name" required minlength="2" maxlength="100" placeholder="Alex Morgan" />
+      </div>
+      <div class="field">
+        <label for="studio-company">Company <span class="optional">(optional)</span></label>
+        <input id="studio-company" name="company" type="text" autocomplete="organization" maxlength="160" placeholder="Your business" />
+      </div>
+      <div class="field field-wide">
+        <label for="studio-email">Email <span aria-hidden="true">*</span></label>
+        <input id="studio-email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="254" placeholder="alex@yourcompany.com" />
+      </div>
+      <div class="field field-wide">
+        <label for="studio-problem">What needs to work better? <span aria-hidden="true">*</span></label>
+        <textarea id="studio-problem" name="problem" required minlength="20" maxlength="4000" rows="5" aria-describedby="studio-problem-help" placeholder="Tell me about the process, the bottleneck, or the idea you want to explore."></textarea>
+        <p class="field-help" id="studio-problem-help">A few sentences are plenty. Please leave out passwords and sensitive business data.</p>
+      </div>
+      <div class="contact-trap" aria-hidden="true" inert>
+        <label for="studio-website">Leave this field empty</label>
+        <input id="studio-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+    </div>
+    <p class="contact-expectation">{deliveryEnabled ? 'Your inquiry goes directly to Joe. No account, mailing list, or sales funnel.' : 'Prepare a project email, then review and send it from your email app.'}</p>
+    <button class="contact-submit" type="submit">{deliveryEnabled ? 'Send project inquiry' : 'Prepare email'} <span aria-hidden="true">↗</span></button>
+    <p class="contact-status" role="status" aria-live="polite" aria-atomic="true" tabindex="-1"></p>
+    <div class="email-draft" hidden>
+      <p class="draft-title">Your email draft is ready.</p>
+      <p>Review the message below. It has not been sent.</p>
+      <label for="studio-email-draft">Message to Joe</label>
+      <textarea id="studio-email-draft" class="draft-text" readonly rows="7"></textarea>
+      <div class="draft-actions">
+        <a class="draft-email" href={SOCIALS.email}>Open email app <span aria-hidden="true">↗</span></a>
+        <button class="draft-copy" type="button">Copy message</button>
+      </div>
+      <p class="field-help">If your email app does not open, copy the message and send it to <a href={SOCIALS.email}>{email}</a>.</p>
+    </div>
+  </form>
+  <noscript><p>You can discuss a project by emailing <a href={SOCIALS.email}>{email}</a>. Include your name, company, and a short description of what you need.</p></noscript>
+  <div class="contact-direct"><span>Prefer a direct email?</span><a href={SOCIALS.email}>{email} <span aria-hidden="true">↗</span></a></div>
+  <p class="contact-privacy">Your details are used to respond to your inquiry. <a href="/studio/privacy">Privacy details</a></p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-studio-contact]').forEach((root) => {
+    const form = root.querySelector<HTMLFormElement>('form')!;
+    const submit = root.querySelector<HTMLButtonElement>('.contact-submit')!;
+    const status = root.querySelector<HTMLElement>('.contact-status')!;
+    const draft = root.querySelector<HTMLElement>('.email-draft')!;
+    const draftText = root.querySelector<HTMLTextAreaElement>('.draft-text')!;
+    const draftEmail = root.querySelector<HTMLAnchorElement>('.draft-email')!;
+    const copy = root.querySelector<HTMLButtonElement>('.draft-copy')!;
+    const deliveryEnabled = root.dataset.delivery === 'true';
+    const recipient = root.dataset.email!;
+    const originalLabel = submit.innerHTML;
+    form.hidden = false;
+
+    function prepareDraft(data: FormData) {
+      const name = String(data.get('name') || '').trim();
+      const company = String(data.get('company') || '').trim();
+      const email = String(data.get('email') || '').trim();
+      const problem = String(data.get('problem') || '').trim();
+      const body = `Hi Joe,\n\n${problem}\n\nName: ${name}\nCompany: ${company || 'Not provided'}\nEmail: ${email}`;
+      draftText.value = body;
+      draftEmail.href = `mailto:${recipient}?subject=${encodeURIComponent(`Project inquiry${company ? ` — ${company}` : ''}`)}&body=${encodeURIComponent(body)}`;
+      draft.hidden = false;
+    }
+
+    form.addEventListener('input', (event) => {
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) event.target.setCustomValidity('');
+      if (!draft.hidden) prepareDraft(new FormData(form));
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      status.textContent = '';
+      status.classList.remove('is-error', 'is-success');
+      // Trim before validation so space-only fields cannot become a blank email.
+      for (const input of form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input:not([name="website"]), textarea[name="problem"]')) input.value = input.value.trim();
+      const nameInput = form.elements.namedItem('name') as HTMLInputElement;
+      const problemInput = form.elements.namedItem('problem') as HTMLTextAreaElement;
+      nameInput.setCustomValidity(nameInput.value.length < 2 ? 'Please enter your name (at least 2 characters).' : '');
+      problemInput.setCustomValidity(problemInput.value.length < 20 ? 'Please describe the problem in at least 20 characters.' : '');
+      if (!form.reportValidity()) return;
+      const data = new FormData(form);
+      if (data.get('website')) {
+        status.textContent = 'Please leave the extra field empty and try again.';
+        return;
+      }
+      if (!deliveryEnabled) {
+        prepareDraft(data);
+        status.textContent = 'Email draft prepared. Open your email app or copy the message below to send it.';
+        draftEmail.focus();
+        return;
+      }
+
+      submit.disabled = true;
+      submit.textContent = 'Sending inquiry…';
+      form.setAttribute('aria-busy', 'true');
+      try {
+        const response = await fetch('/api/studio-inquiry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(data.entries())),
+          signal: AbortSignal.timeout(15_000),
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(typeof result.message === 'string' ? result.message : 'Your inquiry could not be sent. Please use the email option below.');
+        status.textContent = result.message;
+        status.classList.add('is-success');
+        draft.hidden = true;
+        form.reset();
+      } catch (error) {
+        status.textContent = error instanceof Error && !['TimeoutError', 'AbortError', 'SyntaxError', 'TypeError'].includes(error.name)
+          ? error.message
+          : 'Delivery could not be confirmed. Your text is still here; please use the email option below.';
+        status.classList.add('is-error');
+        prepareDraft(data);
+      } finally {
+        submit.disabled = false;
+        submit.innerHTML = originalLabel;
+        form.removeAttribute('aria-busy');
+        status.focus();
+      }
+    });
+
+    copy.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(draftText.value);
+        status.textContent = 'Message copied. Paste it into an email to Joe.';
+      } catch {
+        draftText.focus();
+        draftText.select();
+        status.textContent = 'Select and copy the message above, then paste it into your email app.';
+      }
+    });
+  });
+</script>
+
+<style>
+  .contact-panel { color: #252a2c; background: #f7f3ed; border: 1px solid #d6cec1; border-radius: 12px; padding: clamp(1.25rem, 4vw, 2.5rem); }
+  [hidden] { display: none !important; }
+  .contact-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.3rem 1rem; }
+  .field { min-width: 0; }
+  .field-wide { grid-column: 1 / -1; }
+  label { display: block; font-size: .83rem; font-weight: 600; margin-bottom: .5rem; }
+  .optional { font-weight: 400; color: #5d6460; }
+  input, textarea { width: 100%; min-width: 0; box-sizing: border-box; border: 1px solid #a8a89e; border-radius: 5px; background: #fffdf9; padding: .85rem .9rem; font: inherit; font-size: 1rem; color: #252a2c; line-height: 1.5; }
+  input::placeholder, textarea::placeholder { color: #70736d; opacity: 1; }
+  input:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible { outline: 3px solid #a7522c; outline-offset: 3px; }
+  textarea { resize: vertical; }
+  .field-help, .contact-privacy { color: #5d6460; font-size: .77rem; line-height: 1.65; margin: .55rem 0 0; }
+  .contact-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .contact-expectation { font-size: .8rem; line-height: 1.65; color: #5d6460; margin: 1.2rem 0; }
+  .contact-submit { display: flex; justify-content: space-between; align-items: center; width: 100%; border: 0; border-radius: 5px; background: #a7522c; color: #fffdf9; padding: 1rem 1.1rem; min-height: 48px; font: inherit; font-size: .87rem; font-weight: 600; cursor: pointer; transition: background .15s ease; }
+  .contact-submit:hover { background: #864122; }
+  .contact-submit:disabled { opacity: .7; cursor: wait; }
+  .contact-submit span { font-size: 1.2rem; }
+  .contact-status { margin: .8rem 0 0; font-size: .85rem; line-height: 1.65; }
+  .contact-status:empty { margin: 0; }
+  .is-error { color: #a43220; }
+  .is-success { color: #315a42; }
+  .email-draft { border: 1px solid #b8c4b9; border-radius: 6px; background: #e9eee7; margin-top: 1rem; padding: 1rem; font-size: .85rem; line-height: 1.6; }
+  .email-draft p { margin: 0 0 .5rem; }
+  .email-draft label { margin-top: 1rem; }
+  .draft-title { font-weight: 650; }
+  .draft-text { font-size: .85rem; background: #f9fbf7; }
+  .draft-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin: 1rem 0; }
+  .draft-actions a, .draft-actions button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: .55rem .75rem; border-radius: 4px; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; }
+  .draft-email { color: #fffdf9; background: #252a2c; gap: .75rem; border: 1px solid #252a2c; }
+  .draft-copy { background: transparent; color: #252a2c; border: 1px solid #89958a; }
+  .contact-direct { display: flex; flex-wrap: wrap; gap: .3rem 1rem; border-top: 1px solid #d6cec1; padding-top: 1.2rem; margin-top: 1.5rem; font-size: .8rem; line-height: 1.8; }
+  .contact-direct > span { color: #5d6460; }
+  .contact-direct a, .contact-privacy a, .email-draft .field-help a { color: #684126; text-underline-offset: 3px; overflow-wrap: anywhere; }
+  @media (max-width: 440px) { .contact-fields { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .contact-submit { transition: none; } }
+</style>

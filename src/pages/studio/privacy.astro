@@ -1,0 +1,22 @@
+---
+import StudioLayout from '../../layouts/StudioLayout.astro';
+import { brand, contact, founder } from '../../data/studio';
+---
+<StudioLayout title={`Privacy — ${brand.name}`} description={`How ${brand.name} handles project inquiries and privacy-conscious website analytics.`}>
+  <article class="studio-shell privacy">
+    <a class="studio-text-link" href={brand.basePath}>← Back to the Studio</a>
+    <p class="eyebrow">A straightforward approach</p>
+    <h1>Privacy</h1>
+    <p>This page explains the data used when you visit {brand.name} or get in touch about a project.</p>
+    <h2>Project inquiries</h2>
+    <p>The inquiry form asks for your name, company, email address, and a description of your problem. This information is used to respond to your inquiry and discuss potential work. Please leave out passwords, access keys, customer records, and other sensitive information.</p>
+    <p>When the form says “Prepare email,” your draft is prepared in your browser. You choose whether to send it through your email application. Completing the form alone does not send an inquiry. Your email provider processes a message when you send it.</p>
+    <p>If direct form delivery is enabled, the form instead says “Send project inquiry.” Messages are then sent to {founder.name} through Resend, an email delivery service. Delivery failures are shown so you can retry or use the direct email address.</p>
+    <h2>Website measurement</h2>
+    <p>The site uses Vercel Web Analytics and Speed Insights to understand page visits and loading performance. These tools do not use advertising cookies. The Studio sends page views, with query strings and fragment identifiers removed, and does not send form fields as analytics events.</p>
+    <p>The hosting and email providers may process technical information needed to serve the site, deliver messages, and prevent abuse. See <a href="https://vercel.com/docs/analytics/privacy-policy" target="_blank" rel="noopener noreferrer">Vercel’s analytics privacy information</a> and <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">Resend’s privacy policy</a>.</p>
+    <h2>Your information</h2>
+    <p>Inquiries are used for project communication, not sold or added to a marketing list. To ask about an inquiry or request its deletion, email <a href={contact.emailHref}>{contact.email}</a>.</p>
+  </article>
+</StudioLayout>
+<style>.privacy{max-width:800px;padding-block:70px 100px}.eyebrow{margin-top:50px}h1{font-size:clamp(3rem,6vw,5rem);margin:20px 0 30px}h2{font-size:1.7rem;margin:40px 0 16px}p{color:#5f625c;margin-bottom:18px}p a{text-decoration:underline;text-underline-offset:3px}</style>

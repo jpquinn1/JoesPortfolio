@@ -1,0 +1,134 @@
+---
+import { studioWorkflows } from '../../data/studio-workflows';
+---
+
+<div class="workflow-explorer" data-workflow-explorer>
+  <div class="explorer-intro">
+    <p class="explorer-label">A practical starting point</p>
+    <h2>Find the friction.<br />See a way forward.</h2>
+    <p>Choose a familiar problem. Explore what a useful first solution could look like.</p>
+  </div>
+  <div class="explorer-layout">
+    <div class="problem-options" role="group" aria-label="Choose a business problem" hidden data-workflow-options>
+      {studioWorkflows.map((workflow) => (
+        <button type="button" data-workflow-select={workflow.id} aria-controls={`workflow-${workflow.id}`} aria-pressed="false">
+          <span class="option-number" aria-hidden="true">{workflow.number}</span>
+          <span>{workflow.problem}</span>
+          <span class="option-arrow" aria-hidden="true">↗</span>
+        </button>
+      ))}
+      <p class="options-note">Representative ideas, shaped around your actual process during discovery.</p>
+    </div>
+    <div class="workflow-panels">
+      {studioWorkflows.map((workflow) => (
+        <section id={`workflow-${workflow.id}`} class="workflow-panel" data-workflow-panel={workflow.id} aria-labelledby={`workflow-title-${workflow.id}`}>
+          <div class="panel-heading">
+            <p class="panel-kicker">{workflow.shortLabel}</p>
+            <h3 id={`workflow-title-${workflow.id}`}>{workflow.title}</h3>
+            <p>{workflow.explanation}</p>
+          </div>
+          <ol class="workflow-steps" aria-label="Example workflow">
+            {workflow.steps.map((step, index) => (
+              <li><span class="step-number">0{index + 1}</span><span>{step}</span></li>
+            ))}
+          </ol>
+          <div class="solution-grid">
+            <div class="solution-copy">
+              <h4>A representative solution</h4>
+              <p>{workflow.solution}</p>
+              <div class="guardrail"><span aria-hidden="true">↳</span><p>{workflow.guardrail}</p></div>
+              <a href="/studio#contact">Discuss a workflow like this <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="example-interface">
+              <div class="interface-top"><span class="interface-mark" aria-hidden="true">Q</span><span>Studio / Workflow sample</span></div>
+              <div class="interface-heading"><div><p>{workflow.uiSubtitle}</p><h4>{workflow.uiTitle}</h4></div><span class:list={['interface-badge', { 'is-attention': workflow.id === 'equipment-visibility' }]}>{workflow.uiBadge}</span></div>
+              <dl>{workflow.fields.map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+              <p class="interface-note"><span aria-hidden="true">○</span> {workflow.note}</p>
+              <p class="interface-action">{workflow.action}</p>
+              <p class="synthetic-label">Concept interface · Synthetic data</p>
+            </div>
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+  <p class="sr-only" aria-live="polite" aria-atomic="true" data-workflow-announcement></p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-workflow-explorer]').forEach((explorer) => {
+    const options = explorer.querySelector<HTMLElement>('[data-workflow-options]');
+    const buttons = Array.from(explorer.querySelectorAll<HTMLButtonElement>('[data-workflow-select]'));
+    const panels = Array.from(explorer.querySelectorAll<HTMLElement>('[data-workflow-panel]'));
+    const announcement = explorer.querySelector<HTMLElement>('[data-workflow-announcement]');
+    if (!options || !buttons.length || !panels.length) return;
+    const select = (id: string, announce = false) => {
+      buttons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.workflowSelect === id)));
+      panels.forEach((panel) => { panel.hidden = panel.dataset.workflowPanel !== id; });
+      if (announce && announcement) {
+        const heading = panels.find((panel) => panel.dataset.workflowPanel === id)?.querySelector('h3');
+        announcement.textContent = heading ? `Showing workflow: ${heading.textContent}` : '';
+      }
+    };
+    buttons.forEach((button) => button.addEventListener('click', () => select(button.dataset.workflowSelect!, true)));
+    options.hidden = false;
+    explorer.dataset.enhanced = 'true';
+    select(buttons[0].dataset.workflowSelect!);
+  });
+</script>
+
+<style>
+  .workflow-explorer { color: #252a2c; }
+  .explorer-intro { max-width: 690px; margin-bottom: 3rem; }
+  .explorer-label,.panel-kicker { font: 500 .7rem/1.4 var(--font-jetbrains-mono, monospace); letter-spacing: .14em; text-transform: uppercase; }
+  .explorer-label { color: #895034; margin: 0 0 1.2rem; }
+  h2 { font-size: clamp(2rem,4.2vw,3.6rem); font-weight: 500; line-height: 1.06; letter-spacing: -.05em; margin: 0 0 1.25rem; }
+  .explorer-intro > p:last-child { max-width: 520px; color: #595e5b; line-height: 1.7; margin: 0; }
+  .explorer-layout { display: grid; gap: 2rem; }
+  .workflow-explorer[data-enhanced] .explorer-layout { grid-template-columns: minmax(200px,.7fr) minmax(0,2fr); }
+  .problem-options { display: flex; flex-direction: column; gap: .65rem; }
+  [hidden] { display: none !important; }
+  .problem-options button { display: grid; grid-template-columns: 1.2rem 1fr .8rem; gap: .7rem; align-items: start; width: 100%; min-height: 85px; padding: 1.15rem 1rem; border: 1px solid #cfc9be; border-radius: .45rem; background: transparent; color: #404642; font: inherit; font-size: .9rem; line-height: 1.5; text-align: left; cursor: pointer; transition: background .18s,border-color .18s,color .18s; }
+  .problem-options button:hover { border-color: #8d604a; background: #e9dece; }
+  .problem-options button[aria-pressed="true"] { background: #252a2c; color: #f1e9dd; border-color: #252a2c; }
+  .option-number { font: 500 .66rem/2 var(--font-jetbrains-mono,monospace); opacity: .8; }
+  .option-arrow { color: #b1704e; font-size: 1.15rem; }
+  .problem-options button[aria-pressed="true"] .option-arrow { color: #e9af85; }
+  button:focus-visible,a:focus-visible { outline: 3px solid #965331; outline-offset: 4px; }
+  .options-note { color: #61655f; font-size: .75rem; line-height: 1.6; padding: .4rem .1rem; margin: 0; }
+  .workflow-panel { min-width: 0; border: 1px solid #cfc9be; border-radius: .65rem; padding: clamp(1.2rem,2.8vw,2.2rem); background: #f8f3ea; }
+  .workflow-panel + .workflow-panel { margin-top: 2rem; }
+  [data-enhanced] .workflow-panel { margin: 0; }
+  .panel-kicker { color: #885033; margin: 0 0 .65rem; }
+  .panel-heading h3 { font-size: clamp(1.4rem,2.2vw,1.9rem); line-height: 1.2; font-weight: 500; letter-spacing: -.035em; margin: 0 0 .8rem; }
+  .panel-heading > p:last-child { color: #595e5b; font-size: .9rem; line-height: 1.7; margin: 0; max-width: 650px; }
+  .workflow-steps { list-style: none; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1.2rem; padding: 0; margin: 1.8rem 0 2rem; }
+  .workflow-steps li { position: relative; background: #eae6dc; border: 1px solid #d6d4ca; border-radius: .3rem; padding: .7rem .6rem; font-size: .73rem; font-weight: 500; line-height: 1.4; }
+  .workflow-steps li:not(:last-child)::after { content: '→'; position: absolute; right: -.95rem; top: 45%; color: #6f7770; }
+  .step-number { display: block; font: .6rem/1.5 var(--font-jetbrains-mono,monospace); color: #765442; margin-bottom: .35rem; }
+  .solution-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.2fr); gap: 1.5rem; }
+  .solution-copy h4 { font-size: .9rem; font-weight: 600; margin: 0 0 .6rem; }
+  .solution-copy > p { color: #595e5b; font-size: .83rem; line-height: 1.75; margin: 0; }
+  .guardrail { display: flex; gap: .6rem; margin: 1.1rem 0; padding-top: 1rem; border-top: 1px solid #d8d3c8; }
+  .guardrail > span { color: #8a4f31; }
+  .guardrail p { margin: 0; color: #515a51; font-size: .75rem; line-height: 1.6; }
+  .solution-copy a { color: #8b4829; font-size: .78rem; font-weight: 600; text-decoration-thickness: 1px; text-underline-offset: .25rem; }
+  .example-interface { min-width: 0; align-self: start; background: #fffdf8; border: 1px solid #d6d0c6; border-radius: .45rem; overflow: hidden; }
+  .interface-top { display: flex; align-items: center; gap: .45rem; background: #eeeae2; border-bottom: 1px solid #d6d0c6; padding: .6rem .8rem; color: #666a62; font: .56rem/1.5 var(--font-jetbrains-mono,monospace); }
+  .interface-mark { display: inline-grid; place-items: center; background: #344038; color: #fffdf8; width: 1.1rem; height: 1.1rem; font-size: .65rem; border-radius: .2rem; }
+  .interface-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: .6rem; padding: 1rem .8rem .7rem; }
+  .interface-heading p { font-size: .55rem; color: #686c65; margin: 0 0 .3rem; }
+  .interface-heading h4 { font-size: .85rem; font-weight: 600; margin: 0; }
+  .interface-badge { display: inline-flex; background: #e1eadc; color: #3c5739; padding: .25rem .4rem; border-radius: .25rem; font-size: .52rem; line-height: 1.4; }
+  .interface-badge.is-attention { background: #f3e1cd; color: #885120; }
+  dl { margin: 0 .8rem; }
+  dl > div { display: grid; grid-template-columns: .8fr 1.4fr; gap: .6rem; border-top: 1px solid #e5dfd4; padding: .6rem 0; font-size: .62rem; line-height: 1.5; }
+  dt { color: #686c65; } dd { margin: 0; color: #343b36; overflow-wrap: anywhere; }
+  .interface-note { color: #715a3e; background: #f7f0e4; padding: .6rem .65rem; margin: .3rem .7rem .7rem; border-radius: .3rem; font-size: .57rem; line-height: 1.5; }
+  .interface-action { font-size: .57rem; line-height: 1.5; color: #4a554b; padding: .65rem .8rem; border-top: 1px solid #e5dfd4; margin: 0; }
+  .synthetic-label { margin: 0; padding: .4rem .8rem; font: .5rem/1.5 var(--font-jetbrains-mono,monospace); color: #6d7067; background: #f4f0e8; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+  @media (max-width: 950px) { .workflow-explorer[data-enhanced] .explorer-layout { grid-template-columns: 1fr; } .problem-options { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); } .options-note { grid-column: 1 / -1; } }
+  @media (max-width: 560px) { .explorer-intro { margin-bottom: 1.8rem; } .problem-options { gap: .5rem; } .problem-options button { grid-template-columns: 1fr .6rem; gap: .35rem; min-height: 100px; padding: .8rem; font-size: .77rem; } .option-number { display: none; } .solution-grid { grid-template-columns: 1fr; gap: 1.5rem; } .workflow-steps { grid-template-columns: 1fr 1fr; gap: .65rem; margin: 1.5rem 0; } .workflow-steps li { font-size: .7rem; } .workflow-steps li:not(:last-child)::after { display: none; } .interface-top,.synthetic-label { font-size: .6rem; } .interface-heading p,.interface-badge { font-size: .65rem; } dl > div { font-size: .74rem; } .interface-note,.interface-action { font-size: .7rem; } }
+  @media (prefers-reduced-motion: reduce) { .problem-options button { transition: none; } }
+</style>

@@ -1,0 +1,9 @@
+---
+interface Props { src?: string; poster: string; alt: string; caption: string; transcriptHref?: string; width?: number; height?: number; }
+const {src, poster, alt, caption, transcriptHref, width=1440, height=900}=Astro.props;
+---
+<figure class="project-media">
+  {src ? <video controls playsinline preload="none" poster={poster} width={width} height={height} aria-label={alt}><source src={src} type="video/mp4" /><p>Your browser cannot play this video. <a href={src}>Download the demonstration.</a></p></video> : <img src={poster} alt={alt} width={width} height={height} loading="lazy" decoding="async" />}
+  <figcaption>{caption} {transcriptHref && <a href={transcriptHref}>Read the transcript →</a>}</figcaption>
+</figure>
+<style>.project-media{margin:0}.project-media img,.project-media video{display:block;width:100%;height:auto;border-radius:8px;background:#252a2c}.project-media figcaption{font-size:.78rem;line-height:1.7;margin-top:12px;color:inherit;opacity:.8}.project-media a{text-decoration:underline;text-underline-offset:3px}</style>

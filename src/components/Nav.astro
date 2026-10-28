@@ -5,7 +5,7 @@ const links = [
 	{ href: '/#about', label: 'About' },
 	{ href: '/#focus', label: 'Focus' },
 	{ href: '/#projects', label: 'Projects' },
-	{ href: '/life', label: 'Life' },
+	{ href: '/studio', label: 'Studio ↗' },
 	{ href: '/#contact', label: 'Contact' },
 ];
 ---
@@ -14,7 +14,7 @@ const links = [
 	class="sticky top-0 z-50 border-b border-border/60 bg-bg/70 backdrop-blur-md"
 >
 	<nav
-		class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4"
+		class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-y-3 px-6 py-4"
 	>
 		<a href="/" class="font-mono text-sm font-semibold tracking-tight">
 			{SITE_TITLE}<span class="text-accent">.</span>
@@ -34,6 +34,7 @@ const links = [
 		</div>
 
 		<div class="flex items-center gap-5">
+			<a href="/studio" class="font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:text-accent sm:hidden">Studio</a>
 			<a
 				href="/life"
 				class="font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:text-accent"

@@ -1,0 +1,129 @@
+---
+interface Props {
+  variant?: 'operations' | 'equipment' | 'site' | 'vision';
+  caption?: string;
+  compact?: boolean;
+}
+const { variant = 'operations', caption, compact = false } = Astro.props;
+const titles = {
+  operations: 'Operations overview',
+  equipment: 'Equipment health',
+  site: 'Site planning workspace',
+  vision: 'Sensor projection workspace',
+};
+const rows = [
+  { asset: 'Compressor 04', location: 'Fabrication floor', event: 'Temperature threshold', state: 'Needs review', tone: 'warm' },
+  { asset: 'Loading bay 02', location: 'West warehouse', event: 'Service interval due', state: 'Assigned', tone: 'neutral' },
+  { asset: 'Ventilation 01', location: 'Assembly area', event: 'Reading returned to normal', state: 'Monitoring', tone: 'sage' },
+];
+const equipment = [
+  { name: 'Compressor 04', location: 'Fabrication floor', status: 'Attention', metric: '78 °C', label: 'Temperature', tone: 'warm', points: '0,38 15,40 30,30 45,35 60,29 75,33 90,18 105,20 120,7 135,10 150,2' },
+  { name: 'Ventilation 01', location: 'Assembly area', status: 'Reporting', metric: '1,240 rpm', label: 'Fan speed', tone: 'sage', points: '0,28 15,24 30,27 45,22 60,25 75,21 90,24 105,22 120,25 135,20 150,22' },
+  { name: 'Pump station 02', location: 'Service yard', status: 'Stale data', metric: '—', label: 'Last seen 18m ago', tone: 'neutral', points: '0,26 15,28 30,23 45,27 60,24 75,26 90,25 105,26 120,26 135,26 150,26' },
+];
+---
+
+<figure class:list={['demo-figure', `demo-${variant}`, { 'is-compact': compact }]}>
+  <div class="demo-shell">
+    <div class="demo-topbar"><span class="studio-symbol" aria-hidden="true">Q<span>·</span></span><span class="demo-product">FIELDNOTE <span>/ {variant === 'operations' ? 'OPERATIONS' : variant === 'equipment' ? 'EQUIPMENT' : 'WORKSPACE'}</span></span><span class="demo-mode"><span aria-hidden="true"></span>Concept demo</span></div>
+    <div class="demo-content">
+      <div class="demo-heading"><div><p class="demo-eyebrow">{variant === 'site' || variant === 'vision' ? 'Independent visualization' : 'Sample workspace / Northline Workshop'}</p><h3>{titles[variant]}</h3></div><span class="period-label">{variant === 'operations' || variant === 'equipment' ? 'SYNTHETIC DATA' : 'ILLUSTRATIVE GEOMETRY'}</span></div>
+      {variant === 'operations' && <>
+        <div class="metrics-strip">
+          <div><span>Connected assets</span><strong>12<span class="metric-detail">sample fleet</span></strong></div>
+          <div><span>Needs attention</span><strong class="accent-text">02<span class="metric-detail">review queue</span></strong></div>
+          <div><span>Active work orders</span><strong>05<span class="metric-detail">in progress</span></strong></div>
+        </div>
+        <div class="operations-body">
+          <div class="activity-panel"><div class="panel-title"><h4>Attention queue</h4><span>Grouped by equipment</span></div>
+            <div class="queue-head" aria-hidden="true"><span>EQUIPMENT / LOCATION</span><span>STATUS</span></div>
+            <ul class="queue-list">{rows.map((row) => <li><span class:list={['event-dot',row.tone]} aria-hidden="true"></span><div><strong>{row.asset}</strong><span>{row.location}</span><p>{row.event}</p></div><span class:list={['status-pill',row.tone]}>{row.state}</span></li>)}</ul>
+          </div>
+          <aside class="event-context"><p class="context-label">INCIDENT / DEMO-018</p><h4>A useful alert.<br />Already in context.</h4><ol><li><span class="timeline-dot" aria-hidden="true"></span><div><strong>Reading received</strong><span>Compressor 04 · 78 °C</span></div></li><li><span class="timeline-dot" aria-hidden="true"></span><div><strong>Repeated events grouped</strong><span>One incident to review</span></div></li><li><span class="timeline-dot current" aria-hidden="true"></span><div><strong>Maintenance notified</strong><span>Service notes attached</span></div></li></ol><div class="next-action"><span>NEXT STEP</span><p>Review with the maintenance team <span aria-hidden="true">↗</span></p></div></aside>
+        </div>
+      </>}
+      {variant === 'equipment' && <>
+        <div class="fleet-summary"><span><i class="event-dot sage" aria-hidden="true"></i>10 reporting</span><span><i class="event-dot warm" aria-hidden="true"></i>1 needs attention</span><span><i class="event-dot neutral" aria-hidden="true"></i>1 stale</span></div>
+        <div class="equipment-grid">{equipment.map((item) => <div class="equipment-card"><span class:list={['status-pill',item.tone]}>{item.status}</span><h4>{item.name}</h4><p>{item.location}</p><strong class="equipment-metric">{item.metric}</strong><span class="equipment-label">{item.label}</span><svg viewBox="0 0 150 50" aria-hidden="true"><path d="M0 48H150M0 24H150" stroke="#414a45" stroke-width=".6"/><polyline points={item.points} fill="none" stroke={item.tone === 'warm' ? '#e5a575' : item.tone === 'sage' ? '#a9bba3' : '#a7aca4'} stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray={item.tone === 'neutral' ? '3 4' : undefined}/></svg><div class="equipment-foot"><span>{item.tone === 'neutral' ? 'Last report: 18 min ago' : 'Last report: 45 sec ago'}</span><span aria-hidden="true">↗</span></div></div>)}</div>
+        <div class="equipment-note"><span class="note-icon" aria-hidden="true">i</span><p>Live values and stale readings are distinct. Remote actions belong behind permissions and operational safeguards.</p></div>
+      </>}
+      {variant === 'site' && <div class="spatial-workspace">
+        <div class="spatial-canvas"><svg viewBox="0 0 660 360" role="img" aria-label="Illustrative site plan showing a warehouse, workshop, loading yard, sensor positions, and connected service routes.">
+          <g transform="translate(330 45) scale(1 .52) rotate(45)" fill="none"><rect x="-210" y="-20" width="390" height="390" rx="3" fill="#364039" stroke="#61705e" stroke-width="2"/>{Array.from({length:8},(_,i)=><><path d={`M${-210+i*55} -20V370`} stroke="#485449" stroke-width=".8"/><path d={`M-210 ${-20+i*55}H180`} stroke="#485449" stroke-width=".8"/></>)}<path d="M-190 270C-130 245-140 160-70 140S70 140 145 35" stroke="#8d967c" stroke-width="32"/><path d="M-190 270C-130 245-140 160-70 140S70 140 145 35" stroke="#c9bd97" stroke-width="1.5" stroke-dasharray="8 7"/><rect x="-155" y="10" width="110" height="92" fill="#6f7c66" stroke="#a1ac8c" stroke-width="2"/><rect x="5" y="210" width="125" height="95" fill="#737f69" stroke="#a1ac8c" stroke-width="2"/><rect x="20" y="20" width="90" height="75" fill="#b77c53" stroke="#dfac7c" stroke-width="2"/><path d="M-95 55L65 55L65 250" stroke="#e3a370" stroke-width="3" stroke-dasharray="5 6"/><circle cx="-95" cy="55" r="8" fill="#f0c69d"/><circle cx="65" cy="55" r="8" fill="#f0c69d"/><circle cx="65" cy="250" r="8" fill="#f0c69d"/></g>
+          <g font-family="sans-serif" font-size="11" fill="#e8e6d6"><path d="M293 91L277 62H195" stroke="#9aa38d" fill="none"/><rect x="175" y="42" width="103" height="25" rx="4" fill="#252e29" stroke="#596450"/><text x="188" y="59">WAREHOUSE</text><path d="M367 143L440 105H505" stroke="#9aa38d" fill="none"/><rect x="441" y="84" width="99" height="25" rx="4" fill="#252e29" stroke="#596450"/><text x="454" y="101">WORKSHOP</text><path d="M262 225L302 275H420" stroke="#9aa38d" fill="none"/><rect x="332" y="263" width="112" height="25" rx="4" fill="#252e29" stroke="#596450"/><text x="345" y="280">LOADING YARD</text></g>
+          <g transform="translate(570 270)" stroke="#aab5a2" stroke-width="1.5" fill="none"><path d="M0 32V0M-6 7L0 0L6 7M0 32L28 43M0 32L-23 48"/><text x="-3" y="-10" fill="#aab5a2" stroke="none" font-size="10">N</text></g>
+        </svg><div class="canvas-legend"><span><i class="event-dot warm" aria-hidden="true"></i>Sensor location</span><span><i class="line-swatch" aria-hidden="true"></i>Service connection</span></div></div>
+        <aside class="spatial-sidebar"><p class="context-label">SITE LAYERS</p><ul><li><span>Buildings & zones</span><span aria-hidden="true">✓</span></li><li><span>Equipment positions</span><span aria-hidden="true">✓</span></li><li><span>Service routes</span><span aria-hidden="true">✓</span></li></ul><div class="selected-object"><p>SELECTED LOCATION</p><h4>Workshop</h4><dl><div><dt>Zone</dt><dd>B / Service</dd></div><div><dt>Sensor points</dt><dd>3 in sample</dd></div><div><dt>Plan type</dt><dd>Concept layout</dd></div></dl></div><p class="spatial-note">Explore relationships before committing to a field installation.</p></aside>
+      </div>}
+      {variant === 'vision' && <div class="spatial-workspace vision-workspace">
+        <div class="spatial-canvas"><svg viewBox="0 0 660 360" role="img" aria-label="Synthetic trajectory projected into a camera view, with world axes, camera field of view, and reference points.">
+          <path d="M0 250L330 135L660 250V360H0Z" fill="#344038"/><g stroke="#4d5c4f" fill="none" stroke-width="1">{[0,1,2,3,4,5,6,7,8].map(i=><path d={`M330 135L${i*95-50} 360`}/>)}{[180,215,255,300,350].map(y=><path d={`M0 ${y}H660`}/>)}</g>
+          <path d="M330 315L177 154L489 154Z" stroke="#91a08a" stroke-width="1.5" stroke-dasharray="5 5" fill="#8a9b7810"/>
+          <path d="M330 315C291 225 318 106 432 73C472 63 494 81 512 111" fill="none" stroke="#e3a176" stroke-width="4" stroke-linecap="round"/>
+          <path d="M330 315C291 225 318 106 432 73C472 63 494 81 512 111" fill="none" stroke="#f5d1af" stroke-width="1.2" stroke-linecap="round"/>
+          <g fill="#f0ba8b" stroke="#252a2c" stroke-width="3"><circle cx="330" cy="315" r="5"/><circle cx="315" cy="247" r="5"/><circle cx="329" cy="173" r="5"/><circle cx="374" cy="107" r="5"/><circle cx="432" cy="73" r="5"/><circle cx="480" cy="77" r="5"/><circle cx="512" cy="111" r="5"/></g>
+          <g stroke="#b2bba4" stroke-width="1.4" fill="none"><path d="M175 199H191M183 191V207M470 235H486M478 227V243M250 275H266M258 267V283"/><rect x="312" y="302" width="36" height="27" rx="3" fill="#252a2c"/><circle cx="330" cy="315" r="7"/><path d="M330 330V347M330 337L319 350M330 337L341 350"/></g>
+          <g font-family="sans-serif" font-size="11" fill="#d6ddcc"><text x="58" y="45">CAMERA VIEW / SYNTHETIC TRAJECTORY</text><path d="M436 73L449 45H546" stroke="#a4ad96" fill="none"/><text x="450" y="37">Projected path</text><text x="370" y="332">Camera origin</text></g>
+        </svg><div class="canvas-legend"><span><i class="event-dot warm" aria-hidden="true"></i>Projected sensor points</span><span><i class="cross-swatch" aria-hidden="true">+</i>Reference points</span></div></div>
+        <aside class="spatial-sidebar"><p class="context-label">PROJECTION CHECK</p><ul><li><span>Camera intrinsics</span><span aria-hidden="true">✓</span></li><li><span>Coordinate transform</span><span aria-hidden="true">✓</span></li><li><span>Image projection</span><span aria-hidden="true">✓</span></li></ul><div class="selected-object"><p>PIPELINE</p><h4>World → Image</h4><dl><div><dt>Input</dt><dd>3D trajectory</dd></div><div><dt>Transform</dt><dd>Camera pose</dd></div><div><dt>Output</dt><dd>2D overlay</dd></div></dl></div><p class="spatial-note">An illustration of the calibration workflow, not a measured accuracy result.</p></aside>
+      </div>}
+    </div>
+    <div class="demo-footer"><span><span class="footer-dot" aria-hidden="true"></span>Independent concept · All records are fictional</span><span class="footer-signature">QUINN SOFTWARE STUDIO</span></div>
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .demo-figure { margin: 0; width: 100%; min-width: 0; container-type: inline-size; }
+  .demo-shell { font-size: 12px; line-height: 1.45; color: #f1e9dd; background: #252d29; border: 1px solid #50584c; border-radius: .75rem; overflow: hidden; box-shadow: 0 22px 55px #151c171a; }
+  .demo-topbar { display: flex; gap: .8rem; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid #465046; background: #222925; }
+  .studio-symbol { color: #f1e9dd; font-size: 1.35rem; font-weight: 600; letter-spacing: -.08em; line-height: 1; }
+  .studio-symbol > span { color: #e6a278; }
+  .demo-product { color: #e7e9df; font: 500 .6rem/1.4 var(--font-jetbrains-mono,monospace); letter-spacing: .12em; }
+  .demo-product > span { color: #a6b1a2; letter-spacing: .03em; }
+  .demo-mode { margin-left: auto; display: flex; align-items: center; gap: .35rem; color: #b8c4ae; font-size: .6rem; white-space: nowrap; }
+  .demo-mode > span { width: 5px; height: 5px; border-radius: 50%; background: #b2c69c; }
+  .demo-content { padding: 1.5rem; }
+  .demo-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1.35rem; }
+  .demo-eyebrow { color: #a9b3a3; font-size: .6rem; margin: 0 0 .35rem; }
+  .demo-heading h3 { margin: 0; font-size: 1.4rem; font-weight: 500; letter-spacing: -.035em; line-height: 1.2; color: #f1e9dd; }
+  .period-label { color: #aeb7a6; font: .48rem/1.6 var(--font-jetbrains-mono,monospace); letter-spacing: .08em; white-space: nowrap; }
+  .metrics-strip { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); padding: 1.1rem 0; margin: 0 0 1.3rem; border-top: 1px solid #475144; border-bottom: 1px solid #475144; }
+  .metrics-strip > div { padding: 0 1.2rem; border-left: 1px solid #475144; }
+  .metrics-strip > div:first-child { padding-left: 0; border-left: 0; }
+  .metrics-strip > div > span { display: block; color: #b6c0af; font-size: .6rem; margin: 0 0 .55rem; }
+  .metrics-strip strong { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem; font-weight: 400; font-size: 2rem; line-height: 1; letter-spacing: -.04em; }
+  .metrics-strip strong.accent-text { color: #edb58c; }
+  .metric-detail { font-size: .48rem; color: #b3bdac; font-weight: 400; letter-spacing: 0; }
+  .operations-body { display: grid; grid-template-columns: minmax(0,1.45fr) minmax(0,1fr); gap: 1.2rem; }
+  .activity-panel,.event-context { min-width: 0; }
+  .panel-title { display: flex; justify-content: space-between; align-items: baseline; gap: .4rem; padding-bottom: 1rem; }
+  .panel-title h4 { color: #f1e9dd; font-size: .78rem; margin: 0; font-weight: 500; }
+  .panel-title > span { color: #b0bba8; font-size: .48rem; }
+  .queue-head { display: flex; justify-content: space-between; color: #aab5a1; padding-bottom: .5rem; border-bottom: 1px solid #465043; font: .45rem/1.5 var(--font-jetbrains-mono,monospace); letter-spacing: .08em; }
+  .queue-list { list-style: none; padding: 0; margin: 0; }
+  .queue-list li { display: grid; grid-template-columns: .5rem 1fr auto; gap: .5rem; align-items: start; padding: .85rem 0; border-bottom: 1px solid #424c40; }
+  .event-dot { display: inline-block; width: 6px; height: 6px; background: #b0b7a6; border-radius: 50%; flex: none; }
+  .queue-list .event-dot { margin-top: .3rem; }
+  .event-dot.warm { background: #e6a274; }.event-dot.sage { background: #b5caa1; }
+  .queue-list strong { display: block; color: #eeeade; font-size: .67rem; line-height: 1.4; font-weight: 500; }
+  .queue-list div > span { color: #b2bca9; font-size: .54rem; }
+  .queue-list p { color: #cad0c1; margin: .25rem 0 0; font-size: .52rem; }
+  .status-pill { display: inline-flex; width: fit-content; align-self: start; border: 1px solid #5b6654; color: #d3dcc7; border-radius: .3rem; padding: .25rem .4rem; font-size: .49rem; line-height: 1.4; white-space: nowrap; }
+  .status-pill.warm { color: #f3c29a; border-color: #846243; background: #4b3c2e; }.status-pill.sage { color: #c5d5b5; background: #384734; border-color: #617554; }
+  .event-context { padding: 1rem; border-radius: .4rem; background: #303b31; border: 1px solid #4a5946; }
+  .context-label { color: #c0c8b4; font: .46rem/1.4 var(--font-jetbrains-mono,monospace); letter-spacing: .1em; margin: 0 0 .65rem; }
+  .event-context h4 { color: #f0ebde; font-size: .95rem; line-height: 1.2; letter-spacing: -.02em; font-weight: 500; margin: 0 0 1.2rem; }
+  .event-context ol { list-style: none; margin: 0; padding: 0; }.event-context li { display: flex; position: relative; gap: .6rem; padding-bottom: .85rem; }.event-context li:not(:last-child)::after { content:''; position:absolute; width:1px; background:#637457; top: .45rem; bottom:0; left: 3px; }.timeline-dot { width:7px;height:7px;background:#9ead8c;border-radius:50%;flex:none;margin-top:.15rem;z-index:1; }.timeline-dot.current { background:#edb88e; }
+  .event-context li strong { display:block;font-size:.56rem;font-weight:500;color:#e6eadb; }.event-context li div > span { display:block;color:#b7c3ac;font-size:.49rem;margin-top:.15rem; }
+  .next-action { border-top:1px solid #53624a;padding-top:.65rem; }.next-action > span { font: .43rem/1.5 var(--font-jetbrains-mono,monospace);color:#bdc9af;letter-spacing:.1em; }.next-action p { font-size:.57rem;line-height:1.6;color:#ead6ba;margin:.25rem 0 0; }.next-action p > span { float:right; }
+  .demo-footer { display:flex;justify-content:space-between;gap:.5rem;padding:.65rem 1.25rem;border-top:1px solid #465046;background:#222925;font-size:.48rem;line-height:1.5;color:#bac2b1; }.demo-footer > span:first-child { display:flex;align-items:center;gap:.4rem; }.footer-dot { width:4px;height:4px;background:#b5c4a5;border-radius:50%; }.footer-signature { font: .43rem/1.5 var(--font-jetbrains-mono,monospace);letter-spacing:.1em; }
+  figcaption { color:inherit;opacity:.8;font-size:.75rem;line-height:1.6;margin-top:.85rem; }
+  .fleet-summary { display:flex;flex-wrap:wrap;gap:1rem;padding:.8rem 0 1.2rem; }.fleet-summary > span { display:flex;align-items:center;gap:.4rem;font-size:.6rem;color:#c4ceba; }
+  .equipment-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem; }.equipment-card { border:1px solid #4d5948;background:#2c372d;border-radius:.4rem;padding:1rem;min-width:0; }.equipment-card h4 { color:#ececde;font-size:.82rem;line-height:1.3;margin:.9rem 0 .25rem;font-weight:500; }.equipment-card > p { color:#bac6ae;font-size:.55rem;margin:0 0 1rem; }.equipment-metric { display:block;font-size:1.45rem;font-weight:400;letter-spacing:-.04em; }.equipment-label { display:block;font-size:.55rem;color:#bbc8ae;margin:.25rem 0 .8rem; }.equipment-card svg { width:100%;height:auto;display:block; }.equipment-foot { display:flex;justify-content:space-between;gap:.3rem;font-size:.48rem;color:#bac5af;margin-top:.6rem;border-top:1px solid #485442;padding-top:.6rem; }.equipment-note { display:flex;gap:.65rem;align-items:center;border-top:1px solid #485442;margin-top:1.2rem;padding-top:1rem; }.note-icon { display:grid;place-items:center;width:1rem;height:1rem;border:1px solid #9ba88e;border-radius:50%;font:.6rem/1 serif;flex:none; }.equipment-note p { color:#bdc8b1;font-size:.6rem;line-height:1.7;margin:0; }
+  .spatial-workspace { display:grid;grid-template-columns:minmax(0,2.7fr) minmax(140px,1fr);border:1px solid #4e5b47;border-radius:.4rem;overflow:hidden; }.spatial-canvas { min-width:0;background:#2c352e;display:flex;flex-direction:column;justify-content:center; }.spatial-canvas svg { width:100%;height:auto;display:block; }.canvas-legend { display:flex;gap:1.2rem;flex-wrap:wrap;padding:.75rem 1rem;border-top:1px solid #485442;color:#c8d0bd;font-size:.5rem;margin-top:auto; }.canvas-legend > span { display:flex;align-items:center;gap:.4rem; }.line-swatch { width:12px;height:1px;border-top:1px dashed #e3a370; }.cross-swatch { font-style:normal;color:#c4cbb8;font-size:.9rem;line-height:.5; }.spatial-sidebar { background:#303b31;border-left:1px solid #4e5b47;padding:1rem; }.spatial-sidebar ul { list-style:none;margin:0;padding:0 0 1rem; }.spatial-sidebar li { display:flex;justify-content:space-between;gap:.5rem;padding:.45rem 0;font-size:.55rem;color:#d6ddcc; }.spatial-sidebar li > span:last-child { color:#c6d8b2; }.selected-object { border-top:1px solid #506047;padding-top:1rem; }.selected-object > p { color:#bdc9ae;font:.45rem/1.5 var(--font-jetbrains-mono,monospace);letter-spacing:.08em;margin:0 0 .4rem; }.selected-object h4 { margin:0 0 .75rem;font-size:.9rem;color:#eeeade;font-weight:500; }.selected-object dl { margin:0; }.selected-object dl > div { display:flex;flex-wrap:wrap;justify-content:space-between;gap:.3rem;padding:.35rem 0;font-size:.5rem; }.selected-object dt { color:#b9c6ac; }.selected-object dd { color:#e1e6d6;margin:0; }.spatial-note { color:#bdc9b0;font-size:.52rem;line-height:1.65;border-top:1px solid #506047;padding-top:.75rem;margin:.75rem 0 0; }
+  @container (max-width: 580px) { .demo-topbar { padding:.85rem 1rem; }.demo-content { padding:1.1rem; }.demo-heading h3 { font-size:1.15rem; }.period-label { display:none; }.demo-product { font-size:.52rem; }.demo-mode { font-size:.52rem; }.metrics-strip > div { padding:0 .7rem; }.metrics-strip strong { font-size:1.65rem; }.metric-detail { display:none; }.operations-body { grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:.8rem; }.panel-title > span { display:none; }.queue-list li { grid-template-columns:.4rem 1fr;gap:.4rem; }.queue-list .status-pill { grid-column:2;margin-top:.2rem; }.event-context { padding:.8rem; }.equipment-grid { gap:.5rem; }.equipment-card { padding:.75rem; }.equipment-metric { font-size:1.2rem; }.equipment-card h4 { font-size:.7rem; }.spatial-workspace { grid-template-columns:1fr; }.spatial-sidebar { display:none; }.footer-signature { display:none; } }
+  @container (max-width: 390px) { .demo-product > span { display:none; }.demo-heading h3 { font-size:1.05rem; }.metrics-strip > div > span { font-size:.54rem; }.metrics-strip strong { font-size:1.4rem; }.operations-body { grid-template-columns:1fr; }.event-context { display:none; }.queue-list li { grid-template-columns:.4rem 1fr auto; }.queue-list .status-pill { grid-column:auto;margin:0; }.queue-list strong { font-size:.7rem; }.queue-list div > span { font-size:.6rem; }.queue-list p { font-size:.57rem; }.equipment-grid { grid-template-columns:1fr; }.equipment-card { display:grid;grid-template-columns:1fr 1fr;gap:.4rem .8rem; }.equipment-card .status-pill { grid-column:1/-1; }.equipment-card h4 { font-size:.8rem;margin:.4rem 0 0; }.equipment-card > p { grid-column:1;font-size:.6rem;margin:0; }.equipment-metric { grid-column:2;grid-row:2;text-align:right; }.equipment-label { grid-column:2;grid-row:3;text-align:right;font-size:.6rem;margin:0; }.equipment-card svg { grid-column:1/-1;max-height:45px; }.equipment-foot { grid-column:1/-1; }.equipment-note p { font-size:.65rem; } }
+  @container (min-width: 460px) { .queue-list li { grid-template-columns:.4rem 1fr auto; }.queue-list .status-pill { grid-column:auto;margin-top:0; } }
+  .is-compact .demo-content { padding:1.2rem; }.is-compact .demo-heading { margin-bottom:1rem; }.is-compact .demo-heading h3 { font-size:1.1rem; }.is-compact .metrics-strip { margin-bottom:1rem;padding:.85rem 0; }.is-compact .metrics-strip strong { font-size:1.7rem; }.is-compact .metrics-strip .metric-detail { display:none; }
+</style>

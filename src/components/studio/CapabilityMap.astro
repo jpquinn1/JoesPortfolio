@@ -1,0 +1,84 @@
+---
+const layers = [
+  { number: '01', title: 'People & processes', detail: 'The owner. The office. The technician.', items: ['Requests', 'Decisions', 'Day-to-day work'], tone: 'people' },
+  { number: '02', title: 'Useful interfaces', detail: 'A clear place to see, decide, and act.', items: ['Web applications', 'Dashboards', 'Customer portals'], tone: 'interfaces' },
+  { number: '03', title: 'Connected information', detail: 'The right data, where it needs to be.', items: ['APIs & integrations', 'Databases', 'Cloud services'], tone: 'information' },
+  { number: '04', title: 'Automation with oversight', detail: 'Less repetition. Clear exceptions.', items: ['Workflow rules', 'AI assistance', 'Monitoring'], tone: 'automation' },
+  { number: '05', title: 'The physical operation', detail: 'Software that understands the field.', items: ['Equipment & sensors', 'Networks', 'Edge devices'], tone: 'physical' },
+];
+const technicalAreas = [
+  { title: 'Applications', detail: 'Python, TypeScript, React, FastAPI, and ASP.NET Core for useful interfaces and service APIs.' },
+  { title: 'Cloud & integration', detail: 'AWS Lambda, SQS, DynamoDB, API Gateway, AWS IoT, Azure services, webhooks, and event-driven workflows.' },
+  { title: 'Automation & AI', detail: 'Document extraction, structured validation, assisted diagnostics, and tool-driven workflows with human review where it matters.' },
+  { title: 'Field engineering', detail: 'MQTT, Raspberry Pi, Linux, telemetry, remote configuration, networking, and connected equipment workflows.' },
+  { title: 'Visual computing', detail: 'OpenCV, camera calibration, coordinate transforms, Three.js, terrain data, and interactive 3D visualization.' },
+  { title: 'Reliability', detail: 'Observability, actionable alerts, deduplication, retries, integration tests, and clear operational handoffs.' },
+];
+---
+
+<div class="capability-map">
+  <div class="capability-copy">
+    <p class="capability-eyebrow">Engineering across the whole system</p>
+    <h2>From the front desk<br />to the field.</h2>
+    <p>Good software connects the people doing the work with the information and equipment they depend on.</p>
+    <p>That takes more than an interface. It takes an understanding of the workflow, the systems behind it, and what happens when something stops working.</p>
+    <div class="capability-principle"><span aria-hidden="true">↳</span><p>One engineer who can follow the problem across those boundaries.</p></div>
+  </div>
+  <div class="system-stack" role="group" aria-label="Connected engineering capabilities, from people and processes to physical equipment">
+    {layers.map((layer, index) => (
+      <div class:list={['system-layer', `layer-${layer.tone}`]}>
+        <div class="layer-top"><span class="layer-number">{layer.number}</span><h3>{layer.title}</h3><span class="layer-symbol" aria-hidden="true">{index === 0 ? '◎' : index === 4 ? '⌁' : '↔'}</span></div>
+        <p>{layer.detail}</p>
+        <ul aria-label={`${layer.title} examples`}>{layer.items.map(item => <li>{item}</li>)}</ul>
+        {index < layers.length - 1 && <span class="layer-connector" aria-hidden="true">↕</span>}
+      </div>
+    ))}
+    <p class="stack-caption">Information moves both ways. People stay in control.</p>
+  </div>
+  <details class="technical-details">
+    <summary><span><span class="detail-label">For a closer look</span>Explore the engineering toolkit</span><span class="detail-toggle" aria-hidden="true">+</span></summary>
+    <div class="technical-grid">{technicalAreas.map(area => <div><h3>{area.title}</h3><p>{area.detail}</p></div>)}</div>
+    <p class="technical-note">The tools follow the problem. A straightforward integration may be all a workflow needs.</p>
+  </details>
+</div>
+
+<style>
+  .capability-map { display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);column-gap:clamp(2rem,7vw,7rem);row-gap:3.5rem;color:#f1e9dd; }
+  .capability-copy { align-self:start;position:sticky;top:7rem;padding-top:1rem; }
+  .capability-eyebrow { color:#d9aa84;font:500 .68rem/1.5 var(--font-jetbrains-mono,monospace);letter-spacing:.13em;text-transform:uppercase;margin:0 0 1.35rem; }
+  h2 { font-size:clamp(2rem,4.2vw,3.6rem);font-weight:500;line-height:1.08;letter-spacing:-.05em;margin:0 0 1.7rem;color:#f1e9dd; }
+  .capability-copy > p:not(.capability-eyebrow) { color:#c2c6ba;line-height:1.8;font-size:.95rem;margin:0 0 1.2rem;max-width:410px; }
+  .capability-principle { display:flex;gap:.85rem;border-top:1px solid #555b51;padding-top:1.3rem;margin-top:2rem;max-width:410px; }
+  .capability-principle > span { font-size:1.5rem;color:#e2a577;line-height:1; }
+  .capability-principle p { margin:0;line-height:1.6;font-size:.88rem;color:#e3d5bf; }
+  .system-stack { position:relative;min-width:0; }
+  .system-layer { position:relative;border:1px solid #65705d;border-radius:.45rem;padding:1.1rem 1.4rem;background:#303a31;margin-bottom:1.3rem; }
+  .layer-top { display:flex;align-items:center;gap:.8rem; }
+  .layer-number { font:.6rem/1.4 var(--font-jetbrains-mono,monospace);color:#b6c1a8; }
+  .layer-top h3 { color:#eeecdf;font-size:1.05rem;letter-spacing:-.015em;font-weight:500;line-height:1.3;margin:0; }
+  .layer-symbol { margin-left:auto;color:#c5d3b5;font-size:1.35rem;line-height:1; }
+  .system-layer > p { color:#bfc9b2;font-size:.76rem;line-height:1.6;margin:.5rem 0 .8rem;padding-left:1.65rem; }
+  .system-layer ul { list-style:none;display:flex;gap:.45rem .9rem;flex-wrap:wrap;margin:0;padding:0 0 0 1.65rem; }
+  .system-layer li { color:#dbe0cf;font-size:.62rem;line-height:1.5; }
+  .system-layer li:not(:last-child)::after { content:'·';margin-left:.9rem;color:#b8c4a7; }
+  .layer-connector { position:absolute;bottom:-1.4rem;left:50%;transform:translateX(-50%);width:2rem;height:1.4rem;display:grid;place-items:center;background:#252a2c;color:#b2c19e;font-size:1.05rem;z-index:1; }
+  .layer-people { background:#e3d5bb;border-color:#e3d5bb; }
+  .layer-people .layer-number,.layer-people .layer-symbol { color:#5d5b47; }
+  .layer-people h3 { color:#30372d; }.layer-people > p { color:#565e4f; }.layer-people li { color:#45503c; }.layer-people li:not(:last-child)::after { color:#6e765e; }
+  .layer-physical { background:#394635;border-color:#758467; }
+  .stack-caption { color:#bac6ac;font:.6rem/1.6 var(--font-jetbrains-mono,monospace);text-align:center;margin:.2rem 0 0; }
+  .technical-details { grid-column:1/-1;border-top:1px solid #555d50;border-bottom:1px solid #555d50; }
+  summary { display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.5rem 0;cursor:pointer;list-style:none;color:#ece5d8;font-size:1.05rem;line-height:1.4; }
+  summary::-webkit-details-marker { display:none; }
+  summary:focus-visible { outline:3px solid #e3b58c;outline-offset:5px; }
+  .detail-label { display:block;color:#b5c1a9;font:.58rem/1.5 var(--font-jetbrains-mono,monospace);letter-spacing:.13em;text-transform:uppercase;margin-bottom:.5rem; }
+  .detail-toggle { display:grid;place-items:center;flex:none;width:2rem;height:2rem;border:1px solid #707b64;border-radius:50%;font-size:1.3rem;font-weight:400;transition:transform .15s; }
+  details[open] .detail-toggle { transform:rotate(45deg); }
+  .technical-grid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.8rem 2.5rem;padding:1.1rem 0 1.5rem; }
+  .technical-grid h3 { color:#e6d5bb;font-size:.85rem;font-weight:500;margin:0 0 .6rem; }
+  .technical-grid p { color:#bcc5b2;font-size:.78rem;line-height:1.75;margin:0; }
+  .technical-note { font-size:.75rem;line-height:1.6;color:#bdc8b2;padding:1rem 0 1.6rem;margin:0; }
+  @media(max-width:800px) { .capability-map { grid-template-columns:1fr;gap:2.5rem; }.capability-copy { position:static; }.capability-copy > p:not(.capability-eyebrow),.capability-principle { max-width:620px; }.system-stack { max-width:650px;width:100%; }.technical-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media(max-width:450px) { .system-layer { padding:1rem; }.layer-top { gap:.6rem; }.layer-top h3 { font-size:.95rem; }.system-layer > p { padding-left:0;font-size:.75rem; }.system-layer ul { padding-left:0;gap:.35rem .6rem; }.system-layer li { font-size:.58rem; }.system-layer li:not(:last-child)::after { margin-left:.6rem; }.technical-grid { grid-template-columns:1fr;gap:1.4rem; } }
+  @media(prefers-reduced-motion:reduce) { .detail-toggle { transition:none; } }
+</style>
