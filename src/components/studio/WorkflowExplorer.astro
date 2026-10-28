@@ -92,7 +92,7 @@ import { studioWorkflows } from '../../data/studio-workflows';
   .problem-options button:hover { border-color: #8d604a; background: #e9dece; }
   .problem-options button[aria-pressed="true"] { background: #252a2c; color: #f1e9dd; border-color: #252a2c; }
   .option-number { font: 500 .66rem/2 var(--font-jetbrains-mono,monospace); opacity: .8; }
-  .option-arrow { color: #b1704e; font-size: 1.15rem; }
+  .option-arrow { color: #895034; font-size: 1.15rem; }
   .problem-options button[aria-pressed="true"] .option-arrow { color: #e9af85; }
   button:focus-visible,a:focus-visible { outline: 3px solid #965331; outline-offset: 4px; }
   .options-note { color: #61655f; font-size: .75rem; line-height: 1.6; padding: .4rem .1rem; margin: 0; }
@@ -126,7 +126,7 @@ import { studioWorkflows } from '../../data/studio-workflows';
   dt { color: #686c65; } dd { margin: 0; color: #343b36; overflow-wrap: anywhere; }
   .interface-note { color: #715a3e; background: #f7f0e4; padding: .6rem .65rem; margin: .3rem .7rem .7rem; border-radius: .3rem; font-size: .57rem; line-height: 1.5; }
   .interface-action { font-size: .57rem; line-height: 1.5; color: #4a554b; padding: .65rem .8rem; border-top: 1px solid #e5dfd4; margin: 0; }
-  .synthetic-label { margin: 0; padding: .4rem .8rem; font: .5rem/1.5 var(--font-jetbrains-mono,monospace); color: #6d7067; background: #f4f0e8; }
+  .synthetic-label { margin: 0; padding: .4rem .8rem; font: .5rem/1.5 var(--font-jetbrains-mono,monospace); color: #62655c; background: #f4f0e8; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
   @media (max-width: 950px) { .workflow-explorer[data-enhanced] .explorer-layout { grid-template-columns: 1fr; } .problem-options { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); } .options-note { grid-column: 1 / -1; } }
   @media (max-width: 560px) { .explorer-intro { margin-bottom: 1.8rem; } .problem-options { gap: .5rem; } .problem-options button { grid-template-columns: 1fr .6rem; gap: .35rem; min-height: 100px; padding: .8rem; font-size: .77rem; } .option-number { display: none; } .solution-grid { grid-template-columns: 1fr; gap: 1.5rem; } .workflow-steps { grid-template-columns: 1fr 1fr; gap: .65rem; margin: 1.5rem 0; } .workflow-steps li { font-size: .7rem; } .workflow-steps li:not(:last-child)::after { display: none; } .interface-top,.synthetic-label { font-size: .6rem; } .interface-heading p,.interface-badge { font-size: .65rem; } dl > div { font-size: .74rem; } .interface-note,.interface-action { font-size: .7rem; } }
