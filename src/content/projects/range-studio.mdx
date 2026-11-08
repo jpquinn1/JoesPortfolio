@@ -1,0 +1,57 @@
+---
+title: "Range Studio"
+description: "A desktop workspace for planning radar layouts, exploring terrain, and turning simulation results into clear engineering reports."
+screenshot: "../../assets/projects/captures/range-studio.png"
+screenshotAlt: "Range Studio showing 3D terrain, radar placement and simulated shot trajectories"
+cardVideo:
+  src: "/projects/range-studio/range-animation.mp4"
+  poster: "../../assets/projects/range-animation-poster.jpg"
+  label: "Watch range animation · 9 sec"
+category: "professional"
+role: "Application design & development"
+status: "Internal beta"
+highlights:
+  - "Geospatial site and terrain editing"
+  - "3D views and animated flythroughs"
+  - "Saved designs and exportable reports"
+tools:
+  - "python"
+  - "typescript"
+  - "react"
+  - "fastapi"
+  - "qt"
+tags:
+  - "Desktop software"
+  - "Geospatial"
+  - "Simulation integration"
+order: 1
+featured: true
+mediaNote: "Built-in Flythrough using a bundled test range and synthetic terrain. Shots and coverage indicators show simulation output."
+gallery:
+  - image: "../../assets/projects/captures/range-studio-detail.png"
+    alt: "Range Studio split view with a site plan and terrain profile"
+    caption: "One project, two perspectives: the site plan and terrain profile share the same geometry and simulation results."
+---
+
+## Context
+
+Range design brings together several kinds of information: site geometry, terrain, radar placement, infrastructure and simulated coverage. Moving between separate tools makes it harder to see how one design choice affects the rest.
+
+## What I built
+
+- **One design workspace:** edit radars, bays, fences and infrastructure against a georeferenced site.
+- **Multiple views:** move between plan, profile and 3D context, or watch an animated range flythrough using the same project model.
+- **A simulation bridge:** translate application geometry into the inputs expected by the shared radar engine.
+- **Useful deliverables:** save versioned projects and export PDF, spreadsheet and image reports.
+
+## Design decisions
+
+The React interface runs with a local Python service inside a desktop shell. Long-running simulation and terrain work stays separate from the editing experience. Saved results carry input and engine context, so a report can explain what produced it.
+
+Visual context and simulation inputs also have distinct responsibilities. A detailed map can help someone understand a site without silently changing the engineering model beneath it.
+
+## Project overview
+
+Range Studio evolved from an earlier Python/Qt companion into a broader desktop application. My work covers the application architecture, domain models, editing workflows, geospatial integration, reporting and release coordination. The underlying radar simulation foundations are shared Trackman components.
+
+The current application is in internal beta. That stage includes operator feedback, cross-platform packaging and careful handling of changes to saved projects. The goal is a practical design workflow: make geometry easier to inspect, preserve decisions, and give an engineer something understandable to review.

@@ -1,63 +1,36 @@
 ---
-import AboutHeroImage from '../assets/blog-placeholder-about.jpg';
-import Layout from '../layouts/BlogPost.astro';
+import Layout from '../layouts/Layout.astro';
+import TechStack from '../components/TechStack.astro';
+import '../styles/portfolio-work.css';
+const experience = [
+  { company: 'TrackMan', logo: '/images/logos/trackman.png', dates: 'March 2026 – Present', role: 'Operations Engineer — Software Development and Support', bullets: ['Engineering desktop tools for range design, radar data, and operator workflows.', 'Cloud-connected device control, telemetry, and alert-to-ticket automation.', 'macOS release maintenance, cross-platform packaging, and field troubleshooting.'] },
+  { company: 'PGA TOUR · ShotLink', logo: '/images/logos/pga-tour.png', dates: 'March 2025 – February 2026', role: 'Technical Support Analyst / Development', bullets: ['Raspberry Pi provisioning, configuration tools, and AWS IoT integrations.', 'Tournament operations applications, API integrations, and radar telemetry.', 'Live-event technical monitoring and practical support for field teams.'] },
+  { company: 'PGA TOUR · ShotLink', logo: '/images/logos/pga-tour.png', dates: 'May 2024 – March 2025', role: 'Field Technician', bullets: ['On-site tournament technology setup and troubleshooting.', 'Teamwork and technical communication in live production environments.'] },
+];
 ---
 
-<Layout
-	title="About Me"
-	description="Lorem ipsum dolor sit amet"
-	pubDate={new Date('August 08 2021')}
-	heroImage={AboutHeroImage}
->
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-		labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-		viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-		adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-		et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-		vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-		sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-	</p>
+<Layout title="Experience — Joe Quinn" description="Joe Quinn's experience connecting software, cloud services and field equipment at TrackMan and PGA TOUR ShotLink.">
+  <header class="work-section work-page-header">
+    <p class="section-label">About / Experience</p>
+    <h1>Hands-on with<br />the whole system.</h1>
+    <p class="experience-page-intro">I'm Joe, an engineer in Phoenix. I turn the realities of field operations into software people can use: clear interfaces, connected devices, and useful automation.</p>
+    <div class="work-category-links"><a href="/projects">Explore my work <span>↗</span></a><a href="/resume">View resume <span>↗</span></a></div>
+  </header>
 
-	<p>
-		Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-		tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-		blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-		porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-		massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-		Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-		bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-		massa massa ultricies mi.
-	</p>
+  <section class="work-section" aria-labelledby="career-title">
+    <div class="work-section-heading"><div><p class="section-label">Professional experience</p><h2 id="career-title">Built on real operations.</h2></div></div>
+    <div class="experience-timeline">{experience.map((job) => <div class="experience-job"><div><img class="experience-job-logo" src={job.logo} alt={job.company} loading="lazy" width="75" height="48" /><p class="experience-job-date">{job.dates}</p></div><div><h3>{job.company}</h3><p class="experience-job-role">{job.role}</p><ul>{job.bullets.map((bullet) => <li>{bullet}</li>)}</ul></div></div>)}</div>
+  </section>
 
-	<p>
-		Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-		suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-		nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-		turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-		dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-		semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-		vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-		facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-		vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-		urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-	</p>
+  <section class="work-section work-personal-section" aria-labelledby="approach-title">
+    <div class="experience-intro"><div><p class="section-label">How I work</p><h2 id="approach-title">Understand the problem.<br />Build the useful part.</h2></div><div><p>I like working across boundaries: equipment and software, field teams and developers, an unfamiliar domain and a repeatable workflow. That means learning the system, testing assumptions, and documenting the decisions that matter.</p><p class="mt-4">Alongside application development, I explore camera calibration, radar geometry, and CAD prototypes for field equipment.</p></div></div>
+    <div class="focus-tools"><p class="work-fact-label">Regularly in the toolkit</p><TechStack tools={['python', 'typescript', 'react', 'aws', 'azure', 'docker', 'git']} /></div>
+  </section>
 
-	<p>
-		Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-		viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-		scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-		gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-		pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-		blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-		cursus metus aliquam eleifend mi.
-	</p>
-
-	<p>
-		Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-		nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-		tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-		ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-		proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-	</p>
+  <section class="work-section work-personal-section" aria-labelledby="beyond-title">
+    <div class="work-section-heading"><div><p class="section-label">Beyond the day job</p><h2 id="beyond-title">Stay curious.</h2></div><a class="work-text-link" href="/projects#personal">Personal projects <span aria-hidden="true">↗</span></a></div>
+    <p class="work-section-intro">At home, I experiment with self-hosted services, music automation, and tools for everyday workflows. Outside the screen, you'll find photography, travel, and time outdoors.</p>
+    <a class="work-text-link" href="/life">A little more of life <span aria-hidden="true">→</span></a>
+    <div class="resume-education mt-8"><h3>The Ohio State University</h3><p>B.S. in Computer Science and Engineering · Graduated May 2024</p></div>
+  </section>
 </Layout>

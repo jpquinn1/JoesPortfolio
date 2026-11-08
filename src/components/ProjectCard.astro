@@ -1,41 +1,46 @@
 ---
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
+import TechStack from './TechStack.astro';
+import ProjectVideo from './ProjectVideo.astro';
+import '../styles/portfolio-work.css';
 
 interface Props {
-	href: string;
-	title: string;
-	description: string;
-	tags: string[];
-	screenshot: ImageMetadata;
+  href: string;
+  title: string;
+  description: string;
+  tags: string[];
+  screenshot: ImageMetadata;
+  screenshotAlt?: string;
+  cardVideo?: { src: string; poster: ImageMetadata; label: string };
+  category?: 'professional' | 'personal';
+  role?: string;
+  status?: string;
+  highlights?: string[];
+  tools?: string[];
 }
-
-const { href, title, description, tags, screenshot } = Astro.props;
+const { href, title, description, tags, screenshot, screenshotAlt, cardVideo, category = 'professional', role, status, highlights = [], tools = [] } = Astro.props;
 ---
 
-<a href={href} class="card group block overflow-hidden">
-	<div class="relative aspect-[16/9] overflow-hidden border-b border-border">
-		<Image
-			src={screenshot}
-			alt={`${title} preview`}
-			widths={[480, 800, 1200]}
-			sizes="(max-width: 640px) 100vw, 50vw"
-			class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-		/>
-	</div>
-
-	<div class="p-6">
-		<h3
-			class="text-xl font-semibold tracking-tight transition-colors group-hover:text-accent"
-		>
-			{title}
-		</h3>
-		<p class="mt-2 text-sm leading-relaxed text-muted">{description}</p>
-
-		<div class="mt-4 flex flex-wrap gap-2">
-			{tags.map((tag) => <span class="tag">{tag}</span>)}
-		</div>
-
-		<p class="mt-5 font-mono text-xs text-accent">Read case study →</p>
-	</div>
-</a>
+<article class="work-card">
+  <div class="work-card-image">
+    {cardVideo ? <ProjectVideo title={title} video={cardVideo} /> : <>
+      <Image src={screenshot} alt={screenshotAlt ?? `${title} project preview`} widths={[480, 800, 1200]} sizes="(max-width: 640px) 100vw, 50vw" loading="lazy" />
+      <span class="work-card-open" aria-hidden="true">↗</span>
+    </>}
+  </div>
+  <a href={href} class="work-card-body" aria-label={`Explore ${title}`}>
+    <div class="work-card-meta">
+      <span>{category === 'personal' ? 'Personal project' : 'Professional work'}</span>
+      {status && <span class="work-status">{status}</span>}
+    </div>
+    <h3>{title}</h3>
+    <p class="work-card-description">{description}</p>
+    {role && <p class="work-card-role">{role}</p>}
+    {highlights.length > 0 && <ul class="work-card-highlights">{highlights.slice(0, 3).map((item) => <li>{item}</li>)}</ul>}
+    <div class="work-card-footer">
+      {tools.length > 0 ? <TechStack tools={tools.slice(0, 4)} compact /> : <div class="work-card-tags">{tags.slice(0, 3).map((tag) => <span>{tag}</span>)}</div>}
+      <span class="work-card-link">Explore project <span aria-hidden="true">→</span></span>
+    </div>
+  </a>
+</article>

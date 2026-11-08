@@ -1,0 +1,28 @@
+---
+interface Props { tools: string[]; compact?: boolean; }
+const { tools, compact = false } = Astro.props;
+const names: Record<string, string> = {
+  python: 'Python', typescript: 'TypeScript', react: 'React', fastapi: 'FastAPI',
+  azure: 'Azure', aws: 'AWS', docker: 'Docker', terraform: 'Terraform',
+  postgresql: 'PostgreSQL', sqlite: 'SQLite', git: 'Git', grafana: 'Grafana',
+  opencv: 'OpenCV', cpp: 'C++', qt: 'Qt', raspberrypi: 'Raspberry Pi',
+  nextjs: 'Next.js', astro: 'Astro', tailwindcss: 'Tailwind CSS', nodejs: 'Node.js',
+  blender: 'Blender', vite: 'Vite', csharp: 'C#', dotnetcore: '.NET',
+};
+---
+<ul class:list={['tech-stack', { 'tech-stack--compact': compact }]} aria-label="Tools and technologies">
+  {tools.map(tool => <li>
+    {names[tool] && <span class="tech-icon"><img src={`/images/tools/${tool}.svg`} width="24" height="24" alt="" loading="lazy" decoding="async" /></span>}
+    <span>{names[tool] ?? tool}</span>
+  </li>)}
+</ul>
+<style>
+  .tech-stack{display:flex;flex-wrap:wrap;gap:.65rem 1rem;list-style:none;padding:0;margin:0;color:inherit}
+  .tech-stack li{display:inline-flex;align-items:center;gap:.55rem;min-height:36px;font-size:.8rem;line-height:1.3;font-weight:500}
+  .tech-icon{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:9px;background:#f6f7f7;border:1px solid #dfe5e8}
+  .tech-icon img{width:23px;height:23px;object-fit:contain}
+  .tech-stack--compact{gap:.45rem .8rem}
+  .tech-stack--compact li{font-size:.75rem;min-height:25px;gap:.4rem}
+  .tech-stack--compact .tech-icon{width:25px;height:25px;border-radius:6px}
+  .tech-stack--compact img{width:18px;height:18px}
+</style>

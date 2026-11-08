@@ -1,0 +1,127 @@
+{
+  "collection": "Devicon",
+  "revision": "v2.17.0",
+  "repository": "https://github.com/devicons/devicon",
+  "icons": [
+    {
+      "id": "python",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/python/python-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "typescript",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/typescript/typescript-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "react",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/react/react-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "fastapi",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/fastapi/fastapi-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "azure",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/azure/azure-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "docker",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/docker/docker-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "terraform",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/terraform/terraform-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "postgresql",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/postgresql/postgresql-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "sqlite",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/sqlite/sqlite-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "git",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/git/git-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "grafana",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/grafana/grafana-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "opencv",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/opencv/opencv-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "qt",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/qt/qt-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "raspberrypi",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/raspberrypi/raspberrypi-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "nextjs",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/nextjs/nextjs-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "astro",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/astro/astro-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "tailwindcss",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/tailwindcss/tailwindcss-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "nodejs",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/nodejs/nodejs-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "blender",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/blender/blender-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "vite",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/vite/vite-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "aws",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/amazonwebservices/amazonwebservices-original-wordmark.svg",
+      "status": "saved"
+    },
+    {
+      "id": "cpp",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/cplusplus/cplusplus-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "csharp",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/csharp/csharp-original.svg",
+      "status": "saved"
+    },
+    {
+      "id": "dotnetcore",
+      "source": "https://raw.githubusercontent.com/devicons/devicon/v2.17.0/icons/dotnetcore/dotnetcore-original.svg",
+      "status": "saved"
+    }
+  ]
+}

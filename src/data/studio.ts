@@ -207,7 +207,9 @@ export const caseStudies: StudioCaseStudy[] = [
     experienceNote:
       'Informed by professional field-device and IoT engineering experience. The Studio interface is independently reconstructed and is not an employer dashboard or evidence of a Studio client installation.',
     relatedPortfolio: [
+      { label: 'Radar control & Azure IoT', href: '/projects/radar-relay-iot' },
       { label: 'Edge fleet tooling & AWS IoT', href: '/projects/iot-edge-fleet-tooling' },
+      { label: 'Broadcast field monitoring', href: '/projects/field-monitor' },
     ],
   },
   {
@@ -247,6 +249,7 @@ export const caseStudies: StudioCaseStudy[] = [
     experienceNote:
       'A conceptual demonstration informed by Joe’s spatial-interface and field-systems background. Specific commercial outcomes, publication rights for professional tools, and production maturity are not asserted.',
     relatedPortfolio: [
+      { label: 'Range Studio — geospatial design workspace', href: '/projects/range-studio' },
       { label: '3D calibration workspace background', href: '/projects/radar-golf-trace-calibration' },
     ],
   },

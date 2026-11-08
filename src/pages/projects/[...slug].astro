@@ -2,68 +2,57 @@
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
+import TechStack from '../../components/TechStack.astro';
+import ProjectVideo from '../../components/ProjectVideo.astro';
+import '../../styles/portfolio-work.css';
 
 export async function getStaticPaths() {
-	const projects = await getCollection('projects');
-	return projects.map((project) => ({
-		params: { slug: project.id },
-		props: project,
-	}));
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({ params: { slug: project.id }, props: project }));
 }
 type Props = CollectionEntry<'projects'>;
-
 const project = Astro.props;
 const { Content } = await render(project);
-const { title, description, screenshot, tags, repo, demo } = project.data;
+const { title, description, screenshot, screenshotAlt, cardVideo, tags, repo, demo, category = 'professional', role, status, highlights = [], tools = [], gallery = [], mediaNote } = project.data;
 ---
 
 <Layout title={`${title} — Joe Quinn`} description={description}>
-	<article class="mx-auto max-w-3xl px-6 py-16">
-		<a
-			href="/#projects"
-			class="font-mono text-xs uppercase tracking-widest text-muted transition-colors hover:text-accent"
-		>
-			← Back to projects
-		</a>
+  <article class="work-detail">
+    <header class="work-section work-detail-header">
+      <a href={`/projects#${category === 'personal' ? 'personal' : 'professional'}`} class="work-back-link">← All {category === 'personal' ? 'personal projects' : 'professional work'}</a>
+      <div class="work-detail-kicker"><p class="section-label">{category === 'personal' ? 'Personal project' : 'Professional work'}</p>{status && <span class="work-status">{status}</span>}</div>
+      <h1>{title}</h1>
+      <p class="work-detail-description">{description}</p>
+      <div class="work-detail-facts">
+        {role && <div><span class="work-fact-label">My role</span><p>{role}</p></div>}
+        <div><span class="work-fact-label">Focus</span><p>{tags.slice(0, 3).join(' / ')}</p></div>
+        <a href="#project-overview" class="work-text-link">Read the story <span aria-hidden="true">↓</span></a>
+      </div>
+    </header>
 
-		<h1 class="mt-8 text-4xl font-semibold tracking-tight sm:text-5xl">
-			{title}
-		</h1>
-		<p class="mt-4 text-lg text-muted">{description}</p>
+    <figure class="work-section work-hero-figure">
+      {cardVideo ? <div class="work-full-image"><ProjectVideo title={title} video={cardVideo} /></div> : <a class="work-full-image" href={screenshot.src} target="_blank" rel="noopener noreferrer" aria-label={`Open full-size ${title} image`}>
+        <Image src={screenshot} alt={screenshotAlt ?? `${title} project preview`} widths={[640, 1024, 1600, 2200]} sizes="(max-width: 1024px) 100vw, 1024px" loading="eager" />
+        <span>View full size ↗</span>
+      </a>}
+      {mediaNote && <figcaption>{mediaNote}</figcaption>}
+    </figure>
 
-		<div class="mt-5 flex flex-wrap gap-2">
-			{tags.map((tag) => <span class="tag">{tag}</span>)}
-		</div>
+    {highlights.length > 0 && <section class="work-section work-feature-strip" aria-label="Project highlights">
+      {highlights.slice(0, 3).map((item, index) => <div><span class="work-feature-number">0{index + 1}</span><p>{item}</p></div>)}
+    </section>}
 
-		{
-			(repo || demo) && (
-				<div class="mt-5 flex flex-wrap gap-4 font-mono text-xs">
-					{repo && (
-						<a href={repo} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">
-							Repository ↗
-						</a>
-					)}
-					{demo && (
-						<a href={demo} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">
-							Live demo ↗
-						</a>
-					)}
-				</div>
-			)
-		}
+    {tools.length > 0 && <section class="work-section work-stack-section" aria-label="Project tools"><p class="work-fact-label">Built with</p><TechStack tools={tools} /></section>}
 
-		<div class="mt-10 overflow-hidden rounded-2xl border border-border">
-			<Image
-				src={screenshot}
-				alt={`${title} screenshot`}
-				widths={[640, 1024, 1600]}
-				sizes="(max-width: 768px) 100vw, 768px"
-				class="w-full"
-			/>
-		</div>
+    {gallery.length > 0 && <section class="work-section work-gallery-section" aria-labelledby="gallery-title">
+      <div class="work-section-heading"><div><p class="section-label">A closer look</p><h2 id="gallery-title">Inside the workflow.</h2></div></div>
+      <div class="work-gallery">{gallery.map((item) => <figure class:list={{ 'work-gallery-portrait': item.image.height > item.image.width }}><a href={item.image.src} target="_blank" rel="noopener noreferrer" aria-label={`Open full-size image: ${item.alt}`}><Image src={item.image} alt={item.alt} widths={[640, 1024, 1600]} sizes={item.image.height > item.image.width ? '(max-width: 640px) 100vw, 480px' : '(max-width: 768px) 100vw, 1036px'} loading="lazy" /></a><figcaption>{item.caption}</figcaption></figure>)}</div>
+    </section>}
 
-		<div class="prose mt-12">
-			<Content />
-		</div>
-	</article>
+    <section id="project-overview" class="work-section work-overview-section" aria-label="Project overview">
+      <aside class="work-overview-aside"><p class="section-label">The project</p><p>Context.<br />Contribution.<br />Decisions.</p>{(repo || demo) && <div class="work-external-links">{repo && <a href={repo} target="_blank" rel="noopener noreferrer">Repository ↗</a>}{demo && <a href={demo} target="_blank" rel="noopener noreferrer">Live demo ↗</a>}</div>}</aside>
+      <div class="prose work-prose"><Content /></div>
+    </section>
+    <footer class="work-section work-closing"><p>More from the workbench.</p><a href="/projects" class="work-text-link">Explore all projects <span aria-hidden="true">→</span></a></footer>
+  </article>
 </Layout>

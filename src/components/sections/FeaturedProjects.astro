@@ -1,30 +1,37 @@
 ---
 import { getCollection } from 'astro:content';
 import ProjectCard from '../ProjectCard.astro';
+import '../../styles/portfolio-work.css';
 
-const projects = (await getCollection('projects', ({ data }) => data.featured)).sort(
-	(a, b) => a.data.order - b.data.order,
-);
+const projects = (await getCollection('projects', ({ data }) => data.featured)).sort((a, b) => a.data.order - b.data.order);
+const professional = projects.filter(({ data }) => data.category !== 'personal').slice(0, 4);
+const personal = projects.filter(({ data }) => data.category === 'personal').slice(0, 2);
 ---
 
-<section id="projects" class="mx-auto max-w-5xl scroll-mt-20 px-6 py-16">
-	<p class="section-label mb-6">Featured Projects</p>
-
-	{
-		projects.length === 0 ? (
-			<p class="text-muted">No projects yet. Add one in <code class="font-mono text-sm">src/content/projects/</code>.</p>
-		) : (
-			<div class="grid gap-6 sm:grid-cols-2">
-				{projects.map((project) => (
-					<ProjectCard
-						href={`/projects/${project.id}`}
-						title={project.data.title}
-						description={project.data.description}
-						tags={project.data.tags}
-						screenshot={project.data.screenshot}
-					/>
-				))}
-			</div>
-		)
-	}
+<section id="projects" class="work-section scroll-mt-20" aria-labelledby="selected-work-title">
+  <div class="work-section-heading">
+    <div>
+      <p class="section-label">Selected work</p>
+      <h2 id="selected-work-title">Built for the field.<br /><span>Designed for people.</span></h2>
+    </div>
+    <a href="/projects" class="work-text-link">All projects <span aria-hidden="true">↗</span></a>
+  </div>
+  <p class="work-section-intro">Professional applications and contributions, from connected devices to the tools used to support them.</p>
+  <div class="work-grid">
+    {professional.map((project) => <ProjectCard href={`/projects/${project.id}`} {...project.data} />)}
+  </div>
 </section>
+
+{personal.length > 0 && <section id="personal-projects" class="work-section work-personal-section scroll-mt-20" aria-labelledby="personal-work-title">
+  <div class="work-section-heading">
+    <div>
+      <p class="section-label">Outside of work</p>
+      <h2 id="personal-work-title">Personal projects.</h2>
+    </div>
+    <a href="/projects#personal" class="work-text-link">Explore personal work <span aria-hidden="true">↗</span></a>
+  </div>
+  <p class="work-section-intro">Small everyday problems. A place to experiment with useful software.</p>
+  <div class="work-grid">
+    {personal.map((project) => <ProjectCard href={`/projects/${project.id}`} {...project.data} />)}
+  </div>
+</section>}

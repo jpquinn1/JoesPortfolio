@@ -4,6 +4,7 @@ import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
 import { brand, contact, founder, services } from '../data/studio';
 import '../styles/studio.css';
+import '../styles/studio-desert.css';
 interface Props { title?: string; description?: string; }
 const { title = `${brand.name} — ${brand.headline}`, description = `${brand.description} ${brand.locationLine}` } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -40,7 +41,7 @@ const schema = { '@context':'https://schema.org', '@type':'ProfessionalService',
       };
     </script>
   </head>
-  <body class="studio-body">
+  <body class="studio-body studio-desert">
     <a class="skip-link" href="#main-content">Skip to content</a>
     <header class="studio-header">
       <nav class="studio-shell studio-nav" aria-label="Studio navigation">

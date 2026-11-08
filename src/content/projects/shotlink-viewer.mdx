@@ -1,0 +1,50 @@
+---
+title: "ShotLink Recording Viewer"
+description: "A focused workbench integration that connects golf-shot metadata with Azure broadcast recordings."
+screenshot: "../../assets/projects/captures/shotlink-viewer.png"
+screenshotAlt: "ShotLink recording browser with player, stroke, club and event metadata"
+category: "professional"
+role: "Workbench integration contributor"
+status: "Implemented contribution"
+highlights:
+  - "Search by golf-event context"
+  - "Correlate shots and recordings"
+  - "Download directly into the workbench"
+tools:
+  - "python"
+  - "qt"
+  - "azure"
+  - "git"
+tags:
+  - "API integration"
+  - "Desktop tooling"
+  - "Broadcast analysis"
+order: 5
+featured: false
+mediaNote: "Actual Qt viewer rendered with offline sample records. The Azure account, players and events are demonstration values."
+---
+
+## Context
+
+A recording filename is rarely how someone remembers a shot. Analysts and support staff think in terms of a tournament, round, hole, player and stroke.
+
+## My contributions
+
+- **Recording browser:** list and navigate Azure broadcast captures inside the existing workbench.
+- **Metadata indexing:** use ShotLink context to associate events with stored recordings.
+- **Matching and caching:** correlate event identifiers with timestamp fallbacks and reuse fetched metadata.
+- **Desktop integration:** connect selection, download progress and import to the established analysis workflow.
+
+## Design decisions
+
+The viewer is an extension of FusionWorkbench, so it follows the host application's interaction model. Asynchronous work and Qt signals keep network operations separate from the desktop window.
+
+Golf identifiers also need domain-aware handling. Tournament-code differences, round context and incomplete metadata belong in the integration layer, with tests around parsing and matching behavior.
+
+## Project overview
+
+This was a scoped contribution within the much larger VisionDevelopment repository. I added the browser and indexing helpers, integrated them with workbench window management and contributed regression fixes for matching and tournament codes.
+
+The purpose is a shorter route from a recognizable shot to the recording someone needs to inspect. It joins existing services and analysis tools; it does not generate the source radar data or implement the surrounding vision engine.
+
+The integration is present in the local contribution history. Its value is the workflow it enables: use familiar event metadata to locate a capture, then continue analysis in the tool the team already uses.

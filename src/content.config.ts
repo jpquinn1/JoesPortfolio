@@ -27,6 +27,25 @@ const projects = defineCollection({
 			description: z.string(),
 			// Large screenshot/preview for the card and case study header.
 			screenshot: image(),
+			screenshotAlt: z.string().optional(),
+			cardVideo: z.object({
+				src: z.string(),
+				poster: image(),
+				label: z.string(),
+			}).optional(),
+			// Professional contributions and personal projects stay distinct.
+			category: z.enum(['professional', 'personal']).default('professional'),
+			role: z.string().default('Software development'),
+			status: z.string().default('Project'),
+			highlights: z.array(z.string()).default([]),
+			// Stable technology slugs for the shared logo component.
+			tools: z.array(z.string()).default([]),
+			gallery: z.array(z.object({
+				image: image(),
+				alt: z.string(),
+				caption: z.string(),
+			})).default([]),
+			mediaNote: z.string().optional(),
 			// Tech tags rendered as mono pills.
 			tags: z.array(z.string()).default([]),
 			// Controls ordering on the homepage (lower = first).

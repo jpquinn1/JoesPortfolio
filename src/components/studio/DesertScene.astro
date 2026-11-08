@@ -1,0 +1,19 @@
+<div class="desert-background" aria-hidden="true">
+  <div class="desert-pin">
+    <div class="desert-vignette">
+      <img src="/studio/desert-field-low-poly.webp" width="1536" height="1024" alt="" decoding="async" />
+      <svg viewBox="0 0 900 600" fill="none">
+        <circle class="weather-signal" cx="94" cy="240" r="45" stroke="#75827c" stroke-width="1" stroke-dasharray="3 10"/>
+        <path class="shot-trace" d="M480 186Q650 176 815 230" stroke="#984725" stroke-width="1.3"/>
+        <path class="freight-signal" d="M639 440L751 420L824 466L708 500Z" stroke="#75827c" stroke-width="1" stroke-dasharray="6 8"/>
+        <path class="workshop-signal" d="M650 250L760 234L800 340L686 375Z" stroke="#75827c" stroke-dasharray="3 8"/>
+      </svg>
+    </div>
+  </div>
+</div>
+<style>
+  .desert-background{position:absolute;inset:0;z-index:-1;pointer-events:none}.desert-pin{position:sticky;top:85px;height:calc(100svh - 85px);min-height:350px}.desert-vignette{position:absolute;right:3vw;bottom:6vh;width:min(39vw,500px);opacity:.37;mix-blend-mode:multiply}.desert-vignette img{display:block;width:100%;height:auto;mask-image:radial-gradient(ellipse at 50% 50%,#000 42%,transparent 74%)}svg{position:absolute;inset:0;width:100%;height:100%}.weather-signal{transform-origin:94px 240px;animation:orbit 40s linear infinite;opacity:.45}.shot-trace,.freight-signal,.workshop-signal{opacity:0}.freight-signal{animation:freight 12s linear infinite}:global([data-shot="true"]) .shot-trace{animation:shot 1.4s ease-out both}:global([data-active-channel="freight"]) .freight-signal,:global([data-active-channel="workshop"]) .workshop-signal{opacity:.7}:global([data-motion="paused"]) svg *{animation-play-state:paused!important}
+  @keyframes orbit{to{transform:rotate(360deg)}}@keyframes freight{to{stroke-dashoffset:-56}}@keyframes shot{0%{stroke-dasharray:0 500;opacity:.8}70%{stroke-dasharray:500 500;opacity:.8}100%{stroke-dasharray:500 500;opacity:0}}
+  @media(max-width:760px){.desert-pin{top:77px;height:calc(100svh - 77px)}.desert-vignette{right:-6vw;bottom:9vh;width:min(76vw,390px);opacity:.25}}
+  @media(prefers-reduced-motion:reduce){svg *{animation:none!important}.desert-pin{position:absolute;top:0;height:min(800px,100svh)}}
+</style>

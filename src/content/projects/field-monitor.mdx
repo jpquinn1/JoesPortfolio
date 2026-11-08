@@ -1,0 +1,50 @@
+---
+title: "Broadcast Field Monitor"
+description: "A collector and phone-friendly dashboards that bring equipment health into one view for broadcast field teams."
+screenshot: "../../assets/projects/captures/field-monitor.png"
+screenshotAlt: "Broadcast Field Monitor showing equipment health and battery diagnostics"
+category: "professional"
+role: "Full-stack development"
+status: "Sandbox / field validation"
+highlights:
+  - "Equipment health in one view"
+  - "Queued telemetry and stale-state handling"
+  - "Separate volunteer and admin views"
+tools:
+  - "python"
+  - "react"
+  - "typescript"
+  - "azure"
+  - "postgresql"
+  - "docker"
+tags:
+  - "Field operations"
+  - "Monitoring"
+  - "Mobile web"
+order: 7
+featured: false
+mediaNote: "Running field dashboard with local simulator data, including battery and connectivity scenarios."
+---
+
+## Context
+
+A broadcast cart carries several systems with different failure modes: a radar, router, satellite connection and battery. When a route disappears, a dashboard should not declare every device behind it broken.
+
+## What I built
+
+- **Local collector:** device polling, identity checks, event setup and queued telemetry uploads.
+- **Shared health rules:** distinguish unavailable, unsupported, stale and current readings.
+- **Hosted views:** a phone-friendly volunteer dashboard and a separate administrator interface.
+- **Battery path:** a worker that forwards Azure IoT Hub messages independently of the collector connection.
+
+## Design decisions
+
+Missing data is not zero, and network reachability is not operational readiness. The interface preserves these distinctions so someone in the field can decide what to investigate.
+
+Device readings are deduplicated and ordered, while polling thresholds reduce status flicker. Local and hosted views share the same health logic. Event lifecycle controls support the rhythm of a tournament, including setup and overnight pauses.
+
+## Project overview
+
+The system combines a Python collector, React interfaces, persistent local/cloud state and Azure deployment definitions. A local desktop console supports configuration and network checks; the hosted service makes the resulting information available to people using phones.
+
+The current implementation has local and sandbox deployment evidence. Some device integrations still require live field validation, and the Windows packaging path is separate from a completed release. Simulator scenarios make it possible to examine route loss, stale battery readings and other conditions before connecting the full equipment stack.

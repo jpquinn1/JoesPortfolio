@@ -1,0 +1,55 @@
+---
+title: "Application Tracker"
+description: "A personal workspace for job applications, versioned resumes and a clear history of what happened next."
+screenshot: "../../assets/projects/captures/application-tracker.png"
+screenshotAlt: "Application Tracker dashboard with application statuses and a searchable work queue"
+category: "personal"
+role: "Personal application development"
+status: "Personal / self-hosted"
+highlights:
+  - "Immutable resume versions"
+  - "Searchable application timelines"
+  - "Exports and funnel analytics"
+tools:
+  - "nextjs"
+  - "typescript"
+  - "react"
+  - "postgresql"
+  - "docker"
+tags:
+  - "Personal project"
+  - "Document workflows"
+  - "Analytics"
+order: 20
+featured: true
+mediaNote: "Running application with fictional companies and seeded demo history. These are example outcomes, not personal job-search results."
+gallery:
+  - image: "../../assets/projects/captures/application-tracker-analytics.png"
+    alt: "Application Tracker analytics with a weekly chart and application funnel"
+    caption: "Weekly activity and funnel stages use the event history, with sample-size limits on rates and averages. Demo data shown."
+---
+
+## Context
+
+A job search produces many small pieces of information: a posting, a tailored resume, an application date and a follow-up. The useful record is how those pieces relate over time.
+
+## What I built
+
+- **Application history:** quick capture, duplicate warnings, status changes and a readable event timeline.
+- **Resume provenance:** immutable versions linked to the applications that used them.
+- **Find and compare:** full-text search, JSON/CSV exports and funnel analytics.
+- **A local extension path:** guided resume preparation and reviewed career-context tooling.
+
+## Design decisions
+
+A resume is not just the latest file with a familiar name. Preserving the exact version submitted to a role makes the application history more meaningful.
+
+The data model keeps documents, applications and events connected without losing earlier states. Newer AI-assisted preparation work uses reviewed context and claim approval, so a generated suggestion does not automatically become an accepted career claim.
+
+## Project overview
+
+The core application uses Next.js, TypeScript, PostgreSQL and Drizzle. It is a personal, self-hosted tool built around a single-user workflow, with Docker packaging and private-access deployment documentation.
+
+The committed foundation includes the resume library, event history, search, export and analytics. Newer local work explores document preparation and optional email/workflow integrations. Those extensions are distinct from the core tracker.
+
+This project applies the same operational ideas found in my professional tooling to a personal problem: preserve history, make state visible and give the user a useful next action without requiring a spreadsheet to hold everything together.

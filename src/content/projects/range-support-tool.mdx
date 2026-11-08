@@ -1,0 +1,55 @@
+---
+title: "Range Support Tool 2"
+description: "Targeted contributions and macOS release maintenance for an established radar-support application."
+screenshot: "./range-support-tool-overview.svg"
+screenshotAlt: "Range Support Tool 2 workflow illustration"
+category: "professional"
+role: "Contributor & macOS release maintainer"
+status: "Ongoing maintenance"
+highlights:
+  - "macOS signing and notarization"
+  - "Cross-platform release pipelines"
+  - "Range Studio and cloud integrations"
+tools:
+  - "python"
+  - "qt"
+  - "azure"
+  - "aws"
+  - "git"
+tags:
+  - "Team contribution"
+  - "Desktop releases"
+  - "Support tools"
+order: 4
+featured: true
+mediaNote: "Contribution map showing the release and integration areas I maintain."
+gallery:
+  - image: "../../assets/projects/captures/range-support-tool.png"
+    alt: "Range Support Tool native launcher showing support applications and the Range Sim Studio entry"
+    caption: "The shared tool's native launcher, including the Range Studio entry. Rendered locally without service connections; my work covers selected integrations and macOS delivery."
+---
+
+## Context
+
+Engineering tools need more than working features. Operators also need a dependable way to install them, discover updates and move between related workflows.
+
+## My contributions
+
+- **macOS delivery:** application and DMG packaging, Developer ID signing, notarization and ticket stapling.
+- **Release automation:** platform selection, version stamping and release channels in Azure Pipelines.
+- **Companion workflows:** launch integration and data handoff for Sim Studio and Range Studio.
+- **Selected features:** survey-source archiving, camera exposure controls and cloud-backed update/distribution services.
+
+## Design decisions
+
+A release is a coordinated set of artifacts. The desktop application, its companion tools and the update service need consistent platform and version information.
+
+For macOS, distribution also means handling nested code, signing and notarization as part of the release process. These details matter when an operator copies an application out of its installer and uses it later.
+
+## Project overview
+
+Range Support Tool 2 is an existing shared application. My work is a contribution and maintenance story: keeping the macOS release usable while extending specific operator-facing features and improving how related tools are delivered.
+
+The release pipeline supports bundled companion applications, and the distribution work includes a download portal and update lookup. Survey-file archiving preserves source data and metadata through a presigned upload flow.
+
+This project shows the connection between application development and operational ownership. Packaging, compatibility, user feedback and integration work continue after a feature is written. The broader calibration and support product remains a team-built system.

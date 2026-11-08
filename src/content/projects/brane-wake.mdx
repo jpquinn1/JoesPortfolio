@@ -1,0 +1,56 @@
+---
+title: "Brane Wake"
+description: "A personal music-alarm project with persistent schedules, gradual volume changes and playback through existing home-audio services."
+screenshot: "../../assets/projects/captures/brane-wake.png"
+screenshotAlt: "Brane Wake alarm dashboard with weekday and weekend music schedules"
+category: "personal"
+role: "Personal integration project"
+status: "Personal prototype"
+highlights:
+  - "Persistent alarms and snooze"
+  - "Spotify and Music Assistant integration"
+  - "Volume fades and recovery behavior"
+tools:
+  - "python"
+  - "fastapi"
+  - "react"
+  - "sqlite"
+  - "docker"
+  - "raspberrypi"
+tags:
+  - "Personal project"
+  - "Home audio"
+  - "Automation"
+order: 21
+featured: true
+mediaNote: "Running app in its no-audio simulator, with example alarms and a simulated speaker."
+gallery:
+  - image: "../../assets/projects/captures/brane-wake-alarm.png"
+    alt: "Brane Wake alarm editor with repeat days, music, speaker volume and fade settings"
+    caption: "A single routine brings together the schedule, music, speaker, starting volume and gradual fade. Simulator view."
+---
+
+## Context
+
+A wake-up routine should keep its schedule even when a phone locks or a browser closes. Home audio also introduces practical questions about devices, volume control and who currently owns a playback session.
+
+## Project features
+
+- **Persistent scheduling:** alarms, snooze and recovery behavior backed by SQLite.
+- **Mobile-friendly controls:** a React interface for sources, destinations and routine settings.
+- **Playback integration:** Spotify catalog access and Music Assistant adapters for existing speakers.
+- **Session-aware behavior:** gradual volume changes and respect for someone manually taking control.
+
+## Design decisions
+
+Scheduling runs on the service, independently of the open interface. Restart and missed-schedule handling belong in the application rather than relying on a browser tab to stay alive.
+
+Playback control is also conservative. If a person starts something else, the automation should avoid treating that new session as its own. Device compatibility and real audio behavior require checks beyond a successful API response.
+
+## Project overview
+
+Brane Wake is a local personal integration prototype using FastAPI, React and SQLite. Its deployment work spans Raspberry Pi/systemd and Ubuntu/Docker setups, with migration, rollback and troubleshooting notes.
+
+The project connects existing music and playback systems; Spotify, Music Assistant and AirPlay remain third-party platforms. Local records include short playback and volume-fade checks, while long-idle reliability and device compatibility remain ongoing development areas.
+
+It is an example of a small personal tool with substantial systems detail: persistence, network services, speaker behavior and a simple interface all need to agree for a routine to feel dependable.

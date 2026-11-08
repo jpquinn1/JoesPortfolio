@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import '../../styles/portfolio-work.css';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const professional = projects.filter(({ data }) => data.category !== 'personal');
+const personal = projects.filter(({ data }) => data.category === 'personal');
+---
+
+<Layout title="Projects — Joe Quinn" description="Engineering tools, connected systems and personal software projects by Joe Quinn.">
+  <header class="work-page-header work-section">
+    <p class="section-label">Project collection</p>
+    <h1>Ideas, made useful.</h1>
+    <p>Software for real equipment, real workflows, and the people behind them.</p>
+    <nav class="work-category-links" aria-label="Project categories">
+      <a href="#professional">Professional work <span>{professional.length.toString().padStart(2, '0')}</span></a>
+      <a href="#personal">Personal projects <span>{personal.length.toString().padStart(2, '0')}</span></a>
+    </nav>
+  </header>
+  <section id="professional" class="work-section work-index-group" aria-labelledby="professional-title">
+    <div class="work-section-heading">
+      <div><p class="section-label">01 / Professional</p><h2 id="professional-title">Applications &amp; contributions.</h2></div>
+    </div>
+    <p class="work-section-intro">Original application work, focused team contributions, and engineering prototypes. My role is outlined in each project.</p>
+    <div class="work-grid">{professional.map((project) => <ProjectCard href={`/projects/${project.id}`} {...project.data} />)}</div>
+  </section>
+  {personal.length > 0 && <section id="personal" class="work-section work-index-group work-personal-section" aria-labelledby="personal-title">
+    <div class="work-section-heading"><div><p class="section-label">02 / Personal</p><h2 id="personal-title">Built out of curiosity.</h2></div></div>
+    <p class="work-section-intro">Independent experiments in daily routines, self-hosting, and personal workflows.</p>
+    <div class="work-grid">{personal.map((project) => <ProjectCard href={`/projects/${project.id}`} {...project.data} />)}</div>
+  </section>}
+  <div class="work-section work-closing"><p>Have a practical problem to solve?</p><a href="/studio#contact" class="work-text-link">Work with me <span aria-hidden="true">↗</span></a></div>
+</Layout>

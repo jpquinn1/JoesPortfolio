@@ -1,47 +1,14 @@
 ---
+import '../../styles/portfolio-work.css';
 ---
 
-<section id="about" class="mx-auto max-w-5xl scroll-mt-20 px-6 py-16">
-	<p class="section-label mb-6">About Me</p>
-	<div class="max-w-3xl text-lg leading-relaxed text-muted">
-		<p>
-			I'm an Operations Engineer at <span class="text-fg">TrackMan</span> with a
-			Computer Science &amp; Engineering background from <span class="text-fg"
-				>Ohio State</span
-			>. My work sits at the intersection of software, field systems, radar
-			technology, monitoring, and automation. 
-
-		</p>
-		<br />
-		<p>
-		Before TrackMan, I worked with <span class="text-fg"
-				>PGA TOUR ShotLink</span>, supporting tournament technology,
-			field systems, networking, and operational tooling in live production environments. 
-			I like building practical systems that make technical operations easier — dashboards,
-			scripts, alerting workflows, data pipelines, calibration tools, and physical-device workflows.
-		</p>
-
-	</div>
-
-	{/* Small inline experience logos, shown in full brand color on a
-	    transparent background. Files live in public/images/logos/. */}
-	<div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-4">
-		<span class="font-mono text-xs uppercase tracking-widest text-faint">
-			Experience
-		</span>
-		<img
-			src="/images/logos/trackman.png"
-			alt="TrackMan"
-			class="h-12 w-auto transition-transform duration-200 hover:scale-105"
-			loading="lazy"
-			decoding="async"
-		/>
-		<img
-			src="/images/logos/pga-tour.png"
-			alt="PGA TOUR"
-			class="h-12 w-auto transition-transform duration-200 hover:scale-105"
-			loading="lazy"
-			decoding="async"
-		/>
-	</div>
+<section id="about" class="work-section scroll-mt-20" aria-labelledby="experience-heading">
+  <div class="experience-intro">
+    <div><p class="section-label">The experience behind the work</p><h2 id="experience-heading">From the course<br />to the code.</h2></div>
+    <div><p>I'm an Operations Engineer at TrackMan, with a Computer Science &amp; Engineering background from Ohio State. I build tools that connect field equipment, cloud services, and the people operating them.</p><a href="/about" class="work-text-link">More about my experience <span aria-hidden="true">↗</span></a></div>
+  </div>
+  <div class="experience-proof">
+    <div class="experience-proof-item"><img src="/images/logos/trackman.png" alt="TrackMan" loading="lazy" width="65" height="48" /><div><h3>TrackMan</h3><p>Engineering applications · Radar systems<br />Cloud integrations · Release support</p></div></div>
+    <div class="experience-proof-item"><img src="/images/logos/pga-tour.png" alt="PGA TOUR" loading="lazy" width="65" height="48" /><div><h3>PGA TOUR · ShotLink</h3><p>Field technology · Device tooling<br />Tournament operations · Telemetry</p></div></div>
+  </div>
 </section>

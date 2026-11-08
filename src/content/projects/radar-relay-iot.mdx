@@ -1,0 +1,54 @@
+---
+title: "Radar Relay IoT"
+description: "Embedded firmware, Azure services and commissioning tools for remote radar health monitoring and controlled power recovery."
+screenshot: "../../assets/projects/captures/radar-relay-iot.png"
+screenshotAlt: "Radar Relay fleet dashboard showing grouped sites and controller status"
+category: "professional"
+role: "Device, cloud & desktop development"
+status: "Engineering / bench stage"
+highlights:
+  - "Device identity and provisioning"
+  - "Telemetry and controlled power recovery"
+  - "Desktop commissioning and signed releases"
+tools:
+  - "cpp"
+  - "azure"
+  - "typescript"
+  - "react"
+  - "terraform"
+  - "python"
+tags:
+  - "Embedded systems"
+  - "Azure IoT"
+  - "Device operations"
+order: 2
+featured: true
+mediaNote: "Actual dashboard running in fixture mode with a simulated fleet. Counts illustrate the interface, not a deployed fleet."
+gallery:
+  - image: "../../assets/projects/captures/radar-relay-iot-detail.png"
+    alt: "Radar Relay controller detail with telemetry charts and device state"
+    caption: "Controller detail brings telemetry and device state together. Shown with fixture data."
+---
+
+## Context
+
+A remotely deployed radar may need a physical power cycle even when its network connection is unreliable. The surrounding control system needs to make that action deliberate, observable and recoverable.
+
+## What I built
+
+- **Controller firmware:** relay state, watchdogs, telemetry and hardware abstractions for Opta and ESP32 development.
+- **Cloud services:** device inventory, assignment, provisioning and command lifecycle APIs using Azure Functions and Cosmos DB.
+- **Operator tools:** a React dashboard and a Python-backed desktop commissioning application.
+- **Delivery tooling:** infrastructure definitions, signed firmware artifacts and repeatable installation workflows.
+
+## Design decisions
+
+A controller, its network address and the radar it serves are separate identities. That allows hardware to move or be replaced without rewriting its history.
+
+Commands also have a lifecycle. Requesting a power cycle, receiving an acknowledgement and observing completion are different facts. The UI preserves those differences instead of presenting a successful request as a completed physical action.
+
+## Project overview
+
+This project joins embedded software, cloud architecture and the practical steps required to put a device into service. It began with a local Ethernet/relay prototype and expanded into provisioning, fleet views, desktop installation and engineering release management.
+
+Recent work includes ESP32 Ethernet/Wi-Fi failover and signed firmware update paths. Hosted and bench progress is documented, while field acceptance remains staged. The system's central design requirement is that loss of the controller or cloud connection must not remove radar power. Hardware qualification and broader rollout are separate milestones from implementing the software.

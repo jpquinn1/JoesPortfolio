@@ -1,89 +1,72 @@
 ---
-title: Radar-to-Video Golf Trace Calibration System
-description: A computer vision and 3D projection project for aligning radar-generated ball trajectories with external camera footage.
-screenshot: ./header-image-trace-project.png
+title: "Radar-to-Video Calibration"
+description: "A 3D workspace and camera-calibration pipeline for projecting radar trajectories onto recorded video."
+screenshot: "../../assets/projects/captures/radar-golf-trace-calibration.png"
+screenshotAlt: "3D calibration workspace with a radar trajectory, coordinate axes and virtual camera controls"
+cardVideo:
+  src: "/projects/radar-golf-trace-calibration/ui-and-trace-preview.mp4"
+  poster: "../../assets/projects/radar-video-poster.jpg"
+  label: "UI to real shot · 11 sec"
+category: "professional"
+role: "Application & calibration workflow development"
+status: "Research prototype"
+highlights:
+  - "Reusable camera profiles"
+  - "Interactive 3D alignment"
+  - "Projected trajectory overlays"
+tools:
+  - "python"
+  - "opencv"
+  - "react"
+  - "fastapi"
+  - "blender"
 tags:
-  - Python
-  - OpenCV
-  - ChArUco
-  - 3D Projection
-  - Radar Data
-order: 1
+  - "Computer vision integration"
+  - "3D geometry"
+  - "Video tooling"
+order: 0
 featured: true
-pubDate: 2026-01-15
+mediaNote: "Four seconds of the UI walkthrough, followed by the full rendered shot demo. This illustrates the prototype workflow, not independently measured projection accuracy."
 ---
 
-## Overview
+## Context
 
-This system aligns radar-generated golf ball trajectories with footage from an
-external camera, so a true 3D ball flight can be drawn directly onto video. It
-bridges two coordinate systems — the radar's world-space and the camera's
-image-space — using camera calibration and projection math.
+Radar trajectories and camera footage describe the same event in different coordinate systems. Aligning them requires a camera model, a pose and a consistent treatment of the original trajectory.
 
-## The Problem
+## What I built
 
-Radar produces accurate 3D trajectory data, but that data lives in the radar's
-coordinate frame. To overlay a trace on video, every 3D point has to be mapped
-to the correct pixel in each frame, accounting for the camera's intrinsics,
-position, and orientation relative to the radar.
+- **Trajectory adapters:** normalize source messages into a common shot representation.
+- **Calibration workflow:** reusable camera profiles, lens-distortion parameters and ChArUco-based intrinsic calibration.
+- **3D workspace:** inspect the radar, ball start, virtual camera and projected trace together.
+- **Rendering path:** project the trajectory into image coordinates and export a video overlay.
 
 <figure>
-  <img
-    src="/projects/radar-golf-trace-calibration/range-setup.png"
-    alt="Camera and alignment-pole setup on the range, with the camera positioned behind the hitting area."
-    loading="lazy"
-  />
-  <figcaption>
-    Field setup: external camera positioned behind the hitting area with an
-    alignment pole used to ground the calibration geometry.
-  </figcaption>
+  <img src="/projects/radar-golf-trace-calibration/scene-workspace.png" alt="Interactive 3D workspace showing camera placement, a radar trajectory and calibration controls." loading="lazy" />
+  <figcaption>The workspace connects camera placement with the resulting image projection.</figcaption>
 </figure>
 
-## Approach
+## Design decisions
 
-- **Camera calibration** with ChArUco boards to recover intrinsics and lens
-  distortion.
-- **Extrinsic estimation** to find the camera pose relative to the radar's
-  world origin.
-- **3D → 2D projection** of radar trajectory points into image space per frame.
-- **Trajectory visualization** rendered as a smooth, anti-aliased trace.
+Calibration is saved as data rather than left inside an editing session. Camera intrinsics, pose and scene configuration can be reused by the viewer and renderer, which makes experiments easier to compare.
 
-## Calibration Workspace
+The work integrates OpenCV and existing radar data; it does not replace their underlying algorithms. Visual alignment is useful for development, while projection accuracy still needs explicit validation.
 
-A 3D scene workspace lets me inspect the radar trajectory, camera frustum, and
-projected trace together, then tune the virtual camera, ball start, radar
-position, and target direction until the overlay locks to the footage.
+## Project overview
+
+The prototype combines a Python projection/rendering layer with FastAPI and a React Three Fiber workspace. Related Blender experiments explore the same geometry through a separate scene workflow.
+
+My committed application baseline covers the calibration, projection and web experience. Later desktop-launcher work extends the local workflow. The emphasis is repeatable experimentation: preserve the camera model, inspect how a 3D flight maps into pixels, and review the rendered result.
 
 <figure>
-  <img
-    src="/projects/radar-golf-trace-calibration/scene-workspace.png"
-    alt="3D scene workspace showing the radar trajectory, camera frustum, projection overlay, and calibration controls."
-    loading="lazy"
-  />
-  <figcaption>
-    The interactive 3D workspace used to align the virtual camera, radar frame,
-    and 2D projection before rendering.
-  </figcaption>
-</figure>
-
-<figure>
-  <video controls playsInline preload="metadata" muted>
+  <video controls playsinline preload="metadata" muted>
     <source src="/projects/radar-golf-trace-calibration/app-demo.mp4" type="video/mp4" />
   </video>
-  <figcaption>App demo: walking through the calibration and tracing workflow.</figcaption>
+  <figcaption>Application walkthrough of the calibration and tracing workflow.</figcaption>
 </figure>
 
-## Outcome
-
-A repeatable calibration workflow that produces accurate, broadcast-style trace
-overlays from raw radar data and standard camera footage.
-
 <figure>
-  <video controls playsInline preload="metadata" muted>
+  <video controls playsinline preload="metadata" muted>
     <source src="/projects/radar-golf-trace-calibration/final-trace.mp4" type="video/mp4" />
   </video>
-  <figcaption>
-    Final result: the radar trajectory projected and drawn onto the camera
-    footage as a broadcast-style trace.
-  </figcaption>
+  <figcaption>Rendered trajectory overlay from the prototype workflow.</figcaption>
 </figure>

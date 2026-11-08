@@ -1,41 +1,16 @@
 ---
+import TechStack from '../TechStack.astro';
+import '../../styles/portfolio-work.css';
 const areas = [
-	{
-		title: 'Computer Vision & 3D Systems',
-		description:
-			'Camera calibration, OpenCV, ChArUco boards, coordinate systems, projection, trajectory visualization.',
-	},
-	{
-		title: 'Operations Automation',
-		description:
-			'Python scripts, AWS Lambda, API Gateway, DynamoDB, alerts, ticket enrichment, workflow automation.',
-	},
-	{
-		title: 'Field Systems & Networking',
-		description:
-			'Radar deployments, local networks, Linux systems, IP troubleshooting, range/site architecture.',
-	},
-	{
-		title: 'Monitoring & Dashboards',
-		description:
-			'Grafana, Splunk, alerting, metrics enrichment, operational visibility.',
-	},
+  { title: 'Connected field systems', description: 'Device provisioning, telemetry, remote commands, and practical recovery workflows.' },
+  { title: 'Cloud & support automation', description: 'APIs, alert-to-ticket pipelines, operational dashboards, and dependable data handoffs.' },
+  { title: 'Engineering applications', description: 'Desktop tools, geospatial views, camera calibration, and shared simulation workflows.' },
+  { title: 'Delivery & maintenance', description: 'macOS releases, cross-platform packaging, infrastructure, and operator runbooks.' },
 ];
 ---
 
-<section id="focus" class="mx-auto max-w-5xl scroll-mt-20 px-6 py-16">
-	<p class="section-label mb-6">Technical Focus</p>
-
-	<div class="grid gap-4 sm:grid-cols-2">
-		{
-			areas.map((area) => (
-				<div class="card p-6">
-					<h3 class="text-lg font-semibold tracking-tight">{area.title}</h3>
-					<p class="mt-2 text-sm leading-relaxed text-muted">
-						{area.description}
-					</p>
-				</div>
-			))
-		}
-	</div>
+<section id="focus" class="work-section scroll-mt-20" aria-labelledby="focus-title">
+  <div class="work-section-heading"><div><p class="section-label">What I work on</p><h2 id="focus-title">Across the system.</h2></div></div>
+  <div class="focus-list">{areas.map((area, index) => <div class="focus-item"><span class="focus-item-number">0{index + 1}</span><div><h3>{area.title}</h3><p>{area.description}</p></div></div>)}</div>
+  <div class="focus-tools"><p class="work-fact-label">Core tools</p><TechStack tools={['python', 'typescript', 'react', 'azure', 'aws', 'docker']} /></div>
 </section>
