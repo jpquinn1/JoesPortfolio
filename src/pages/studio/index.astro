@@ -1,82 +1,97 @@
 ---
 import StudioLayout from '../../layouts/StudioLayout.astro';
-import { getEntry } from 'astro:content';
-import { Image } from 'astro:assets';
-import WorkflowExplorer from '../../components/studio/WorkflowExplorer.astro';
+import OperationsDemo from '../../components/studio/OperationsDemo.astro';
+import ServiceOutcomes from '../../components/studio/ServiceOutcomes.astro';
+import ConnectedToolkit from '../../components/studio/ConnectedToolkit.astro';
 import CapabilityMap from '../../components/studio/CapabilityMap.astro';
-import ContactForm from '../../components/studio/ContactForm.astro';
-import DesertScene from '../../components/studio/DesertScene.astro';
-import DesertTelemetry from '../../components/studio/DesertTelemetry.astro';
-import ServiceTabs from '../../components/studio/ServiceTabs.astro';
+import WorkflowExplorer from '../../components/studio/WorkflowExplorer.astro';
 import ProjectCarousel from '../../components/studio/ProjectCarousel.astro';
-import ProjectVideo from '../../components/ProjectVideo.astro';
+import ContactForm from '../../components/studio/ContactForm.astro';
 import { founder, contact } from '../../data/studio';
-const rangeStudio = await getEntry('projects', 'range-studio');
+import '../../styles/studio-refresh.css';
+
 const steps = [
-  {number:'01',title:'Understand',description:'Start with the work and the people doing it.'},
-  {number:'02',title:'Prototype',description:'See a useful first version. Refine it together.'},
-  {number:'03',title:'Build',description:'Deliver in clear, tested stages.'},
-  {number:'04',title:'Improve',description:'Support the system as your business evolves.'},
+  { number: '01', title: 'Define', description: 'Review the current workflow, requirements, and scope.' },
+  { number: '02', title: 'Prototype', description: 'Test an initial version with the people who will use it.' },
+  { number: '03', title: 'Build & support', description: 'Implement, test, and deploy. Document the system and plan ongoing support.' },
 ];
 ---
-<StudioLayout>
-  <section class="opening" aria-labelledby="hero-title" data-desert-experience data-active-channel="weather" data-motion="paused">
-    <DesertScene />
-    <div class="intro studio-shell">
-      <div class="intro-copy">
-        <p class="eyebrow">Independent engineering · Phoenix & beyond</p>
-        <h1 id="hero-title">Software that makes<br class="desktop-break" /> operations <em>run better.</em></h1>
-        <p class="intro-description">Custom software. Practical automation. Connected systems.</p>
-        <div class="intro-actions"><a href="#contact" class="studio-button">Discuss a project <span aria-hidden="true">↗</span></a><a href="#work" class="studio-text-link">Explore the work <span aria-hidden="true">↓</span></a></div>
+<StudioLayout
+  theme="technical"
+  title="Quinn Software Studio — Software, automation & connected systems"
+  description="Custom applications, workflow integrations, and telemetry systems by Joe Quinn. Independent software engineering in Phoenix, Arizona."
+>
+  <div class="studio-refresh" data-studio-motion="off">
+    <section class="studio-hero" aria-labelledby="hero-title">
+      <div class="studio-shell pitch-shell">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="availability-dot" aria-hidden="true"></span>Independent software engineering</p>
+          <h1 id="hero-title">Software, automation<br /><span>& connected systems.</span></h1>
+          <p class="hero-description">I design and build applications, integrations, and telemetry systems for businesses.</p>
+          <div class="hero-actions"><a href="#work" class="studio-button">View projects <span aria-hidden="true">↗</span></a><a href="#contact" class="studio-text-link">Discuss a project <span aria-hidden="true">↓</span></a></div>
+        </div>
+        <div class="hero-demo" id="studio-demo"><OperationsDemo /></div>
+        <div class="hero-footnote"><span>Forms / workflows / telemetry</span><span>Phoenix, AZ <span aria-hidden="true">·</span> Local & remote projects</span></div>
       </div>
-      <div class="intro-footer"><DesertTelemetry /><a href="#studio-demo" class="intro-scroll">See it in action <span aria-hidden="true">↓</span></a></div>
-    </div>
-    {rangeStudio && <div class="opening-showcase studio-shell" id="studio-demo">
-      <div class="opening-media-caption"><p>Range Studio.</p><span>INTERNAL ENGINEERING SOFTWARE</span></div>
-      {rangeStudio.data.cardVideo ? <div class="opening-screen"><ProjectVideo title={rangeStudio.data.title} video={rangeStudio.data.cardVideo} /></div> : <a class="opening-screen opening-screen-link" href="/projects/range-studio" aria-label="Explore the Range Studio project"><Image class="opening-app-image" src={rangeStudio.data.screenshot} alt={rangeStudio.data.screenshotAlt ?? 'Range Studio project preview'} widths={[640, 1024, 1600, 2200]} sizes="(max-width: 760px) 90vw, 1060px" loading="eager" /></a>}
-      <div class="opening-project-caption"><p>{rangeStudio.data.mediaNote ?? 'Internal application development at TrackMan.'}</p><a href="/projects/range-studio">Explore the project ↗</a></div>
-    </div>}
-  </section>
+    </section>
 
-  <section id="services" class="studio-section services-showcase" aria-labelledby="services-title">
-    <div class="studio-shell showcase-shell"><div class="showcase-heading"><p class="eyebrow">01 / What we build</p><h2 id="services-title">Built around your business.</h2></div><ServiceTabs /></div>
-  </section>
+    <section id="services" class="studio-section outcomes-section" aria-labelledby="services-title">
+      <div class="studio-shell pitch-shell">
+        <div class="pitch-heading"><p class="eyebrow">01 / Services</p><h2 id="services-title">Project examples</h2><p>A few ways custom software can support everyday operations.</p></div>
+        <ServiceOutcomes />
+        <p class="illustration-note">Illustrative interfaces with sample data. Scope depends on the workflow.</p>
+      </div>
+    </section>
 
-  <section id="work" class="studio-section work-showcase" aria-labelledby="work-title">
-    <div class="studio-shell showcase-heading work-heading"><div><p class="eyebrow">02 / Selected work</p><h2 id="work-title">Built for real operations.</h2></div><a href="/projects" class="studio-text-link">All projects <span aria-hidden="true">↗</span></a></div>
-    <ProjectCarousel />
-    <p class="project-disclosure studio-shell">Professional in-house applications and contributions, with my role and project status explained in each case study. These are separate from Studio client work.</p>
-  </section>
+    <section id="capabilities" class="studio-section studio-dark toolkit-section" aria-labelledby="capabilities-title">
+      <div class="studio-shell pitch-shell">
+        <div class="pitch-heading"><p class="eyebrow">02 / Integrations</p><h2 id="capabilities-title">How the pieces connect</h2><p>Forms, existing tools, and equipment can share data through APIs and automated workflows.</p></div>
+        <ConnectedToolkit />
+        <div class="technical-details">
+          <details class="more-detail"><summary>Engineering capabilities <span aria-hidden="true">+</span></summary><div class="detail-content"><CapabilityMap /></div></details>
+          <details class="more-detail workflow-detail" id="explorer"><summary>Additional workflow examples <span aria-hidden="true">+</span></summary><div class="detail-content"><WorkflowExplorer /></div></details>
+        </div>
+      </div>
+    </section>
 
-  <section id="capabilities" class="studio-section studio-dark engineering-section" aria-labelledby="engineering-title">
-    <div class="studio-shell showcase-shell">
-      <div class="engineering-intro"><p class="eyebrow">03 / The whole system</p><h2 id="engineering-title">From the front desk<br />to the field.</h2><p>Interfaces, automation, and connected equipment.<br />One engineer who understands how they fit together.</p></div>
-      <div class="engineering-topics" aria-label="Engineering capabilities"><span>Applications</span><span>Cloud & APIs</span><span>Automation & AI</span><span>Connected equipment</span></div>
-      <details class="more-detail"><summary>Explore the engineering <span aria-hidden="true">+</span></summary><div class="detail-content"><CapabilityMap /></div></details>
-      <details class="more-detail workflow-detail" id="explorer"><summary>Find a starting point <span aria-hidden="true">+</span></summary><div class="detail-content"><WorkflowExplorer /></div></details>
-    </div>
-  </section>
+    <section id="work" class="studio-section work-section" aria-labelledby="work-title">
+      <div class="studio-shell pitch-shell work-heading"><div class="pitch-heading"><p class="eyebrow">03 / Selected work</p><h2 id="work-title">Engineering projects</h2><p>Applications, automation, and connected equipment I’ve built or contributed to.</p></div><a href="/projects" class="studio-text-link">All projects <span aria-hidden="true">↗</span></a></div>
+      <ProjectCarousel />
+      <p class="project-disclosure studio-shell">Professional in-house work and contributions, separate from Studio client projects. Each case study explains my role and the project’s status.</p>
+    </section>
 
-  <section class="studio-section approach-section" aria-labelledby="approach-title">
-    <div class="studio-shell showcase-shell"><div class="showcase-heading"><p class="eyebrow">04 / A direct partnership</p><h2 id="approach-title">A clear path forward.</h2></div><ol class="approach-steps">{steps.map(step=><li><span>{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></li>)}</ol></div>
-  </section>
+    <section id="about" class="studio-section partnership-section" aria-labelledby="about-title">
+      <div class="studio-shell pitch-shell">
+        <div class="founder-grid">
+          <div class="founder-photo"><img src={founder.image} alt="Joe Quinn, founder of Quinn Software Studio" width="640" height="640" loading="lazy" decoding="async" /></div>
+          <div class="pitch-heading"><p class="eyebrow">04 / About</p><h2 id="about-title">Joe Quinn</h2><p>My background spans application development, cloud services, and equipment in the field. I work directly with businesses on design, implementation, and support.</p><p class="founder-experience">TrackMan · PGA TOUR ShotLink<br />Computer Science & Engineering · Ohio State</p><a href="/about" class="studio-text-link">More about me <span aria-hidden="true">↗</span></a></div>
+        </div>
+        <ol class="approach-steps" aria-label="How we work together">{steps.map(step => <li><span>{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></li>)}</ol>
+      </div>
+    </section>
 
-  <section id="about" class="studio-section founder-section" aria-labelledby="about-title">
-    <div class="studio-shell founder-grid"><div class="founder-photo"><img src={founder.image} alt="Joe Quinn, founder of Quinn Software Studio" width="640" height="640" loading="lazy" decoding="async" /></div><div><p class="eyebrow">05 / Meet Joe</p><h2 id="about-title">Your engineer.<br />From idea to field.</h2><p>I build software for real-world operations. My background spans applications, cloud systems, and equipment in the field.</p><p class="founder-experience">TrackMan · PGA TOUR ShotLink · Ohio State</p><a href="/about" class="studio-text-link">More about me <span aria-hidden="true">↗</span></a></div></div>
-  </section>
-
-  <section id="contact" class="studio-section studio-dark inquiry-section" aria-labelledby="contact-title">
-    <div class="studio-shell inquiry-grid"><div class="inquiry-copy"><p class="eyebrow">06 / Start a conversation</p><h2 id="contact-title">What could<br />work <em>better?</em></h2><p>Tell me what slows you down.<br />We’ll find a useful place to start.</p><a class="inquiry-email" href={contact.emailHref}>{contact.email} <span aria-hidden="true">↗</span></a><span class="inquiry-location">PHOENIX, ARIZONA · WORKING BEYOND IT</span></div><ContactForm /></div>
-  </section>
+    <section id="contact" class="studio-section studio-dark inquiry-section" aria-labelledby="contact-title">
+      <div class="studio-shell pitch-shell inquiry-grid"><div class="pitch-heading inquiry-copy"><p class="eyebrow">05 / Contact</p><h2 id="contact-title">Discuss a project</h2><p>Describe the workflow, the systems involved, and what you’d like to change. An initial idea is enough to start.</p><a class="inquiry-email" href={contact.emailHref}>{contact.email} <span aria-hidden="true">↗</span></a><span class="inquiry-location">Phoenix, Arizona · Local & remote projects</span></div><ContactForm /></div>
+    </section>
+  </div>
 </StudioLayout>
 
-<style>
-  .opening{position:relative;isolation:isolate;overflow:clip;padding-bottom:110px}.intro{min-height:min(830px,calc(100svh - 85px));display:flex;flex-direction:column;position:relative;padding-top:95px}.intro-copy{text-align:center;margin:auto 0}.intro-copy>.eyebrow{font-size:.59rem;letter-spacing:.13em;color:#6e7964;margin-bottom:30px}.intro h1{font-size:clamp(3.5rem,6.25vw,6.2rem);line-height:1.055;letter-spacing:-.065em;max-width:1130px;margin:0 auto;text-wrap:balance}.intro h1 em{font-style:normal;color:var(--studio-accent)}.intro-description{font-size:1.02rem;color:#6b7164;margin:27px auto 0;line-height:1.7;max-width:560px}.intro-actions{display:flex;justify-content:center;gap:28px;align-items:center;flex-wrap:wrap;margin-top:31px}.intro-actions .studio-button{font-size:.78rem}.intro-actions .studio-text-link{font-size:.78rem}.intro-footer{display:flex;align-items:end;justify-content:space-between;gap:24px;padding:75px 0 38px;margin-top:20px}.intro-scroll{font:.61rem var(--font-jetbrains-mono),monospace;color:#6e7964;display:flex;align-items:center;gap:24px;min-height:44px}.opening-showcase{position:relative;max-width:1120px;padding-top:18px}.opening-media-caption{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:20px}.opening-media-caption p{font-size:1.1rem;font-weight:500;letter-spacing:-.03em}.opening-media-caption>span{font:.5rem var(--font-jetbrains-mono),monospace;letter-spacing:.1em;color:#7c8472}.opening-screen{padding:28px;background:#dce0d190;border:1px solid #adb99b55;border-radius:22px;box-shadow:0 30px 75px #3440330c;backdrop-filter:blur(7px)}.opening-screen :global(.demo-shell){box-shadow:none}.opening-screen :global(.showcase-asset){border-radius:12px;aspect-ratio:16/9;object-fit:contain}
-  .showcase-shell{max-width:1120px}.showcase-heading{margin-bottom:40px}.showcase-heading .eyebrow{font-size:.59rem;margin-bottom:20px}.showcase-heading h2{font-size:clamp(2.25rem,3.9vw,3.55rem);letter-spacing:-.05em;line-height:1.1}.services-showcase{background:#e9e4d9;border-block:1px solid #75827c25}.work-showcase{background:#e5e7dc;overflow:clip}.work-heading{display:flex;justify-content:space-between;align-items:end;gap:30px;max-width:1120px}.work-heading>.studio-text-link{font-size:.75rem;color:#66775b;flex:none}.project-disclosure{font-size:.65rem;color:#77816d;text-align:center;max-width:700px;margin-top:27px;line-height:1.7}.engineering-intro{text-align:center}.engineering-intro h2{font-size:clamp(2.7rem,5vw,4.6rem);margin:25px 0;line-height:1.07}.engineering-intro>p:last-child{font-size:.95rem;color:#bfc8b2;line-height:1.8}.engineering-topics{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:38px 0 55px}.engineering-topics>span{padding:10px 18px;border:1px solid #66785a75;border-radius:24px;font-size:.72rem;color:#d2dcc5}.more-detail{border-top:1px solid #74816755}.more-detail:last-child{border-bottom:1px solid #74816755}.more-detail>summary{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 0;list-style:none;cursor:pointer;font-size:.88rem;color:#e3e7d6}.more-detail>summary::-webkit-details-marker{display:none}.more-detail>summary>span{font-size:1.3rem;color:#b6c7a1}.more-detail[open]>summary>span{transform:rotate(45deg)}.detail-content{padding:28px 0 45px}.workflow-detail .detail-content{padding:35px;border-radius:16px;background:#f1e9dd;margin-bottom:30px}.approach-steps{padding:0;margin:0;list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:35px}.approach-steps li{border-top:1px solid #b4bda7;padding-top:24px}.approach-steps li>span{font:.63rem var(--font-jetbrains-mono),monospace;color:#7f8b71}.approach-steps h3{font-size:1.28rem;margin:29px 0 12px}.approach-steps p{font-size:.81rem;color:#707967;line-height:1.7;max-width:210px}.founder-section{background:#e9e4d9;border-top:1px solid #75827c25}.founder-grid{max-width:1000px;display:grid;grid-template-columns:.7fr 1fr;align-items:center;gap:95px}.founder-photo img{display:block;width:100%;aspect-ratio:1;object-fit:cover;object-position:50% 35%;filter:saturate(.65);border-radius:18px}.founder-grid h2{font-size:clamp(2.4rem,4vw,3.7rem);margin:22px 0;line-height:1.08}.founder-grid>div>p:not(.eyebrow){color:#68715f;font-size:.9rem;line-height:1.8;max-width:430px}.founder-grid>div>p.founder-experience{font-size:.69rem;margin:22px 0 13px;color:#7b826f}.founder-grid .studio-text-link{font-size:.78rem}.inquiry-grid{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:start}.inquiry-copy h2{font-size:clamp(3.6rem,5.7vw,5.2rem);line-height:1.07;margin:25px 0}.inquiry-copy h2 em{font-style:normal;color:#d8b895}.inquiry-copy>p:not(.eyebrow){font-size:.95rem;line-height:1.8;color:#c2cbb6}.inquiry-email{display:flex;align-items:center;gap:25px;width:fit-content;margin:35px 0 15px;font-size:.92rem;min-height:44px}.inquiry-location{display:block;font:.5rem var(--font-jetbrains-mono),monospace;letter-spacing:.1em;color:#acb99d}
-  @media(min-width:1600px){.intro{padding-top:110px}.intro-footer{padding-top:100px}}
-  @media(max-width:1080px){.intro{padding-top:65px}.intro h1{font-size:clamp(3.5rem,6.3vw,5rem)}.founder-grid{gap:55px}.inquiry-grid{gap:50px}.intro-footer{padding-top:65px}}
-  @media(max-width:760px){.opening{padding-bottom:65px}.intro{min-height:calc(100svh - 77px);padding-top:65px}.intro h1{font-size:clamp(3.05rem,9vw,4.5rem);line-height:1.08}.desktop-break{display:none}.intro-copy>.eyebrow{font-size:.46rem;letter-spacing:.07em;margin-bottom:25px}.intro-description{font-size:.87rem;max-width:300px;margin-top:22px}.intro-actions{gap:15px;margin-top:26px}.intro-actions .studio-button,.intro-actions .studio-text-link{font-size:.7rem;gap:15px}.intro-actions .studio-button{padding:.8rem 1rem}.intro-footer{padding:90px 0 26px;align-items:start}.intro-scroll{font-size:0;gap:0}.intro-scroll span{font-size:1rem}.opening-showcase{padding-top:10px}.opening-screen{padding:10px;border-radius:15px}.opening-media-caption{margin-bottom:14px;gap:10px}.opening-media-caption p{font-size:.92rem}.opening-media-caption>span{font-size:.43rem}.showcase-heading{margin-bottom:30px}.showcase-heading h2{font-size:2.3rem}.showcase-heading .eyebrow{font-size:.53rem;margin-bottom:16px}.work-heading{align-items:start;flex-direction:column;gap:15px}.work-heading>.studio-text-link{font-size:.7rem}.project-disclosure{font-size:.58rem;margin-top:22px}.engineering-intro>p:last-child{font-size:.87rem}.engineering-topics{gap:8px;margin:30px 0 38px}.engineering-topics>span{font-size:.65rem;padding:9px 14px}.workflow-detail .detail-content{padding:20px}.more-detail>summary{font-size:.81rem}.approach-steps{grid-template-columns:1fr 1fr;gap:30px 24px}.approach-steps h3{font-size:1.18rem;margin-top:22px}.founder-grid{grid-template-columns:1fr;gap:32px}.founder-photo{max-width:240px}.founder-grid h2{margin-top:18px}.inquiry-grid{grid-template-columns:1fr;gap:38px}.inquiry-copy h2{font-size:3.7rem}.inquiry-email{margin-top:23px}.inquiry-location{font-size:.46rem}}
-  @media(max-width:360px){.intro{padding-top:45px}.intro h1{font-size:2.85rem}.intro-footer{gap:8px}.intro-scroll{display:none}.intro-actions{gap:12px}.intro-description{font-size:.82rem}.inquiry-email{font-size:.82rem}}
-  .opening-screen-link{display:block;text-decoration:none}.opening-app-image{display:block;width:100%;height:auto;border-radius:12px}.opening-project-caption{display:flex;justify-content:space-between;align-items:start;gap:25px;margin-top:17px;color:#68715f;font-size:.7rem;line-height:1.7}.opening-project-caption p{max-width:720px}.opening-project-caption a{flex-shrink:0;text-decoration:none;min-height:44px;display:flex;align-items:center}.opening-project-caption a:hover{text-decoration:underline;text-underline-offset:4px}
-  @media(max-width:760px){.opening-project-caption{flex-direction:column;gap:3px;font-size:.63rem}.opening-app-image{border-radius:8px}}
-</style>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-studio-motion]').forEach(root => {
+    const button = root.querySelector<HTMLButtonElement>('[data-studio-motion-toggle]');
+    if (!button) return;
+    const preference = matchMedia('(prefers-reduced-motion: reduce)');
+    let paused = preference.matches;
+    const sync = () => {
+      root.dataset.studioMotion = paused || document.hidden ? 'off' : 'on';
+      button.disabled = preference.matches;
+      button.querySelector('[data-motion-label]')!.textContent = preference.matches ? 'Reduced motion' : paused ? 'Play motion' : 'Pause motion';
+      button.querySelector('[aria-hidden]')!.textContent = paused ? '▷' : 'Ⅱ';
+    };
+    button.hidden = false;
+    button.addEventListener('click', () => { paused = !paused; sync(); });
+    preference.addEventListener('change', event => { paused = event.matches; sync(); });
+    document.addEventListener('visibilitychange', sync);
+    sync();
+  });
+</script>

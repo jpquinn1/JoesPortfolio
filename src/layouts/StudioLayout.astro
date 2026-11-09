@@ -5,8 +5,8 @@ import SpeedInsights from '@vercel/speed-insights/astro';
 import { brand, contact, founder, services } from '../data/studio';
 import '../styles/studio.css';
 import '../styles/studio-desert.css';
-interface Props { title?: string; description?: string; }
-const { title = `${brand.name} — ${brand.headline}`, description = `${brand.description} ${brand.locationLine}` } = Astro.props;
+interface Props { title?: string; description?: string; theme?: 'desert' | 'technical'; }
+const { title = `${brand.name} — ${brand.headline}`, description = `${brand.description} ${brand.locationLine}`, theme = 'desert' } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const image = new URL(`${brand.basePath}/social-preview.png`, Astro.site);
 const [wordmarkName, ...wordmarkDescriptor] = brand.name.split(' ');
@@ -16,11 +16,11 @@ const nav = [{label:'Services',id:'services'},{label:'Work',id:'work'},{label:'C
 const schema = { '@context':'https://schema.org', '@type':'ProfessionalService', name:brand.name, url:new URL(brand.basePath,Astro.site).href, description, image:image.href, email:contact.email, founder:{'@type':'Person',name:founder.name,url:new URL(founder.portfolioHref,Astro.site).href}, address:{'@type':'PostalAddress',addressLocality:city,addressRegion:region,addressCountry:'US'}, hasOfferCatalog:{'@type':'OfferCatalog',name:'Software engineering services',itemListElement:services.map(service=>({'@type':'Offer',itemOffered:{'@type':'Service',name:service.title}}))} };
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" class:list={{ 'studio-technical-root': theme === 'technical' }}>
   <head>
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title><meta name="description" content={description} />
-    <meta name="theme-color" content="#252A2C" />
+    <meta name="theme-color" content={theme === 'technical' ? '#0a0b0d' : '#252A2C'} />
     <link rel="canonical" href={canonical} /><link rel="icon" type="image/svg+xml" href={`${brand.basePath}/mark.svg`} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:type" content="website" /><meta property="og:site_name" content={brand.name} />
@@ -41,7 +41,7 @@ const schema = { '@context':'https://schema.org', '@type':'ProfessionalService',
       };
     </script>
   </head>
-  <body class="studio-body studio-desert">
+  <body class:list={['studio-body', `studio-${theme}`]}>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <header class="studio-header">
       <nav class="studio-shell studio-nav" aria-label="Studio navigation">
@@ -59,8 +59,8 @@ const schema = { '@context':'https://schema.org', '@type':'ProfessionalService',
     </header>
     <main id="main-content"><slot /></main>
     <footer class="studio-footer">
-      <div class="studio-shell footer-top"><a class="footer-brand" href={brand.basePath}>{brand.name}<span>Practical software. Connected operations.</span></a><div><a href={`${brand.basePath}#contact`}>Let’s talk ↗</a><a href={founder.portfolioHref}>{founderFirstName}’s technical portfolio ↗</a></div></div>
-      <div class="studio-shell footer-bottom"><p>© {new Date().getFullYear()} {founder.name} · {brand.location}</p><a href={`${brand.basePath}/privacy`}>Privacy</a><span>Independent by design.</span></div>
+      <div class="studio-shell footer-top"><a class="footer-brand" href={brand.basePath}>{brand.name}<span>Software · Automation · Connected systems</span></a><div><a href={`${brand.basePath}#contact`}>Contact ↗</a><a href={founder.portfolioHref}>{founderFirstName}’s technical portfolio ↗</a></div></div>
+      <div class="studio-shell footer-bottom"><p>© {new Date().getFullYear()} {founder.name} · {brand.location}</p><a href={`${brand.basePath}/privacy`}>Privacy</a><span>Independent software engineering.</span></div>
     </footer>
     <Analytics />
     <SpeedInsights />

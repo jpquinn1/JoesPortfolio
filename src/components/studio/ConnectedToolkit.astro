@@ -1,0 +1,45 @@
+---
+import Icon from './WorkflowIcon.astro';
+const tools = [
+  { id: 'python', name: 'Python', role: 'Custom logic' },
+  { id: 'aws', name: 'AWS', role: 'Cloud services' },
+  { id: 'postgresql', name: 'PostgreSQL', role: 'Data storage' },
+  { id: 'grafana', name: 'Grafana', role: 'Monitoring' },
+];
+---
+<div class="connected-toolkit">
+  <div class="toolkit-flow" aria-label="Forms, email, and equipment connect through automation to team workflows and client updates">
+    <div class="toolkit-endpoints">
+      <div><span class="endpoint-icon"><Icon name="form" size={20} /></span><span>Forms & email<small>Capture the request</small></span></div>
+      <div><span class="endpoint-icon"><Icon name="sheet" size={20} /></span><span>Your existing tools<small>Read & sync records</small></span></div>
+      <div><span class="endpoint-icon"><Icon name="device" size={20} /></span><span>Equipment & sensors<small>Collect readings</small></span></div>
+    </div>
+    <svg class="connection-lines input-lines" viewBox="0 0 100 220" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M0 32H25Q50 32 50 57V85Q50 110 75 110H100M0 110H100M0 188H25Q50 188 50 163V135Q50 110 75 110"/><path class="flowing-line" d="M0 32H25Q50 32 50 57V85Q50 110 75 110H100M0 110H100M0 188H25Q50 188 50 163V135Q50 110 75 110"/></svg>
+    <div class="automation-hub"><div class="hub-graphic"><Icon name="workflow" size={33} /></div><strong>Connected workflows</strong><span>Route · Validate · Follow up</span><div class="n8n-option"><span class="n8n-name">n8n</span><span>Exploring for<br />upcoming projects</span></div></div>
+    <svg class="connection-lines output-lines" viewBox="0 0 100 220" preserveAspectRatio="none" fill="none" aria-hidden="true"><path d="M0 110H25Q50 110 50 85V57Q50 32 75 32H100M0 110H100M0 110H25Q50 110 50 135V163Q50 188 75 188H100"/><path class="flowing-line" d="M0 110H25Q50 110 50 85V57Q50 32 75 32H100M0 110H100M0 110H25Q50 110 50 135V163Q50 188 75 188H100"/></svg>
+    <div class="toolkit-endpoints">
+      <div><span class="endpoint-icon"><Icon name="check" size={20} /></span><span>Jobs & assignments<small>Ownership & status</small></span></div>
+      <div><span class="endpoint-icon"><Icon name="chat" size={20} /></span><span>Client updates<small>Progress & next steps</small></span></div>
+      <div><span class="endpoint-icon"><Icon name="signal" size={20} /></span><span>Dashboards & alerts<small>Status & exceptions</small></span></div>
+    </div>
+  </div>
+  <div class="backend-tools"><p>Example tools</p><ul>{tools.map(tool => <li><span class="tool-logo"><img src={`/images/tools/${tool.id}.svg`} width="25" height="25" alt="" loading="lazy" /></span><span><strong>{tool.name}</strong><small>{tool.role}</small></span></li>)}</ul></div>
+  <p class="toolkit-note">Tools are selected for the integration, data, and hosting requirements.</p>
+</div>
+<style>
+  .connected-toolkit { margin-top: 47px; }
+  .toolkit-flow { display: grid; grid-template-columns: 1fr 70px 205px 70px 1fr; align-items: center; }
+  .toolkit-endpoints { display: grid; gap: 15px; }
+  .toolkit-endpoints>div { display: flex; align-items: center; gap: 13px; padding: 15px; border: 1px solid var(--studio-border); background: var(--studio-surface); border-radius: 8px; min-height: 64px; }
+  .endpoint-icon { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--studio-accent-line); border-radius: 7px; color: var(--studio-accent); flex: none; }
+  .toolkit-endpoints>div>span:last-child { font-size: .76rem; font-weight: 500; }.toolkit-endpoints small { display: block; color: var(--studio-muted); font-size: .59rem; font-weight: 400; margin-top: 3px; }
+  .connection-lines { width: 100%; height: 220px; overflow: visible; stroke: var(--studio-border); stroke-width: 1; }.connection-lines .flowing-line { stroke: var(--studio-accent); stroke-dasharray: 5 120; animation: connection 10s linear infinite; }
+  .automation-hub { padding: 24px 14px 15px; text-align: center; border: 1px solid var(--studio-accent-line); border-radius: 12px; background: var(--studio-accent-soft); box-shadow: 0 0 0 7px var(--studio-shadow); }
+  .hub-graphic { color: var(--studio-accent); margin-bottom: 12px; }.automation-hub>strong { display: block; font-size: .83rem; font-weight: 500; }.automation-hub>span { display: block; color: var(--studio-muted); font: .53rem var(--font-jetbrains-mono),monospace; margin-top: 7px; }
+  .n8n-option { display: flex; align-items: center; justify-content: center; gap: 13px; border-top: 1px solid var(--studio-accent-line); margin-top: 20px; padding-top: 13px; text-align: left; }.n8n-name { font-size: 1.3rem; font-weight: 700; letter-spacing: -.04em; color: #ea6e90; }.n8n-option>span:last-child { font-size: .53rem; color: var(--studio-muted); line-height: 1.5; }
+  .backend-tools { display: flex; align-items: center; gap: 40px; margin-top: 44px; padding-top: 27px; border-top: 1px solid var(--studio-border); }.backend-tools>p { font: .56rem/1.6 var(--font-jetbrains-mono),monospace; color: var(--studio-muted); text-transform: uppercase; letter-spacing: .06em; }.backend-tools ul { padding: 0; margin: 0; list-style: none; display: flex; justify-content: space-between; flex: 1; gap: 20px; }.backend-tools li { display: flex; align-items: center; gap: 11px; }.tool-logo { width: 38px; height: 38px; border-radius: 8px; background: #e2e8f0; display: grid; place-items: center; flex: none; }.tool-logo img { width: 25px; height: 25px; object-fit: contain; }.backend-tools strong { display: block; font-size: .75rem; font-weight: 500; }.backend-tools small { display: block; color: var(--studio-muted); font-size: .56rem; margin-top: 2px; }.toolkit-note { font-size: .66rem; color: var(--studio-muted); margin-top: 24px; line-height: 1.7; }
+  @keyframes connection { to { stroke-dashoffset: -500; } }
+  @media(max-width:1000px) { .toolkit-flow { grid-template-columns: 1fr 30px 185px 30px 1fr; }.toolkit-endpoints>div { gap: 9px; padding: 11px; }.toolkit-endpoints>div>span:last-child { font-size: .67rem; }.toolkit-endpoints small { font-size: .52rem; }.backend-tools { gap: 25px; }.backend-tools ul { gap: 15px; }.backend-tools li { gap: 8px; } }
+  @media(max-width:760px) { .toolkit-flow { grid-template-columns: 1fr; justify-items: center; }.toolkit-endpoints { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; width: 100%; }.toolkit-endpoints>div { flex-direction: column; align-items: flex-start; gap: 10px; padding: 13px 11px; }.toolkit-endpoints small { font-size: .55rem; line-height: 1.6; }.connection-lines { width: 80px; height: 60px; transform: rotate(90deg); margin-block: 8px; }.automation-hub { width: 235px; }.backend-tools { display: block; margin-top: 32px; }.backend-tools ul { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }.backend-tools strong { font-size: .8rem; }.backend-tools small { font-size: .63rem; }.toolkit-note { font-size: .69rem; }.connected-toolkit { margin-top: 32px; } }
+  @media(max-width:380px) { .toolkit-endpoints { gap: 5px; }.toolkit-endpoints>div { padding: 10px 8px; }.toolkit-endpoints>div>span:last-child { font-size: .6rem; }.toolkit-endpoints small { font-size: .5rem; } }
+</style>
