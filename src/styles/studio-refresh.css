@@ -71,6 +71,29 @@ body.studio-technical :focus-visible { outline-color: var(--studio-accent); }
 .studio-technical .skip-link { background: var(--studio-accent); color: var(--studio-bg); }
 
 .studio-refresh { font-family: var(--font-inter), Arial, sans-serif; }
+/* Separate phone composition keeps the saguaros in view instead of cropping a wide scene. */
+.studio-refresh :is(.studio-hero,.outcomes-section,.work-section,.partnership-section),
+.studio-technical .studio-footer {
+  position: relative;
+  isolation: isolate;
+  --desert-position: center top;
+  --desert-size: max(100%, 1440px) auto;
+}
+.studio-refresh :is(.studio-hero,.outcomes-section,.work-section,.partnership-section)::before,
+.studio-technical .studio-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url('/studio/sonoran-background.svg') var(--desert-position) / var(--desert-size) no-repeat;
+  opacity: .2;
+}
+.studio-refresh .outcomes-section { --desert-position: center -65px; }
+.studio-refresh .work-section { --desert-position: center -150px; }
+.studio-refresh .partnership-section::before { transform: scaleX(-1); }
+.studio-technical .studio-footer { --desert-position: right 55%; --desert-size: max(100%, 1200px) auto; }
+.studio-technical .studio-footer::before { opacity: .14; }
 .studio-refresh .pitch-shell { max-width: 1120px; }
 .studio-refresh h1,.studio-refresh h2,.studio-refresh h3 { font-family: var(--pitch-mono); font-weight: 500; }
 .studio-refresh .eyebrow { color: var(--studio-accent); font-size: .66rem; line-height: 1.7; letter-spacing: .09em; }
@@ -164,6 +187,15 @@ body.studio-technical :focus-visible { outline-color: var(--studio-accent); }
   .studio-refresh .studio-hero { padding-top: 54px; }
 }
 @media(max-width:760px) {
+  .studio-refresh :is(.studio-hero,.outcomes-section,.work-section,.partnership-section),
+  .studio-technical .studio-footer { --desert-size: 100% auto; }
+  .studio-refresh :is(.studio-hero,.outcomes-section,.work-section,.partnership-section)::before,
+  .studio-technical .studio-footer::before { background-image: url('/studio/sonoran-background-mobile.svg'); }
+  .studio-refresh .studio-hero { --desert-position: center top; }
+  .studio-refresh .outcomes-section { --desert-position: center 20px; }
+  .studio-refresh .work-section { --desert-position: center -35px; }
+  .studio-refresh .partnership-section { --desert-position: center top; }
+  .studio-technical .studio-footer { --desert-position: right bottom; }
   .studio-technical .studio-nav { min-height: 76px; }
   .studio-refresh .studio-section { padding-block: 62px; }
   .studio-refresh .studio-hero { padding-top: 36px; padding-bottom: 0; }

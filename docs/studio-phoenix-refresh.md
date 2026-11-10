@@ -37,6 +37,7 @@ results. Existing professional-project roles and maturity descriptions stay inta
 - Pale stone page background `#f3f1eb`, including the header, hero, and footer. The workflow panel, project slides, pilot, integrations, and contact sections retain neutral charcoal `#292a2d`, with raised surfaces `#303236` and `#383a3f`.
 - Original Q wordmark, Inter body, JetBrains Mono headings, and restrained teal accents.
 - Hand-authored SVG saguaros, a sun outline, mountain ridges, and terrain contours live in `src/components/studio/PhoenixWorkflow.astro`.
+- Faint SVG cactus, mountain, and terrain outlines also appear across the pale stone hero, services, work, about, and footer backgrounds. A separate narrow composition keeps the cactus and ridgeline visible in the first phone view. These static CSS backgrounds have no accessibility-tree content, pointer targets, or additional JavaScript.
 - Three examples rotate every 9.6 seconds: request → job record → team update, quote → due date → follow-up, and reading → alert → team check. Each has three animated steps and its own fictional sample metrics, labeled visibly.
 - Selecting an example pauses the animation and rotation. A play/pause control resumes or freezes both. Keyboard focus in the example selectors also pauses rotation; reduced-motion preferences leave manual selection available.
 - Updates are not live-region announcements. The first example's semantic steps and sample metrics remain readable without JavaScript. Motion pauses offscreen and in hidden tabs.
