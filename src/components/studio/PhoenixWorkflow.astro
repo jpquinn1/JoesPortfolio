@@ -1,27 +1,35 @@
 ---
-import Icon from './WorkflowIcon.astro';
-const scenarios = [
+import ToolMark from './ToolMark.astro';
+import { studioTools, type StudioTool } from '../../data/studio-tools';
+interface Scenario {
+  id: string; label: string; heading: string; description: string;
+  stages: { label: string; tool: StudioTool }[];
+  events: string[];
+  metrics: { label: string; value: string; note?: string }[];
+  sparkline: string;
+}
+const scenarios: Scenario[] = [
   {
     id: 'intake', label: 'Job intake', heading: 'One request. Connected steps.',
-    description: 'Request becomes a job record and a team update',
-    stages: [{ label: 'Request', icon: 'form' }, { label: 'Job record', icon: 'sheet' }, { label: 'Team update', icon: 'mail' }],
-    events: ['Request details captured', 'Job record created', 'Team update sent'],
+    description: 'A request in Google Sheets is assigned through n8n, then shared in Slack',
+    stages: [{ label: 'Request', tool: 'sheets' }, { label: 'Assign job', tool: 'n8n' }, { label: 'Team update', tool: 'slack' }],
+    events: ['Request row received', 'Job assigned to the team', 'Slack update sent'],
     metrics: [{ label: 'Requests', value: '12' }, { label: 'Assigned', value: '11', note: 'Ready for the team' }, { label: 'To review', value: '01', note: 'A person decides' }],
     sparkline: 'm1 17 9-2 8 1 9-6 9 3 9-7 8 3 10-6 11-1',
   },
   {
     id: 'followup', label: 'Follow-ups', heading: 'A quote. A timely follow-up.',
-    description: 'A quote gets a due date and a follow-up reminder',
-    stages: [{ label: 'Quote', icon: 'sheet' }, { label: 'Due date', icon: 'clock' }, { label: 'Follow-up', icon: 'mail' }],
-    events: ['Quote sent to customer', 'Follow-up scheduled', 'Reminder sent'],
+    description: 'A quote in Excel gets a follow-up scheduled through n8n and sent with Gmail',
+    stages: [{ label: 'Quote', tool: 'excel' }, { label: 'Schedule', tool: 'n8n' }, { label: 'Follow-up', tool: 'gmail' }],
+    events: ['Quote ready for follow-up', 'Follow-up scheduled', 'Gmail follow-up sent'],
     metrics: [{ label: 'Quotes', value: '08' }, { label: 'Scheduled', value: '05', note: 'Reminders queued' }, { label: 'To review', value: '03', note: 'Your team follows up' }],
     sparkline: 'm1 17 10 0 8-4 9 1 8-5 9 1 9-4 10 0 10-3',
   },
   {
     id: 'equipment', label: 'Equipment', heading: 'A signal. A clear next step.',
-    description: 'An equipment reading triggers an alert and an assigned check',
-    stages: [{ label: 'Reading', icon: 'signal' }, { label: 'Alert', icon: 'mail' }, { label: 'Team check', icon: 'client' }],
-    events: ['Equipment reading received', 'Threshold alert raised', 'Check assigned to a person'],
+    description: 'A Grafana alert is routed through n8n to a team check in Slack',
+    stages: [{ label: 'Reading', tool: 'grafana' }, { label: 'Route alert', tool: 'n8n' }, { label: 'Team check', tool: 'slack' }],
+    events: ['Equipment reading received', 'Threshold alert routed', 'Slack check sent to the team'],
     metrics: [{ label: 'Monitored', value: '06' }, { label: 'In range', value: '05', note: 'Within set limits' }, { label: 'To check', value: '01', note: 'Assigned for review' }],
     sparkline: 'm1 12 10-1 8 2 8-3 9 2 9-8 9 2 10 4 10-2',
   },
@@ -56,7 +64,10 @@ const scenarios = [
           </g>)}
         </svg>
         <ol aria-label={scenario.description}>
-          {scenario.stages.map((stage, index) => <li data-stage={index}><span class="step-symbol"><span class="step-glyph"><Icon name={stage.icon} size={23} /></span></span><span class="step-label">{stage.label}</span></li>)}
+          {scenario.stages.map((stage, index) => <li data-stage={index}>
+            <span class="step-symbol" data-tool={stage.tool}><span class="step-glyph"><ToolMark tool={stage.tool} size={stage.tool === 'n8n' ? 36 : 26} loading="eager" /></span></span>
+            <span class="step-label"><span>{studioTools[stage.tool].name}</span><span class="step-action">{stage.label}</span></span>
+          </li>)}
         </ol>
       </div>
       <div class="sketch-event"><span class="event-check" aria-hidden="true">✓</span>{scenario.events.map((event, index) => <span data-scene-event hidden={index !== 0}>{event}</span>)}</div>
@@ -195,9 +206,11 @@ const scenarios = [
   .sketch-dot { width: 5px; height: 5px; background: var(--studio-copper); border-radius: 50%; flex: none; }
   .sketch-route { position: relative; margin-top: 27px; }
   .sketch-route ol { position: relative; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; padding: 0; margin: 0; list-style: none; }
-  .sketch-route li { display: grid; justify-items: center; gap: 12px; color: var(--studio-muted); font-size: .75rem; text-align: center; line-height: 1.5; }
-  .step-label { letter-spacing: .025em; color: var(--studio-fg); min-height: 3em; }
-  .step-symbol { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid #686c75; background: var(--studio-bg); border-radius: 11px; transition: border-color .35s,color .35s,background .35s; }
+  .sketch-route li { display: grid; grid-template-rows: 52px auto; align-content: start; justify-items: center; gap: 12px; color: var(--studio-muted); font-size: .75rem; text-align: center; line-height: 1.5; }
+  .step-label { display: grid; align-content: start; gap: 3px; letter-spacing: .025em; color: var(--studio-fg); min-height: 3em; }
+  .step-action { color: var(--studio-muted); font-size: .65rem; letter-spacing: .015em; }
+  .step-symbol { --step-fill: #f8f7f2; position: relative; display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid #d0cdc5; background: var(--step-fill); border-radius: 11px; transition: border-color .35s,box-shadow .35s; }
+  .step-symbol[data-tool="n8n"] { --step-fill: var(--studio-bg); border-color: #686c75; }
   .step-glyph { display: grid; place-items: center; }
   .step-symbol::after { content: ''; position: absolute; inset: -1px; border: 1px solid var(--studio-accent); border-radius: inherit; opacity: 0; pointer-events: none; }
   .route-lines { position: absolute; inset: 0 0 auto; width: 100%; height: 56px; fill: none; stroke: #777b8560; stroke-width: 1; }
@@ -207,7 +220,7 @@ const scenarios = [
   [data-step="0"] [aria-hidden="false"] .route-packet[data-hop="0"], [data-step="1"] [aria-hidden="false"] .route-packet[data-hop="1"] { animation: send-packet 3.2s linear both; }
   [data-step="0"] [aria-hidden="false"] [data-stage="0"] .step-symbol,
   [data-step="1"] [aria-hidden="false"] [data-stage="1"] .step-symbol,
-  [data-step="2"] [aria-hidden="false"] [data-stage="2"] .step-symbol { color: var(--studio-accent); border-color: #80e1cd99; background: #2b3938; }
+  [data-step="2"] [aria-hidden="false"] [data-stage="2"] .step-symbol { border-color: var(--studio-accent); box-shadow: 0 0 0 3px #80e1cd18; }
   [data-step="0"] [aria-hidden="false"] [data-stage="0"] .step-symbol::after,
   [data-step="1"] [aria-hidden="false"] [data-stage="1"] .step-symbol::after,
   [data-step="2"] [aria-hidden="false"] [data-stage="2"] .step-symbol::after { animation: arrival-ping .8s ease-out both; }

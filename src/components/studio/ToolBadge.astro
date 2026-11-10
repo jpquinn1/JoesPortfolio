@@ -1,24 +1,16 @@
 ---
-import Icon from './WorkflowIcon.astro';
-interface Props { tool: 'excel' | 'sheets' | 'gmail' | 'slack' | 'grafana'; compact?: boolean; }
+import ToolMark from './ToolMark.astro';
+import { studioTools, type StudioTool } from '../../data/studio-tools';
+interface Props { tool: StudioTool; compact?: boolean; }
 const { tool, compact = false } = Astro.props;
-const tools = {
-  excel: { name: 'Excel', icon: 'sheet', color: '#217346' },
-  sheets: { name: 'Google Sheets', icon: 'sheet', color: '#23834e' },
-  gmail: { name: 'Gmail', icon: 'mail', color: '#b84e42' },
-  slack: { name: 'Slack', icon: 'chat', color: '#72527e' },
-  grafana: { name: 'Grafana', icon: 'signal', color: '#b76b22' },
-};
-const item = tools[tool];
-const logos: Partial<Record<Props['tool'], string>> = { sheets: 'google-sheets', gmail: 'gmail', slack: 'slack', grafana: 'grafana' };
+const item = studioTools[tool];
 ---
-<span class:list={['tool-badge', { compact }]} style={`--tool-color:${item.color}`}>
-  <span class="tool-symbol">{logos[tool] ? <img src={`/images/tools/${logos[tool]}.svg`} width={compact ? 15 : 21} height={compact ? 15 : 21} alt="" loading="lazy" /> : <Icon name={item.icon} size={compact ? 15 : 21} />}</span>
+<span class:list={['tool-badge', { compact }]}>
+  <span class="tool-symbol"><ToolMark tool={tool} size={compact ? 15 : 21} /></span>
   <span>{item.name}</span>
 </span>
 <style>
   .tool-badge { display: inline-flex; align-items: center; gap: 10px; min-width: 0; color: var(--studio-fg); font: 500 .85rem/1.4 var(--font-inter),Arial,sans-serif; letter-spacing: .01em; }
-  .tool-symbol { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 9px; color: var(--tool-color); background: #f8f7f2; border: 1px solid #d0cdc5; }
+  .tool-symbol { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 9px; background: #f8f7f2; border: 1px solid #d0cdc5; }
   .compact { gap: 7px; font-size: .75rem; color: var(--studio-muted); }.compact .tool-symbol { width: 26px; height: 26px; border-radius: 6px; }
-  .tool-symbol img { width: 21px; height: 21px; object-fit: contain; }.compact .tool-symbol img { width: 15px; height: 15px; }
 </style>

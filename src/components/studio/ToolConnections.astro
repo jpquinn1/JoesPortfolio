@@ -1,13 +1,13 @@
 ---
 import ToolBadge from './ToolBadge.astro';
-import Icon from './WorkflowIcon.astro';
+import ToolMark from './ToolMark.astro';
 ---
 <figure class="tool-connections" data-tool-connections data-running="false" aria-label="Example: spreadsheet rows are checked and assigned, then sent to a team or email update">
   <figcaption><div><p class="eyebrow">Your everyday tools</p><h3>From spreadsheet to next step.</h3></div><button type="button" data-flow-toggle hidden>Pause flow</button></figcaption>
   <div class="tool-pipeline">
     <div class="tool-endpoints inputs"><div><ToolBadge tool="excel" /><small>A new row</small></div><div><ToolBadge tool="sheets" /><small>A form response</small></div></div>
     <div class="pipeline-link" aria-hidden="true"><span></span><i></i></div>
-    <div class="pipeline-action"><span class="automation-symbol"><Icon name="workflow" size={28} /></span><div><strong>Check & assign</strong><span>One clear next step</span></div><span class="action-check" aria-hidden="true">✓</span></div>
+    <div class="pipeline-action"><span class="automation-symbol"><ToolMark tool="n8n" size={38} /></span><div><strong>Check & assign</strong><span>Example with n8n</span></div><span class="action-check" aria-hidden="true">✓</span></div>
     <div class="pipeline-link second-link" aria-hidden="true"><span></span><i></i></div>
     <div class="tool-endpoints outputs"><div><ToolBadge tool="slack" /><small>Notify your team</small></div><div><ToolBadge tool="gmail" /><small>Send an update</small></div></div>
   </div>
@@ -42,7 +42,7 @@ import Icon from './WorkflowIcon.astro';
   .tool-pipeline { display: grid; grid-template-columns: 1fr 65px 1.1fr 65px 1fr; align-items: center; }
   .tool-endpoints { display: grid; gap: 12px; }.tool-endpoints>div { display: grid; gap: 6px; padding: 12px 15px; border: 1px solid var(--studio-border); border-radius: 9px; background: var(--studio-bg); }.tool-endpoints small { color: var(--studio-muted); font-size: .75rem; padding-left: 46px; }
   .pipeline-action { display: flex; align-items: center; gap: 13px; padding: 24px 17px; position: relative; border: 1px solid var(--studio-accent-line); border-radius: 11px; background: var(--studio-accent-soft); }
-  .automation-symbol { display: grid; place-items: center; color: var(--studio-accent); flex: none; }.pipeline-action strong { display: block; font: 500 .85rem/1.5 var(--pitch-mono); }.pipeline-action div>span { display: block; font-size: .75rem; color: var(--studio-muted); margin-top: 5px; }
+  .automation-symbol { display: grid; place-items: center; width: 52px; height: 52px; background: #292a2d; border: 1px solid #686c75; border-radius: 11px; flex: none; }.pipeline-action strong { display: block; font: 500 .85rem/1.5 var(--pitch-mono); }.pipeline-action div>span { display: block; font-size: .75rem; color: var(--studio-muted); margin-top: 5px; }
   .action-check { position: absolute; right: -7px; top: -7px; display: grid; place-items: center; width: 22px; height: 22px; background: var(--studio-accent); color: var(--studio-bg); border-radius: 50%; animation: pipeline-check 7s infinite; }
   .pipeline-link { position: relative; height: 28px; }.pipeline-link span { position: absolute; inset: 50% 0 auto; height: 1px; background: var(--studio-accent-line); }.pipeline-link i { position: absolute; top: 11px; left: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--studio-accent); box-shadow: 0 0 0 4px #23685d10; animation: pipeline-packet 7s infinite; }
   .second-link span { transform: scaleX(-1); }.second-link i { animation-delay: 2.4s; }
