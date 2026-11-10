@@ -1,10 +1,11 @@
 ---
 import { SITE_TITLE, SOCIALS } from '../consts';
+import { studioHref } from '../lib/studio-urls';
 const links = [
   { href: '/projects', label: 'Work' },
   { href: '/about', label: 'Experience' },
   { href: '/resume', label: 'Resume' },
-  { href: '/studio', label: 'Studio ↗' },
+  { href: studioHref(), label: 'Studio ↗' },
   { href: '/life', label: 'Life' },
   { href: '/#contact', label: 'Contact' },
 ];

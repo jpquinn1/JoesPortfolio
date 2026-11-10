@@ -8,27 +8,29 @@ import WorkflowExplorer from '../../components/studio/WorkflowExplorer.astro';
 import ProjectCarousel from '../../components/studio/ProjectCarousel.astro';
 import ContactForm from '../../components/studio/ContactForm.astro';
 import { founder, contact } from '../../data/studio';
+import { portfolioHref } from '../../lib/studio-urls';
 import '../../styles/studio-refresh.css';
 
 const steps = [
-  { number: '01', title: 'Define', description: 'Review the current workflow, requirements, and scope.' },
-  { number: '02', title: 'Prototype', description: 'Test an initial version with the people who will use it.' },
-  { number: '03', title: 'Build & support', description: 'Implement, test, and deploy. Document the system and plan ongoing support.' },
+  { number: '01', title: 'Discuss one workflow', description: 'Walk through your current tools, the repeated work, and where time gets lost. Choose one useful result to focus on.' },
+  { number: '02', title: 'Agree on a paid pilot', description: 'Review a written scope, price, timeline, and success criteria. You approve these before any paid work begins.' },
+  { number: '03', title: 'Test it with your team', description: 'Try the pilot on real work and review the result together. Then decide on rollout, handoff, or further support.' },
 ];
 ---
 <StudioLayout
   theme="technical"
-  title="Quinn Software Studio — Software, automation & connected systems"
-  description="Custom applications, workflow integrations, and telemetry systems by Joe Quinn. Independent software engineering in Phoenix, Arizona."
+  title="Quinn Software Studio — Less manual admin for service & production teams"
+  description="Forms, workflow automation, and connected tools that reduce manual admin for service and production teams. Work directly with Joe Quinn, starting with one scoped, paid pilot. Phoenix, AZ and remote."
 >
   <div class="studio-refresh" data-studio-motion="off">
     <section class="studio-hero" aria-labelledby="hero-title">
       <div class="studio-shell pitch-shell">
         <div class="hero-copy">
           <p class="eyebrow"><span class="availability-dot" aria-hidden="true"></span>Independent software engineering</p>
-          <h1 id="hero-title">Software, automation<br /><span>& connected systems.</span></h1>
-          <p class="hero-description">I design and build applications, integrations, and telemetry systems for businesses.</p>
-          <div class="hero-actions"><a href="#work" class="studio-button">View projects <span aria-hidden="true">↗</span></a><a href="#contact" class="studio-text-link">Discuss a project <span aria-hidden="true">↓</span></a></div>
+          <h1 id="hero-title">Less manual admin<br /><span>for service & production teams.</span></h1>
+          <p class="hero-description">I build forms, workflows, and connected tools that reduce repeat data entry, organize client follow-ups, and make equipment issues easier to track.</p>
+          <div class="hero-actions"><a href="#contact" class="studio-button">Discuss one workflow <span aria-hidden="true">↗</span></a><a href="#work" class="studio-text-link">View projects <span aria-hidden="true">↓</span></a></div>
+          <p class="hero-start">A short conversation, then a scoped, paid pilot if there’s a fit.</p>
         </div>
         <div class="hero-demo" id="studio-demo"><OperationsDemo /></div>
         <div class="hero-footnote"><span>Forms / workflows / telemetry</span><span>Phoenix, AZ <span aria-hidden="true">·</span> Local & remote projects</span></div>
@@ -43,9 +45,26 @@ const steps = [
       </div>
     </section>
 
+    <section id="process" class="studio-section pilot-section" aria-labelledby="process-title">
+      <div class="studio-shell pitch-shell">
+        <div class="pitch-heading"><p class="eyebrow">02 / How it works</p><h2 id="process-title">Start with one workflow.</h2><p>A small, paid pilot gives your team something practical to evaluate before deciding what comes next.</p></div>
+        <ol class="approach-steps" aria-label="From first conversation to paid pilot">{steps.map(step => <li><span>{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></li>)}</ol>
+        <div class="pilot-example">
+          <div><p class="eyebrow">Example pilot</p><p>A service request form that creates a job record and notifies the right person.</p><p class="pilot-measure">Review the time spent re-entering requests and whether handoffs are being missed.</p></div>
+          <a class="studio-text-link" href="#contact">Discuss one workflow <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="work" class="studio-section work-section" aria-labelledby="work-title">
+      <div class="studio-shell pitch-shell work-heading"><div class="pitch-heading"><p class="eyebrow">03 / Selected work</p><h2 id="work-title">Engineering projects</h2><p>Applications, automation, and connected equipment I’ve built or contributed to.</p></div><a href={portfolioHref('/projects')} class="studio-text-link">All projects <span aria-hidden="true">↗</span></a></div>
+      <ProjectCarousel />
+      <p class="project-disclosure studio-shell">Professional in-house work and contributions, separate from Studio client projects. Each case study explains my role and the project’s status.</p>
+    </section>
+
     <section id="capabilities" class="studio-section studio-dark toolkit-section" aria-labelledby="capabilities-title">
       <div class="studio-shell pitch-shell">
-        <div class="pitch-heading"><p class="eyebrow">02 / Integrations</p><h2 id="capabilities-title">How the pieces connect</h2><p>Forms, existing tools, and equipment can share data through APIs and automated workflows.</p></div>
+        <div class="pitch-heading"><p class="eyebrow">04 / Integrations</p><h2 id="capabilities-title">How the pieces connect</h2><p>The workflow determines the tools. Forms, existing software, and equipment can share data through APIs and automation.</p></div>
         <ConnectedToolkit />
         <div class="technical-details">
           <details class="more-detail"><summary>Engineering capabilities <span aria-hidden="true">+</span></summary><div class="detail-content"><CapabilityMap /></div></details>
@@ -54,24 +73,17 @@ const steps = [
       </div>
     </section>
 
-    <section id="work" class="studio-section work-section" aria-labelledby="work-title">
-      <div class="studio-shell pitch-shell work-heading"><div class="pitch-heading"><p class="eyebrow">03 / Selected work</p><h2 id="work-title">Engineering projects</h2><p>Applications, automation, and connected equipment I’ve built or contributed to.</p></div><a href="/projects" class="studio-text-link">All projects <span aria-hidden="true">↗</span></a></div>
-      <ProjectCarousel />
-      <p class="project-disclosure studio-shell">Professional in-house work and contributions, separate from Studio client projects. Each case study explains my role and the project’s status.</p>
-    </section>
-
     <section id="about" class="studio-section partnership-section" aria-labelledby="about-title">
       <div class="studio-shell pitch-shell">
         <div class="founder-grid">
           <div class="founder-photo"><img src={founder.image} alt="Joe Quinn, founder of Quinn Software Studio" width="640" height="640" loading="lazy" decoding="async" /></div>
-          <div class="pitch-heading"><p class="eyebrow">04 / About</p><h2 id="about-title">Joe Quinn</h2><p>My background spans application development, cloud services, and equipment in the field. I work directly with businesses on design, implementation, and support.</p><p class="founder-experience">TrackMan · PGA TOUR ShotLink<br />Computer Science & Engineering · Ohio State</p><a href="/about" class="studio-text-link">More about me <span aria-hidden="true">↗</span></a></div>
+          <div class="pitch-heading"><p class="eyebrow">05 / About</p><h2 id="about-title">Joe Quinn</h2><p>My background spans application development, cloud services, and equipment in the field. You work directly with me on design, implementation, and support.</p><p class="founder-experience">TrackMan · PGA TOUR ShotLink<br />Computer Science & Engineering · Ohio State</p><a href={portfolioHref('/about')} class="studio-text-link">More about me <span aria-hidden="true">↗</span></a></div>
         </div>
-        <ol class="approach-steps" aria-label="How we work together">{steps.map(step => <li><span>{step.number}</span><h3>{step.title}</h3><p>{step.description}</p></li>)}</ol>
       </div>
     </section>
 
     <section id="contact" class="studio-section studio-dark inquiry-section" aria-labelledby="contact-title">
-      <div class="studio-shell pitch-shell inquiry-grid"><div class="pitch-heading inquiry-copy"><p class="eyebrow">05 / Contact</p><h2 id="contact-title">Discuss a project</h2><p>Describe the workflow, the systems involved, and what you’d like to change. An initial idea is enough to start.</p><a class="inquiry-email" href={contact.emailHref}>{contact.email} <span aria-hidden="true">↗</span></a><span class="inquiry-location">Phoenix, Arizona · Local & remote projects</span></div><ContactForm /></div>
+      <div class="studio-shell pitch-shell inquiry-grid"><div class="pitch-heading inquiry-copy"><p class="eyebrow">06 / Contact</p><h2 id="contact-title">Discuss one workflow.</h2><p>What does your team repeat, copy between tools, or chase by email? A few sentences are enough. I’ll reply to arrange a short conversation.</p><p class="inquiry-next">If there’s a fit, the next step is a written proposal for one paid pilot.</p><a class="inquiry-email" href={contact.emailHref}>{contact.email} <span aria-hidden="true">↗</span></a><span class="inquiry-location">Phoenix, Arizona · Local & remote projects</span></div><ContactForm /></div>
     </section>
   </div>
 </StudioLayout>

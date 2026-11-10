@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { portfolioHref } from '../../lib/studio-urls';
 import { Image } from 'astro:assets';
 import TechStack from '../TechStack.astro';
 import ProjectVideo from '../ProjectVideo.astro';
@@ -20,9 +21,9 @@ const total = String(projects.length).padStart(2, '0');
   <div class="project-rail" data-project-rail tabindex="0" aria-label="Scroll through projects. Use left and right arrow keys." role="list">
     {projects.map((project,index) => <article class="project-slide" data-project-slide role="listitem" aria-label={`${index + 1} of ${projects.length}: ${project.presentation.title}`}>
       <header class="project-slide-heading"><p>{project.data.role} · {project.data.status}</p><h3 id={`project-${project.id}`}>{project.presentation.title}</h3><div class="project-slide-summary">{project.presentation.description}</div>{project.presentation.contribution && <p class="project-contribution"><strong>My contribution:</strong> {project.presentation.contribution}</p>}</header>
-      {project.data.cardVideo ? <div class="project-visual"><ProjectVideo title={project.presentation.title} video={project.data.cardVideo} /></div> : <a class="project-visual" href={`/projects/${project.id}`} aria-label={`Explore ${project.presentation.title}`}><Image class="project-capture" src={project.data.screenshot} alt={project.data.screenshotAlt ?? `${project.presentation.title} preview`} widths={[640, 1024, 1600]} sizes="(max-width: 760px) 80vw, 900px" loading="lazy" /></a>}
+      {project.data.cardVideo ? <div class="project-visual"><ProjectVideo title={project.presentation.title} video={project.data.cardVideo} /></div> : <a class="project-visual" href={portfolioHref(`/projects/${project.id}`)} aria-label={`Explore ${project.presentation.title}`}><Image class="project-capture" src={project.data.screenshot} alt={project.data.screenshotAlt ?? `${project.presentation.title} preview`} widths={[640, 1024, 1600]} sizes="(max-width: 760px) 80vw, 900px" loading="lazy" /></a>}
       <div class="project-tools"><TechStack tools={project.data.tools.slice(0,4)} compact /></div>
-      <footer class="project-slide-footer"><span>{String(index + 1).padStart(2, '0')} / {total}</span><a href={`/projects/${project.id}`} aria-label={`Read about ${project.presentation.title}`}>Explore the project <span aria-hidden="true">↗</span></a></footer>
+      <footer class="project-slide-footer"><span>{String(index + 1).padStart(2, '0')} / {total}</span><a href={portfolioHref(`/projects/${project.id}`)} aria-label={`Read about ${project.presentation.title}`}>Explore the project <span aria-hidden="true">↗</span></a></footer>
     </article>)}
   </div>
   <div class="carousel-controls" hidden>

@@ -1,0 +1,31 @@
+name: Site checks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Test inquiry handling and domain routing
+        run: node --test tests/*.test.js
+      - name: Build both websites
+        run: npm run build
+      - name: Check production pages and canonical URLs
+        run: node scripts/check-studio-build.mjs

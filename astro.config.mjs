@@ -11,7 +11,14 @@ import react from '@astrojs/react';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://joequinn.dev',
-  integrations: [mdx(), sitemap(), react()],
+  integrations: [
+    mdx(),
+    sitemap({
+      // Studio has its own canonical domain and sitemap on the same deployment.
+      filter: (page) => !new URL(page).pathname.startsWith('/studio'),
+    }),
+    react(),
+  ],
 
   fonts: [
     {
