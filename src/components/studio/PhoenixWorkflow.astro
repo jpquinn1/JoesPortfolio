@@ -42,13 +42,21 @@ const scenarios = [
     </g>
   </svg>
 
+  <figcaption><span>Illustrative workflow · sample data</span><button type="button" data-scene-toggle hidden>Pause motion</button></figcaption>
   <div class="workflow-sketch">
+    <div class="scenario-viewport" data-scenario-viewport>
     {scenarios.map((scenario, index) => <div id={`workflow-${scenario.id}`} class="scenario-panel" data-scenario-panel role="group" aria-label={scenario.label} hidden={index !== 0}>
       <div class="sketch-heading"><span class="sketch-dot" aria-hidden="true"></span>{scenario.heading}</div>
       <div class="sketch-route">
-        <svg class="route-lines" viewBox="0 0 300 48" preserveAspectRatio="none" aria-hidden="true"><path d="M45 24H255" pathLength="100" /><path class="route-packet" d="M45 24H255" pathLength="100" /></svg>
+        <svg class="route-lines" viewBox="0 0 300 56" preserveAspectRatio="none" aria-hidden="true">
+          {[0, 1].map(hop => <g transform={`translate(${hop * 100} 0)`}>
+            <path d="M50 26H76Q84 26 84 34V38Q84 46 92 46H108Q116 46 116 38V34Q116 26 124 26H150" />
+            <path class="route-packet packet-trail" data-hop={hop} d="M50 26H76Q84 26 84 34V38Q84 46 92 46H108Q116 46 116 38V34Q116 26 124 26H150" pathLength="100" />
+            <path class="route-packet packet-head" data-hop={hop} d="M50 26H76Q84 26 84 34V38Q84 46 92 46H108Q116 46 116 38V34Q116 26 124 26H150" pathLength="100" />
+          </g>)}
+        </svg>
         <ol aria-label={scenario.description}>
-          {scenario.stages.map((stage, index) => <li data-stage={index}><span class="step-symbol"><Icon name={stage.icon} size={21} /></span><span>{stage.label}</span></li>)}
+          {scenario.stages.map((stage, index) => <li data-stage={index}><span class="step-symbol"><span class="step-glyph"><Icon name={stage.icon} size={23} /></span></span><span class="step-label">{stage.label}</span></li>)}
         </ol>
       </div>
       <div class="sketch-event"><span class="event-check" aria-hidden="true">✓</span>{scenario.events.map((event, index) => <span data-scene-event hidden={index !== 0}>{event}</span>)}</div>
@@ -56,106 +64,179 @@ const scenarios = [
         {scenario.metrics.map((metric, index) => <div><span>{metric.label}</span><strong>{metric.value}</strong>{index === 0 ? <svg viewBox="0 0 76 20" aria-hidden="true"><path d={scenario.sparkline} /></svg> : <span class="metric-note">{metric.note}</span>}</div>)}
       </div>
     </div>)}
+    </div>
     <div class="scenario-controls" data-scenario-controls role="group" aria-label="Choose a workflow example; selecting pauses motion" hidden>
       {scenarios.map((scenario, index) => <button type="button" data-scenario-select={index} aria-pressed={index === 0 ? 'true' : 'false'} aria-controls={`workflow-${scenario.id}`}><span aria-hidden="true">0{index + 1}</span>{scenario.label}</button>)}
     </div>
   </div>
-  <figcaption><span>Illustrative workflow · sample data</span><button type="button" data-scene-toggle hidden>Pause motion</button></figcaption>
 </figure>
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-phoenix-workflow]').forEach(root => {
     const toggle = root.querySelector<HTMLButtonElement>('[data-scene-toggle]')!;
+    const viewport = root.querySelector<HTMLElement>('[data-scenario-viewport]')!;
     const panels = [...root.querySelectorAll<HTMLElement>('[data-scenario-panel]')];
     const controls = root.querySelector<HTMLElement>('[data-scenario-controls]')!;
     const selectors = [...controls.querySelectorAll<HTMLButtonElement>('[data-scenario-select]')];
     const events = panels.map(panel => [...panel.querySelectorAll<HTMLElement>('[data-scene-event]')]);
     const preference = matchMedia('(prefers-reduced-motion: reduce)');
+    const stepDuration = 3200;
     let paused = preference.matches;
     let visible = false;
+    let hovered = false;
     let scenario = 0;
     let stage = 0;
-    let timer: ReturnType<typeof setInterval> | undefined;
+    let remaining = stepDuration;
+    let started = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let slides: Animation[] = [];
+    let touch: { x: number; y: number } | undefined;
+
+    const settleSlides = () => {
+      slides.forEach(animation => { animation.onfinish = null; animation.cancel(); });
+      slides = [];
+      panels.forEach(panel => panel.classList.remove('is-exiting'));
+    };
     const render = () => {
       root.dataset.step = String(stage);
       panels.forEach((panel, index) => {
-        panel.hidden = index !== scenario;
+        panel.hidden = false;
+        panel.inert = index !== scenario;
+        panel.setAttribute('aria-hidden', String(index !== scenario));
         selectors[index].setAttribute('aria-pressed', String(index === scenario));
         events[index].forEach((event, step) => { event.hidden = step !== stage; });
       });
     };
+    const select = (index: number, direction = 1) => {
+      settleSlides();
+      const previous = scenario;
+      scenario = (index + panels.length) % panels.length;
+      stage = 0;
+      remaining = stepDuration;
+      render();
+      if (previous === scenario || preference.matches || !visible || document.hidden) return;
+      panels[previous].classList.add('is-exiting');
+      const options = { duration: 460, easing: 'cubic-bezier(.22,.68,.25,1)' };
+      slides = [
+        panels[previous].animate([{ transform: 'translateX(0)', opacity: 1 }, { transform: `translateX(${-direction * 105}%)`, opacity: 0 }], options),
+        panels[scenario].animate([{ transform: `translateX(${direction * 105}%)`, opacity: 0 }, { transform: 'translateX(0)', opacity: 1 }], options),
+      ];
+      slides[0].onfinish = settleSlides;
+    };
     const sync = () => {
-      clearInterval(timer);
-      timer = undefined;
-      const running = !paused && !preference.matches && visible && !document.hidden;
+      if (timer !== undefined) {
+        remaining = Math.max(0, remaining - (performance.now() - started));
+        clearTimeout(timer);
+        timer = undefined;
+      }
+      const running = !paused && !hovered && !preference.matches && visible && !document.hidden;
       root.dataset.running = String(running);
       toggle.disabled = preference.matches;
       toggle.textContent = preference.matches ? 'Reduced motion' : paused ? 'Play motion' : 'Pause motion';
-      if (running) timer = setInterval(() => {
-        stage = (stage + 1) % events[scenario].length;
-        if (stage === 0) scenario = (scenario + 1) % panels.length;
-        render();
-      }, 3200);
+      if (!running) settleSlides();
+      if (running) {
+        started = performance.now();
+        timer = setTimeout(() => {
+          timer = undefined;
+          remaining = stepDuration;
+          if (stage === 2) select(scenario + 1);
+          else { stage += 1; render(); }
+          sync();
+        }, remaining);
+      }
+    };
+    const choose = (index: number, direction: number) => {
+      paused = true;
+      sync();
+      if ((index + panels.length) % panels.length !== scenario) select(index, direction);
     };
     toggle.hidden = false;
     controls.hidden = false;
     toggle.addEventListener('click', () => { paused = !paused; sync(); });
-    selectors.forEach((button, index) => button.addEventListener('click', () => {
-      scenario = index;
-      stage = 0;
-      paused = true;
-      render();
-      sync();
-    }));
-    controls.addEventListener('focusin', () => { paused = true; sync(); });
+    selectors.forEach((button, index) => button.addEventListener('click', () => choose(index, index < scenario ? -1 : 1)));
+    root.addEventListener('focusin', event => {
+      if (event.target !== toggle || toggle.matches(':focus-visible')) { paused = true; sync(); }
+    });
+    root.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') { hovered = true; sync(); } });
+    root.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') { hovered = false; sync(); } });
+    viewport.addEventListener('pointerdown', event => { if (event.pointerType === 'touch') touch = { x: event.clientX, y: event.clientY }; });
+    viewport.addEventListener('pointerup', event => {
+      if (!touch) return;
+      const dx = event.clientX - touch.x, dy = event.clientY - touch.y;
+      touch = undefined;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) choose(scenario + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+    });
+    viewport.addEventListener('pointercancel', () => { touch = undefined; });
     preference.addEventListener('change', () => { paused = preference.matches; sync(); });
     document.addEventListener('visibilitychange', sync);
-    new IntersectionObserver(entries => {
-      visible = entries.some(entry => entry.isIntersecting);
+    new IntersectionObserver(entries => { visible = entries.some(entry => entry.isIntersecting); sync(); }, { threshold: 0.15 }).observe(root);
+    addEventListener('pagehide', () => { visible = false; sync(); });
+    addEventListener('pageshow', () => {
+      const box = root.getBoundingClientRect();
+      visible = box.bottom > 0 && box.top < innerHeight;
       sync();
-    }, { threshold: 0.15 }).observe(root);
-    addEventListener('pagehide', () => { clearInterval(timer); root.dataset.running = 'false'; });
-    addEventListener('pageshow', sync);
+    });
+    render();
     sync();
   });
 </script>
 
 <style>
   [hidden] { display: none !important; }
-  .phoenix-workflow { position: relative; isolation: isolate; min-width: 0; padding: 34px 22px 12px; border-radius: 14px; overflow: hidden; font-family: var(--pitch-mono); }
+  .phoenix-workflow { display: flex; flex-direction: column; position: relative; isolation: isolate; min-width: 0; padding: 34px 22px 12px; border-radius: 14px; overflow: hidden; font-family: var(--pitch-mono); }
   .desert-lines { position: absolute; z-index: -1; width: 123%; max-width: none; height: auto; left: -7%; top: -80px; color: #c6b29a; opacity: .23; pointer-events: none; }
   .desert-sun { opacity: .45; }.saguaro { stroke-width: 1.5; }
-  .workflow-sketch { position: relative; padding: 24px; border: 1px solid #81858d45; border-radius: 10px; background: #292a2ddb; }
-  .sketch-heading { display: flex; gap: 9px; align-items: center; font-size: .65rem; line-height: 1.8; color: var(--studio-muted); }
+  .workflow-sketch { order: 0; position: relative; padding: 24px; border: 1px solid #81858d45; border-radius: 10px; background: #292a2ddb; }
+  .scenario-viewport { display: grid; overflow: clip; touch-action: pan-y; }
+  .scenario-panel { grid-area: 1 / 1; min-width: 0; }
+  .scenario-panel[aria-hidden="true"] { visibility: hidden; pointer-events: none; }
+  .scenario-panel.is-exiting { visibility: visible; }
+  .sketch-heading { display: flex; gap: 9px; align-items: center; font-size: .75rem; letter-spacing: .02em; line-height: 1.8; color: var(--studio-muted); }
   .sketch-dot { width: 5px; height: 5px; background: var(--studio-copper); border-radius: 50%; flex: none; }
   .sketch-route { position: relative; margin-top: 27px; }
   .sketch-route ol { position: relative; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; padding: 0; margin: 0; list-style: none; }
-  .sketch-route li { display: grid; justify-items: center; gap: 12px; color: var(--studio-muted); font-size: .6rem; text-align: center; line-height: 1.6; }
-  .step-symbol { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid #686c75; background: var(--studio-bg); border-radius: 9px; transition: border-color .7s,color .7s; }
-  .route-lines { position: absolute; inset: 0 0 auto; width: 100%; height: 48px; fill: none; stroke: #777b854f; stroke-width: 1; }
-  .route-lines .route-packet { stroke: var(--studio-accent); stroke-width: 1.8; stroke-dasharray: 5 95; animation: send-packet 9.6s linear infinite; opacity: .55; }
-  [data-step="0"] [data-stage="0"] .step-symbol,[data-step="1"] [data-stage="1"] .step-symbol,[data-step="2"] [data-stage="2"] .step-symbol { color: var(--studio-accent); border-color: #80e1cd99; }
-  .sketch-event { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 23px; color: var(--studio-muted); font-size: .63rem; min-height: 1.8em; }
+  .sketch-route li { display: grid; justify-items: center; gap: 12px; color: var(--studio-muted); font-size: .75rem; text-align: center; line-height: 1.5; }
+  .step-label { letter-spacing: .025em; color: var(--studio-fg); min-height: 3em; }
+  .step-symbol { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid #686c75; background: var(--studio-bg); border-radius: 11px; transition: border-color .35s,color .35s,background .35s; }
+  .step-glyph { display: grid; place-items: center; }
+  .step-symbol::after { content: ''; position: absolute; inset: -1px; border: 1px solid var(--studio-accent); border-radius: inherit; opacity: 0; pointer-events: none; }
+  .route-lines { position: absolute; inset: 0 0 auto; width: 100%; height: 56px; fill: none; stroke: #777b8560; stroke-width: 1; }
+  .route-lines path { vector-effect: non-scaling-stroke; }
+  .route-packet { stroke: var(--studio-accent); stroke-linecap: round; opacity: 0; }
+  .packet-trail { stroke-width: 2; stroke-dasharray: 11 89; }.packet-head { stroke-width: 4; stroke-dasharray: 1 99; }
+  [data-step="0"] [aria-hidden="false"] .route-packet[data-hop="0"], [data-step="1"] [aria-hidden="false"] .route-packet[data-hop="1"] { animation: send-packet 3.2s linear both; }
+  [data-step="0"] [aria-hidden="false"] [data-stage="0"] .step-symbol,
+  [data-step="1"] [aria-hidden="false"] [data-stage="1"] .step-symbol,
+  [data-step="2"] [aria-hidden="false"] [data-stage="2"] .step-symbol { color: var(--studio-accent); border-color: #80e1cd99; background: #2b3938; }
+  [data-step="0"] [aria-hidden="false"] [data-stage="0"] .step-symbol::after,
+  [data-step="1"] [aria-hidden="false"] [data-stage="1"] .step-symbol::after,
+  [data-step="2"] [aria-hidden="false"] [data-stage="2"] .step-symbol::after { animation: arrival-ping .8s ease-out both; }
+  [data-step="0"] [aria-hidden="false"] [data-stage="0"] .step-glyph,
+  [data-step="1"] [aria-hidden="false"] [data-stage="1"] .step-glyph,
+  [data-step="2"] [aria-hidden="false"] [data-stage="2"] .step-glyph { animation: notification-nudge .55s ease-out both; }
+  .sketch-event { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 23px; color: var(--studio-muted); font-size: .72rem; letter-spacing: .02em; line-height: 1.7; min-height: 3.4em; text-align: center; }
   .event-check { color: var(--studio-accent); font-size: .7rem; }
   .sketch-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; border-top: 1px solid #777b8540; padding-top: 20px; margin-top: 22px; }
   .sketch-metrics>div { display: grid; align-content: start; gap: 5px; }
-  .sketch-metrics>div>span:first-child { color: var(--studio-muted); font-size: .6rem; }
+  .sketch-metrics>div>span:first-child { color: var(--studio-muted); font-size: .7rem; letter-spacing: .02em; }
   .sketch-metrics strong { color: var(--studio-fg); font-size: 1.55rem; font-weight: 400; line-height: 1.5; font-variant-numeric: tabular-nums; }
-  .sketch-metrics .metric-note { font-size: .5rem; color: var(--studio-faint); line-height: 1.6; min-height: 3.2em; }
+  .sketch-metrics .metric-note { font-size: .62rem; color: var(--studio-faint); line-height: 1.6; min-height: 3.2em; }
   .sketch-metrics svg { width: 76px; height: 20px; fill: none; stroke: var(--studio-copper); stroke-width: 1.1; opacity: .7; }
   .scenario-controls { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; border-top: 1px solid #777b8540; margin-top: 14px; padding-top: 5px; }
-  .scenario-controls button { display: flex; align-items: center; justify-content: center; gap: 7px; min-width: 0; min-height: 44px; padding: 4px 0; border: 0; background: none; color: var(--studio-muted); font: .6rem/1.6 var(--pitch-mono); text-align: center; }
+  .scenario-controls button { display: flex; align-items: center; justify-content: center; gap: 7px; min-width: 0; min-height: 44px; padding: 4px 0; border: 0; background: none; color: var(--studio-muted); font: .68rem/1.6 var(--pitch-mono); letter-spacing: .015em; text-align: center; }
   .scenario-controls button>span { font-size: .48rem; color: var(--studio-faint); }
   .scenario-controls button[aria-pressed="true"], .scenario-controls button:hover { color: var(--studio-accent); }
   .scenario-controls button[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 6px; }
   .scenario-controls button:focus-visible { outline-offset: 0; border-radius: 3px; }
-  figcaption { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; margin-top: 8px; font-size: .56rem; color: var(--studio-faint); }
+  figcaption { order: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; margin-top: 8px; font-size: .62rem; color: var(--studio-faint); }
   figcaption button { padding: 0 2px; min-height: 44px; flex: none; border: 0; background: none; color: var(--studio-muted); font: inherit; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: #81858d; }
   figcaption button:disabled { text-decoration: none; cursor: default; }
-  [data-running="false"] .route-packet { animation-play-state: paused; }
-  @keyframes send-packet { from { stroke-dashoffset: 5; } to { stroke-dashoffset: -95; } }
-  @media(max-width:1000px) and (min-width:761px) { .phoenix-workflow { padding: 25px 14px 10px; }.workflow-sketch { padding: 20px 13px; }.sketch-metrics { gap: 9px; }figcaption { font-size: .5rem; }.scenario-controls button>span { display: none; } }
+  [data-running="false"] *, [data-running="false"] *::after { animation-play-state: paused !important; }
+  @keyframes send-packet { 0%,38% { opacity: 0; stroke-dashoffset: 12; } 44% { opacity: .85; stroke-dashoffset: 0; } 97% { opacity: .85; stroke-dashoffset: -98; } 100% { opacity: 0; stroke-dashoffset: -100; } }
+  @keyframes arrival-ping { from { opacity: .65; transform: scale(.98); } to { opacity: 0; transform: scale(1.35); } }
+  @keyframes notification-nudge { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-9deg); } 50% { transform: rotate(7deg); } 75% { transform: rotate(-3deg); } }
+  @media(max-width:1000px) and (min-width:761px) { .phoenix-workflow { padding: 25px 14px 10px; }.workflow-sketch { padding: 20px 13px; }.sketch-metrics { gap: 9px; }figcaption { font-size: .6rem; }.scenario-controls button>span { display: none; } }
   @media(max-width:760px) { .phoenix-workflow { padding: 30px 18px 12px; max-width: 520px; width: 100%; margin-inline: auto; }.desert-lines { top: -65px; }.workflow-sketch { padding: 23px; } }
-  @media(max-width:400px) { .phoenix-workflow { padding: 24px 14px 10px; }.workflow-sketch { padding: 20px 12px; }.sketch-heading { font-size: .57rem; }.sketch-metrics { gap: 8px; }.sketch-route li { font-size: .55rem; }.scenario-controls button { font-size: .56rem; }.scenario-controls button>span { display: none; }figcaption { flex-wrap: wrap; justify-content: flex-start; gap: 0 14px; font-size: .52rem; } }
-  @media(prefers-reduced-motion:reduce) { .route-packet { animation: none; display: none; }.step-symbol { transition: none; } }
+  @media(max-width:400px) { .phoenix-workflow { padding: 24px 14px 10px; }.workflow-sketch { padding: 20px 12px; }.sketch-heading { font-size: .7rem; }.sketch-metrics { gap: 8px; }.sketch-route ol { gap: 5px; }.scenario-controls button { font-size: .65rem; }.scenario-controls button>span { display: none; }figcaption { flex-wrap: wrap; justify-content: flex-start; gap: 0 14px; font-size: .6rem; } }
+  @media(prefers-reduced-motion:reduce) { *,*::after { animation: none !important; }.route-packet { display: none; }.step-symbol { transition: none; } }
 </style>

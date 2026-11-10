@@ -38,6 +38,16 @@ results. Existing professional-project roles and maturity descriptions stay inta
 
 ## Visual and interaction details
 
+### Workflow legibility and motion refinement
+
+- [USWDS typography guidance](https://designsystem.digital.gov/components/typography/) permits slightly looser tracking for very small type. The workflow's step labels are now 12px with `0.025em` tracking (0.3px), brighter text, and comfortable line height. This is a targeted design choice for small labels, not a universal recommended spacing for all text. Main headings and body copy keep their existing spacing.
+- [W3C text-spacing guidance](https://www.w3.org/WAI/WCAG21/Understanding/text-spacing.html) concerns allowing user overrides without lost content, not setting every page to 0.12em tracking. Workflow panels share a content-sized grid; labels can wrap rather than being clipped to fixed heights.
+- Two rounded connector paths carry a small packet between the three steps. A brief ring and restrained icon nudge indicate arrival. The step timer retains its remaining time while paused, so packet progress and stage changes stay coordinated after pause/resume.
+- Example changes slide horizontally for 460ms. Manual selection and horizontal touch swipes pause automatic rotation; keyboard focus and pointer hover also stop it. Inactive panels are inert and hidden from assistive technology. Reduced-motion preferences keep manual selection available without the slide, packet, or ping effects. See the [W3C carousel pattern](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/).
+- A compact example connects Excel/Google Sheets to checked, assigned work and Slack/Gmail updates. Tool tiles repeat in the service cards; these are illustrative possibilities, with actual support checked during scoping. The flow has its own pause control and stops offscreen or in hidden tabs. Tool artwork sources are recorded in `public/images/tools/STUDIO-TOOL-SOURCES.md`.
+
+### Retained visual direction
+
 - Pale stone page background `#f3f1eb`, including the header, hero, and footer. The workflow panel, project slides, pilot, integrations, and contact sections retain neutral charcoal `#292a2d`, with raised surfaces `#303236` and `#383a3f`.
 - Original Q wordmark, Inter body, JetBrains Mono headings, and restrained teal accents.
 - Hand-authored SVG saguaros, a sun outline, mountain ridges, and terrain contours live in `src/components/studio/PhoenixWorkflow.astro`.
