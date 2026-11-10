@@ -7,7 +7,7 @@ const config = JSON.parse(readFileSync(new URL('../vercel.json', import.meta.url
 // Match the shipped low-level Vercel route regular expressions in their real
 // order. A filesystem phase ends routing here; host routes must run before it.
 function route(url) {
-  const { hostname, pathname, search, hash } = new URL(url);
+  const { hostname, pathname } = new URL(url);
   for (const rule of config.routes) {
     if (rule.handle === 'filesystem') break;
     if (rule.has && !rule.has.every((condition) => condition.type === 'host' && condition.value === hostname)) continue;
@@ -16,11 +16,11 @@ function route(url) {
     const target = rule.headers?.Location ?? rule.dest;
     return {
       kind: rule.status ? 'redirect' : 'rewrite',
-      destination: pathname.replace(match, target) + search + hash,
+      destination: pathname.replace(match, target),
       ...(rule.status ? { status: rule.status } : {}),
     };
   }
-  return { kind: 'file', destination: pathname + search + hash };
+  return { kind: 'file', destination: pathname };
 }
 
 test('Studio domain serves the Studio while portfolio and previews keep their own home', () => {
@@ -30,12 +30,12 @@ test('Studio domain serves the Studio while portfolio and previews keep their ow
   assert.equal(route('https://joes-portfolio-preview.vercel.app/studio').kind, 'file');
 });
 
-test('Old public Studio pages permanently redirect with path, query, and anchor intact', () => {
+test('Old public Studio pages permanently redirect with the correct path', () => {
   for (const hostname of ['joequinn.dev', 'www.joequinn.dev', 'quinnsoftwarestudio.com']) {
     for (const [path, destination] of [['/studio', '/'], ['/studio/', '/'], ['/studio/privacy', '/privacy'], ['/studio/privacy/', '/privacy'], ['/studio/work/connected-equipment', '/work/connected-equipment'], ['/studio/work/connected-equipment/', '/work/connected-equipment']]) {
-      const result = route(`https://${hostname}${path}?ref=card#contact`);
+      const result = route(`https://${hostname}${path}`);
       assert.equal(result.kind, 'redirect');
-      assert.equal(result.destination, `https://quinnsoftwarestudio.com${destination}?ref=card#contact`);
+      assert.equal(result.destination, `https://quinnsoftwarestudio.com${destination}`);
       assert.equal(result.status, 308);
     }
   }

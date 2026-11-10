@@ -11,7 +11,7 @@ No second hosting project, paid hosting add-on, or deployment token is needed.
 - `https://quinnsoftwarestudio.com/` serves the existing Studio build at `/studio`.
 - Studio case studies use `/work/<slug>` and privacy uses `/privacy` on the Studio domain.
 - `www.quinnsoftwarestudio.com` redirects to the apex domain.
-- Old `/studio`, `/studio/privacy`, and `/studio/work/<slug>` links on the portfolio domain permanently redirect to their new addresses. Query strings and browser fragments are preserved.
+- Old `/studio`, `/studio/privacy`, and `/studio/work/<slug>` links on the portfolio domain permanently redirect to their new addresses. Verify query-string and browser-fragment handling during the live cutover; local routing tests cover paths and host isolation.
 
 `vercel.json` scopes these routes by hostname and runs them **before** the
 filesystem phase. This ordering is required: the ordinary `rewrites` setting is
