@@ -1,5 +1,6 @@
 ---
 import Icon from './WorkflowIcon.astro';
+import ToolBadge from './ToolBadge.astro';
 import { studioHref } from '../../lib/studio-urls';
 const services = [
   { id: 'intake', number: '01', title: 'Enter it once.', description: 'Turn a request into an assigned job. Keep the details moving between your tools.', examples: 'Requests · Job tracking · Approvals', href: '/studio/work/operations-automation', link: 'Explore automation' },
@@ -14,10 +15,11 @@ const services = [
       {service.id === 'clients' && <div class="client-graphic"><div class="client-top"><span class="client-avatar">N</span><div><strong>Welcome, Northside.</strong><span>Here’s what happens next.</span></div></div><div class="client-progress"><span class="complete"><Icon name="check" size={13} /></span><i></i><span class="complete"><Icon name="check" size={13} /></span><i></i><span>3</span></div><div class="client-steps"><span>Request</span><span>Proposal</span><span>In progress</span></div><div class="client-update"><Icon name="mail" size={16} /><span>Your proposal is ready to review.</span><span class="update-dot"></span></div></div>}
       {service.id === 'telemetry' && <div class="telemetry-graphic"><div class="telemetry-top"><span><Icon name="signal" size={16} />Equipment health</span><span class="sample-label">Sample</span></div><div class="telemetry-reading"><strong>26.4<small>°C</small></strong><span>Workshop temperature</span></div><svg class="telemetry-chart" viewBox="0 0 280 64" fill="none"><path d="M0 55H280M0 31H280M0 7H280" stroke="var(--studio-border)" stroke-width=".7"/><path d="M0 23H280" stroke="var(--studio-warning)" stroke-dasharray="4 5"/><path d="M0 52 15 50 30 53 45 47 60 48 75 42 90 46 105 36 120 39 135 32 150 36 165 28 180 29 195 18 210 23 225 14 240 16 255 9 270 12 280 6" stroke="var(--studio-accent)" stroke-width="2.5"/><circle class="signal-pulse" cx="270" cy="12" r="4" fill="var(--studio-accent)"/></svg><div class="telemetry-alert"><span></span>Threshold crossed <Icon name="arrow" size={13} /> Team notified</div></div>}
     </div>
-    <div class="outcome-copy"><p class="outcome-number">{service.number} / {service.id === 'intake' ? 'Operations' : service.id === 'clients' ? 'Client systems' : 'Connected equipment'}</p><h3>{service.title}</h3><p>{service.description}</p><p class="outcome-examples">{service.examples}</p><a href={service.href.startsWith('#') ? service.href : studioHref(service.href)}>{service.link}<span aria-hidden="true">↗</span></a></div>
+    <div class="outcome-copy"><p class="outcome-number">{service.number} / {service.id === 'intake' ? 'Operations' : service.id === 'clients' ? 'Client systems' : 'Connected equipment'}</p><h3>{service.title}</h3><p>{service.description}</p><p class="outcome-examples">{service.examples}</p><div class="service-tools" aria-label="Example tools">{service.id === 'intake' ? <><ToolBadge tool="excel" compact /><ToolBadge tool="sheets" compact /></> : service.id === 'clients' ? <><ToolBadge tool="gmail" compact /><ToolBadge tool="slack" compact /></> : <ToolBadge tool="grafana" compact />}</div><a href={service.href.startsWith('#') ? service.href : studioHref(service.href)}>{service.link}<span aria-hidden="true">↗</span></a></div>
   </article>)}
 </div>
 <style>
+  .service-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; margin-top: 14px; }
   .outcome-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 22px; }
   .outcome-card { border: 1px solid var(--studio-border); border-radius: 12px; overflow: hidden; background: var(--studio-surface); display: flex; flex-direction: column; }
   .outcome-visual { height: 242px; padding: 27px; display: grid; place-items: center; border-bottom: 1px solid var(--studio-border); background-color: var(--studio-raised); background-image: radial-gradient(#5eead412 .7px,transparent .7px); background-size: 15px 15px; }

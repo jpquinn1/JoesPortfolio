@@ -178,7 +178,7 @@ body.studio-technical :focus-visible { outline-color: var(--studio-accent); }
 .studio-technical :is(.studio-button,.studio-text-link):hover span[aria-hidden] { transform: translate(3px,-2px); }
 .studio-refresh [data-reveal].is-revealed { animation: studio-arrive .65s both; }
 .studio-refresh .approach-steps li:nth-child(2) { animation-delay: .08s; }.studio-refresh .approach-steps li:nth-child(3) { animation-delay: .16s; }
-body[data-ambient-motion="off"] .outcomes-section * { animation-play-state: paused; }
+body[data-ambient-motion="off"] .outcome-card * { animation-play-state: paused; }
 body[data-ambient-motion="off"] [data-reveal] { animation: none !important; }
 @keyframes studio-arrive { from { opacity: .4; translate: 0 15px; } to { opacity: 1; translate: 0 0; } }
 .studio-refresh[data-studio-motion="off"] .toolkit-section *, .studio-refresh[data-studio-motion="off"] .toolkit-section *::before, .studio-refresh[data-studio-motion="off"] .toolkit-section *::after { animation-play-state: paused !important; }
