@@ -1,5 +1,6 @@
 ---
 import StudioLayout from '../../layouts/StudioLayout.astro';
+import PhoenixWorkflow from '../../components/studio/PhoenixWorkflow.astro';
 import OperationsDemo from '../../components/studio/OperationsDemo.astro';
 import ServiceOutcomes from '../../components/studio/ServiceOutcomes.astro';
 import ConnectedToolkit from '../../components/studio/ConnectedToolkit.astro';
@@ -19,27 +20,27 @@ const steps = [
 ---
 <StudioLayout
   theme="technical"
-  title="Quinn Software Studio — Less manual admin for service & production teams"
-  description="Forms, workflow automation, and connected tools that reduce manual admin for service and production teams. Work directly with Joe Quinn, starting with one scoped, paid pilot. Phoenix, AZ and remote."
+  title="Phoenix Software & Workflow Automation | Quinn Software Studio"
+  description="Less admin. More time for your business. Custom software and workflow automation for Phoenix service businesses, workshops, and production teams. Start with one scoped pilot."
 >
   <div class="studio-refresh" data-studio-motion="off">
     <section class="studio-hero" aria-labelledby="hero-title">
-      <div class="studio-shell pitch-shell">
+      <div class="studio-shell pitch-shell hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="availability-dot" aria-hidden="true"></span>Independent software engineering</p>
-          <h1 id="hero-title">Less manual admin<br /><span>for service & production teams.</span></h1>
-          <p class="hero-description">I build forms, workflows, and connected tools that reduce repeat data entry, organize client follow-ups, and make equipment issues easier to track.</p>
+          <p class="eyebrow"><span class="location-dot" aria-hidden="true"></span>Phoenix, Arizona · Software & automation</p>
+          <h1 id="hero-title">Less admin.<br /><span>More time for<br />your business.</span></h1>
+          <p class="hero-description">I build software and automation for Phoenix service and production teams. Connect your tools, cut repeat admin, and make more time for your customers.</p>
           <div class="hero-actions"><a href="#contact" class="studio-button">Discuss one workflow <span aria-hidden="true">↗</span></a><a href="#work" class="studio-text-link">View projects <span aria-hidden="true">↓</span></a></div>
           <p class="hero-start">A short conversation, then a scoped, paid pilot if there’s a fit.</p>
         </div>
-        <div class="hero-demo" id="studio-demo"><OperationsDemo /></div>
-        <div class="hero-footnote"><span>Forms / workflows / telemetry</span><span>Phoenix, AZ <span aria-hidden="true">·</span> Local & remote projects</span></div>
+        <PhoenixWorkflow />
+        <div class="hero-footnote"><span>Built around your workflow</span><span>Work directly with Joe Quinn <span aria-hidden="true">·</span> Phoenix & beyond</span></div>
       </div>
     </section>
 
     <section id="services" class="studio-section outcomes-section" aria-labelledby="services-title">
       <div class="studio-shell pitch-shell">
-        <div class="pitch-heading"><p class="eyebrow">01 / Services</p><h2 id="services-title">Project examples</h2><p>A few ways custom software can support everyday operations.</p></div>
+        <div class="pitch-heading services-heading"><div><p class="eyebrow">01 / For hands-on businesses</p><h2 id="services-title">Keep the work moving.<br />Lose the extra admin.</h2></div><p>For the Phoenix teams that install, repair, make, and deliver. Start where the same task keeps taking time out of your day.</p></div>
         <ServiceOutcomes />
         <p class="illustration-note">Illustrative interfaces with sample data. Scope depends on the workflow.</p>
       </div>
@@ -52,6 +53,11 @@ const steps = [
         <div class="pilot-example">
           <div><p class="eyebrow">Example pilot</p><p>A service request form that creates a job record and notifies the right person.</p><p class="pilot-measure">Review the time spent re-entering requests and whether handoffs are being missed.</p></div>
           <a class="studio-text-link" href="#contact">Discuss one workflow <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="pilot-questions" aria-label="Common questions about working together">
+          <details class="more-detail"><summary>Do I need to replace my current software? <span aria-hidden="true">+</span></summary><p>Often, the starting point is connecting tools you already use. We’ll look at what they support and whether an existing feature, an integration, or a small custom tool is the best fit.</p></details>
+          <details class="more-detail"><summary>How is the pilot priced? <span aria-hidden="true">+</span></summary><p>The price follows the scope: one workflow, the systems it touches, and a clear result to test. You receive a written scope, price, and timeline to approve before paid work begins.</p></details>
+          <details class="more-detail"><summary>What happens after the pilot? <span aria-hidden="true">+</span></summary><p>We review it with your team, including what improved and what still needs work. Rollout, documentation, handoff, and any ongoing support are agreed separately.</p></details>
         </div>
       </div>
     </section>
@@ -67,6 +73,7 @@ const steps = [
         <div class="pitch-heading"><p class="eyebrow">04 / Integrations</p><h2 id="capabilities-title">How the pieces connect</h2><p>The workflow determines the tools. Forms, existing software, and equipment can share data through APIs and automation.</p></div>
         <ConnectedToolkit />
         <div class="technical-details">
+          <details class="more-detail" id="studio-demo"><summary>See an example workflow <span aria-hidden="true">+</span></summary><div class="detail-content"><OperationsDemo /></div></details>
           <details class="more-detail"><summary>Engineering capabilities <span aria-hidden="true">+</span></summary><div class="detail-content"><CapabilityMap /></div></details>
           <details class="more-detail workflow-detail" id="explorer"><summary>Additional workflow examples <span aria-hidden="true">+</span></summary><div class="detail-content"><WorkflowExplorer /></div></details>
         </div>
@@ -77,7 +84,7 @@ const steps = [
       <div class="studio-shell pitch-shell">
         <div class="founder-grid">
           <div class="founder-photo"><img src={founder.image} alt="Joe Quinn, founder of Quinn Software Studio" width="640" height="640" loading="lazy" decoding="async" /></div>
-          <div class="pitch-heading"><p class="eyebrow">05 / About</p><h2 id="about-title">Joe Quinn</h2><p>My background spans application development, cloud services, and equipment in the field. You work directly with me on design, implementation, and support.</p><p class="founder-experience">TrackMan · PGA TOUR ShotLink<br />Computer Science & Engineering · Ohio State</p><a href={portfolioHref('/about')} class="studio-text-link">More about me <span aria-hidden="true">↗</span></a></div>
+          <div class="pitch-heading"><p class="eyebrow">05 / Your local engineering partner</p><h2 id="about-title">Hi, I’m Joe.</h2><p>I’m based in Phoenix, with a background in software, cloud services, and equipment in the field. I build for the people doing the work—and you work directly with me, from the first conversation through implementation.</p><p class="founder-experience">TrackMan · PGA TOUR ShotLink<br />Computer Science & Engineering · Ohio State</p><a href={portfolioHref('/about')} class="studio-text-link">More about me <span aria-hidden="true">↗</span></a></div>
         </div>
       </div>
     </section>
@@ -93,7 +100,7 @@ const steps = [
     const button = root.querySelector<HTMLButtonElement>('[data-studio-motion-toggle]');
     if (!button) return;
     const preference = matchMedia('(prefers-reduced-motion: reduce)');
-    let paused = preference.matches;
+    let paused = true;
     const sync = () => {
       root.dataset.studioMotion = paused || document.hidden ? 'off' : 'on';
       button.disabled = preference.matches;

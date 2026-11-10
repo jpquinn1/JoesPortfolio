@@ -13,7 +13,7 @@ const image = new URL('/studio/social-preview.png', STUDIO_ORIGIN);
 const [wordmarkName, ...wordmarkDescriptor] = brand.name.split(' ');
 const founderFirstName = founder.name.split(' ')[0];
 const [city, region] = brand.location.split(',').map((part) => part.trim());
-const nav = [{label:'Services',id:'services'},{label:'How it works',id:'process'},{label:'Work',id:'work'},{label:'Integrations',id:'capabilities'},{label:'Contact',id:'contact'}];
+const nav = [{label:'Services',id:'services'},{label:'How it works',id:'process'},{label:'Work',id:'work'},{label:'About',id:'about'},{label:'Contact',id:'contact'}];
 const schema = { '@context':'https://schema.org', '@type':'ProfessionalService', name:brand.name, url:STUDIO_ORIGIN, description, image:image.href, email:contact.email, founder:{'@type':'Person',name:founder.name,url:new URL(founder.portfolioHref,PORTFOLIO_ORIGIN).href}, address:{'@type':'PostalAddress',addressLocality:city,addressRegion:region,addressCountry:'US'}, hasOfferCatalog:{'@type':'OfferCatalog',name:'Software engineering services',itemListElement:services.map(service=>({'@type':'Offer',itemOffered:{'@type':'Service',name:service.title}}))} };
 ---
 <!doctype html>
@@ -21,7 +21,7 @@ const schema = { '@context':'https://schema.org', '@type':'ProfessionalService',
   <head>
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title><meta name="description" content={description} />
-    <meta name="theme-color" content={theme === 'technical' ? '#0a0b0d' : '#252A2C'} />
+    <meta name="theme-color" content={theme === 'technical' ? '#292a2d' : '#252A2C'} />
     <link rel="canonical" href={canonical} /><link rel="icon" type="image/svg+xml" href={`${brand.basePath}/mark.svg`} />
     <link rel="sitemap" href={`${STUDIO_ORIGIN}/sitemap.xml`} />
     <meta property="og:type" content="website" /><meta property="og:site_name" content={brand.name} />
