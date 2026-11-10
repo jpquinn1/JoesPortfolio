@@ -5,9 +5,9 @@
  */
 export const brand = {
   name: 'Quinn Software Studio',
-  headline: 'Less manual admin for service & production teams.',
+  headline: 'Less admin. More time for your business.',
   description:
-    'Forms, workflow automation, and connected tools that reduce repeated data entry, organize client follow-ups, and help teams track equipment issues.',
+    'Custom software and workflow automation for Phoenix service businesses, workshops, and production teams. Connect your tools and cut repeat work.',
   location: 'Phoenix, Arizona',
   locationLine:
     'Independent software engineering based in Phoenix, Arizona. Working with businesses locally and beyond.',
