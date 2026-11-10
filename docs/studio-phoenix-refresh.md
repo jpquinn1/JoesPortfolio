@@ -9,7 +9,7 @@ Reviewed November 10, 2026. The existing Astro site and Vercel deployment are re
 | [Nielsen Norman Group: homepage design principles](https://www.nngroup.com/articles/homepage-design-principles/) | Explain the business quickly, use concrete examples, and make the next action clear. | Short benefit headline, explicit software/automation description, operational examples, and one primary conversation CTA. |
 | [AstroWind](https://github.com/arthelokyo/astrowind) | Modular hero, service, process, FAQ, and CTA sections. | Retain the existing Astro structure; clarify the engagement and answer buying questions before deeper implementation details. |
 | [Astroship hero](https://github.com/surjithctly/astroship/blob/main/src/components/hero.astro) | Two-column introduction with a visual alongside brief copy. | A responsive split hero, with a quiet operational illustration instead of a large text-only opening. |
-| [W3C: minimum contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) | Keep readable text distinct from its background. | Neutral charcoal surfaces, light text, and restrained teal accents; decorative desert strokes are intentionally low contrast. |
+| [W3C: minimum contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) | Keep readable text distinct from its background. | Pale stone page with dark text, charcoal sections with light text, and teal accents adjusted to each surface; decorative desert strokes are intentionally low contrast. |
 | [W3C: pause, stop, hide](https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html) | Give users control over ongoing animation and updates. | A visible pause control, reduced-motion support, and automatic pause while the hero is offscreen or the tab is hidden. |
 
 Templates informed layout and section patterns only. No third-party template code,
@@ -34,11 +34,12 @@ results. Existing professional-project roles and maturity descriptions stay inta
 
 ## Visual and interaction details
 
-- Neutral base `#292a2d`, raised surfaces `#303236` and `#383a3f`; no green cast in the main backgrounds.
+- Pale stone page background `#f3f1eb`, including the header, hero, and footer. The workflow panel, project slides, pilot, integrations, and contact sections retain neutral charcoal `#292a2d`, with raised surfaces `#303236` and `#383a3f`.
 - Original Q wordmark, Inter body, JetBrains Mono headings, and restrained teal accents.
 - Hand-authored SVG saguaros, a sun outline, mountain ridges, and terrain contours live in `src/components/studio/PhoenixWorkflow.astro`.
-- A small animated request → job record → team update example sits in front of the linework. The moving packet and status cycle every 9.6 seconds; the metrics are static fictional sample data, labeled visibly.
-- Updates are not live-region announcements. The semantic steps and sample metrics remain readable without JavaScript. Motion pauses offscreen, in hidden tabs, and when requested by the user or operating system.
+- Three examples rotate every 9.6 seconds: request → job record → team update, quote → due date → follow-up, and reading → alert → team check. Each has three animated steps and its own fictional sample metrics, labeled visibly.
+- Selecting an example pauses the animation and rotation. A play/pause control resumes or freezes both. Keyboard focus in the example selectors also pauses rotation; reduced-motion preferences leave manual selection available.
+- Updates are not live-region announcements. The first example's semantic steps and sample metrics remain readable without JavaScript. Motion pauses offscreen and in hidden tabs.
 - No hero raster image or additional animation library is shipped.
 - The full interactive workflow demo remains available under the integrations section; all five professional projects remain available.
 

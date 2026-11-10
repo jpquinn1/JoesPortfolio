@@ -1,12 +1,33 @@
 ---
 import Icon from './WorkflowIcon.astro';
-const stages = [
-  { label: 'Request', icon: 'form' },
-  { label: 'Job record', icon: 'sheet' },
-  { label: 'Team update', icon: 'mail' },
+const scenarios = [
+  {
+    id: 'intake', label: 'Job intake', heading: 'One request. Connected steps.',
+    description: 'Request becomes a job record and a team update',
+    stages: [{ label: 'Request', icon: 'form' }, { label: 'Job record', icon: 'sheet' }, { label: 'Team update', icon: 'mail' }],
+    events: ['Request details captured', 'Job record created', 'Team update sent'],
+    metrics: [{ label: 'Requests', value: '12' }, { label: 'Assigned', value: '11', note: 'Ready for the team' }, { label: 'To review', value: '01', note: 'A person decides' }],
+    sparkline: 'm1 17 9-2 8 1 9-6 9 3 9-7 8 3 10-6 11-1',
+  },
+  {
+    id: 'followup', label: 'Follow-ups', heading: 'A quote. A timely follow-up.',
+    description: 'A quote gets a due date and a follow-up reminder',
+    stages: [{ label: 'Quote', icon: 'sheet' }, { label: 'Due date', icon: 'clock' }, { label: 'Follow-up', icon: 'mail' }],
+    events: ['Quote sent to customer', 'Follow-up scheduled', 'Reminder sent'],
+    metrics: [{ label: 'Quotes', value: '08' }, { label: 'Scheduled', value: '05', note: 'Reminders queued' }, { label: 'To review', value: '03', note: 'Your team follows up' }],
+    sparkline: 'm1 17 10 0 8-4 9 1 8-5 9 1 9-4 10 0 10-3',
+  },
+  {
+    id: 'equipment', label: 'Equipment', heading: 'A signal. A clear next step.',
+    description: 'An equipment reading triggers an alert and an assigned check',
+    stages: [{ label: 'Reading', icon: 'signal' }, { label: 'Alert', icon: 'mail' }, { label: 'Team check', icon: 'client' }],
+    events: ['Equipment reading received', 'Threshold alert raised', 'Check assigned to a person'],
+    metrics: [{ label: 'Monitored', value: '06' }, { label: 'In range', value: '05', note: 'Within set limits' }, { label: 'To check', value: '01', note: 'Assigned for review' }],
+    sparkline: 'm1 12 10-1 8 2 8-3 9 2 9-8 9 2 10 4 10-2',
+  },
 ];
 ---
-<figure class="phoenix-workflow" data-phoenix-workflow data-running="false" data-step="0" aria-label="Illustrative service workflow with sample metrics">
+<figure class="phoenix-workflow" data-phoenix-workflow data-running="false" data-step="0" aria-label="Illustrative workflows with sample metrics">
   <svg class="desert-lines" viewBox="0 0 620 440" fill="none" aria-hidden="true">
     <g stroke="currentColor" stroke-width="1.1" stroke-linejoin="round">
       <circle cx="454" cy="101" r="49" class="desert-sun" />
@@ -22,18 +43,21 @@ const stages = [
   </svg>
 
   <div class="workflow-sketch">
-    <div class="sketch-heading"><span class="sketch-dot" aria-hidden="true"></span>One request. Connected steps.</div>
-    <div class="sketch-route">
-      <svg class="route-lines" viewBox="0 0 300 48" preserveAspectRatio="none" aria-hidden="true"><path d="M45 24H255" pathLength="100" /><path class="route-packet" d="M45 24H255" pathLength="100" /></svg>
-      <ol aria-label="Request becomes a job record and a team update">
-        {stages.map((stage, index) => <li data-stage={index}><span class="step-symbol"><Icon name={stage.icon} size={21} /></span><span>{stage.label}</span></li>)}
-      </ol>
-    </div>
-    <div class="sketch-event"><span class="event-check" aria-hidden="true">✓</span><span data-scene-event>Request details captured</span></div>
-    <div class="sketch-metrics" aria-label="Sample day: 12 requests, 11 assigned, 1 to review">
-      <div><span>Requests</span><strong>12</strong><svg viewBox="0 0 76 20" aria-hidden="true"><path d="m1 17 9-2 8 1 9-6 9 3 9-7 8 3 10-6 11-1" /></svg></div>
-      <div><span>Assigned</span><strong>11</strong><span class="metric-note">Ready for the team</span></div>
-      <div><span>To review</span><strong>01</strong><span class="metric-note">A person decides</span></div>
+    {scenarios.map((scenario, index) => <div id={`workflow-${scenario.id}`} class="scenario-panel" data-scenario-panel role="group" aria-label={scenario.label} hidden={index !== 0}>
+      <div class="sketch-heading"><span class="sketch-dot" aria-hidden="true"></span>{scenario.heading}</div>
+      <div class="sketch-route">
+        <svg class="route-lines" viewBox="0 0 300 48" preserveAspectRatio="none" aria-hidden="true"><path d="M45 24H255" pathLength="100" /><path class="route-packet" d="M45 24H255" pathLength="100" /></svg>
+        <ol aria-label={scenario.description}>
+          {scenario.stages.map((stage, index) => <li data-stage={index}><span class="step-symbol"><Icon name={stage.icon} size={21} /></span><span>{stage.label}</span></li>)}
+        </ol>
+      </div>
+      <div class="sketch-event"><span class="event-check" aria-hidden="true">✓</span>{scenario.events.map((event, index) => <span data-scene-event hidden={index !== 0}>{event}</span>)}</div>
+      <div class="sketch-metrics" aria-label="Sample metrics">
+        {scenario.metrics.map((metric, index) => <div><span>{metric.label}</span><strong>{metric.value}</strong>{index === 0 ? <svg viewBox="0 0 76 20" aria-hidden="true"><path d={scenario.sparkline} /></svg> : <span class="metric-note">{metric.note}</span>}</div>)}
+      </div>
+    </div>)}
+    <div class="scenario-controls" data-scenario-controls role="group" aria-label="Choose a workflow example; selecting pauses motion" hidden>
+      {scenarios.map((scenario, index) => <button type="button" data-scenario-select={index} aria-pressed={index === 0 ? 'true' : 'false'} aria-controls={`workflow-${scenario.id}`}><span aria-hidden="true">0{index + 1}</span>{scenario.label}</button>)}
     </div>
   </div>
   <figcaption><span>Illustrative workflow · sample data</span><button type="button" data-scene-toggle hidden>Pause motion</button></figcaption>
@@ -42,13 +66,24 @@ const stages = [
 <script>
   document.querySelectorAll<HTMLElement>('[data-phoenix-workflow]').forEach(root => {
     const toggle = root.querySelector<HTMLButtonElement>('[data-scene-toggle]')!;
-    const event = root.querySelector<HTMLElement>('[data-scene-event]')!;
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-scenario-panel]')];
+    const controls = root.querySelector<HTMLElement>('[data-scenario-controls]')!;
+    const selectors = [...controls.querySelectorAll<HTMLButtonElement>('[data-scenario-select]')];
+    const events = panels.map(panel => [...panel.querySelectorAll<HTMLElement>('[data-scene-event]')]);
     const preference = matchMedia('(prefers-reduced-motion: reduce)');
-    const messages = ['Request details captured', 'Job record created', 'Team update sent'];
     let paused = preference.matches;
     let visible = false;
+    let scenario = 0;
     let stage = 0;
     let timer: ReturnType<typeof setInterval> | undefined;
+    const render = () => {
+      root.dataset.step = String(stage);
+      panels.forEach((panel, index) => {
+        panel.hidden = index !== scenario;
+        selectors[index].setAttribute('aria-pressed', String(index === scenario));
+        events[index].forEach((event, step) => { event.hidden = step !== stage; });
+      });
+    };
     const sync = () => {
       clearInterval(timer);
       timer = undefined;
@@ -57,13 +92,22 @@ const stages = [
       toggle.disabled = preference.matches;
       toggle.textContent = preference.matches ? 'Reduced motion' : paused ? 'Play motion' : 'Pause motion';
       if (running) timer = setInterval(() => {
-        stage = (stage + 1) % messages.length;
-        root.dataset.step = String(stage);
-        event.textContent = messages[stage];
+        stage = (stage + 1) % events[scenario].length;
+        if (stage === 0) scenario = (scenario + 1) % panels.length;
+        render();
       }, 3200);
     };
     toggle.hidden = false;
+    controls.hidden = false;
     toggle.addEventListener('click', () => { paused = !paused; sync(); });
+    selectors.forEach((button, index) => button.addEventListener('click', () => {
+      scenario = index;
+      stage = 0;
+      paused = true;
+      render();
+      sync();
+    }));
+    controls.addEventListener('focusin', () => { paused = true; sync(); });
     preference.addEventListener('change', () => { paused = preference.matches; sync(); });
     document.addEventListener('visibilitychange', sync);
     new IntersectionObserver(entries => {
@@ -78,8 +122,8 @@ const stages = [
 
 <style>
   [hidden] { display: none !important; }
-  .phoenix-workflow { position: relative; isolation: isolate; min-width: 0; padding: 90px 22px 40px; font-family: var(--pitch-mono); }
-  .desert-lines { position: absolute; z-index: -1; width: 123%; max-width: none; height: auto; left: -7%; top: -20px; color: #c6b29a; opacity: .23; pointer-events: none; }
+  .phoenix-workflow { position: relative; isolation: isolate; min-width: 0; padding: 34px 22px 12px; border-radius: 14px; overflow: hidden; font-family: var(--pitch-mono); }
+  .desert-lines { position: absolute; z-index: -1; width: 123%; max-width: none; height: auto; left: -7%; top: -80px; color: #c6b29a; opacity: .23; pointer-events: none; }
   .desert-sun { opacity: .45; }.saguaro { stroke-width: 1.5; }
   .workflow-sketch { position: relative; padding: 24px; border: 1px solid #81858d45; border-radius: 10px; background: #292a2ddb; }
   .sketch-heading { display: flex; gap: 9px; align-items: center; font-size: .65rem; line-height: 1.8; color: var(--studio-muted); }
@@ -97,15 +141,21 @@ const stages = [
   .sketch-metrics>div { display: grid; align-content: start; gap: 5px; }
   .sketch-metrics>div>span:first-child { color: var(--studio-muted); font-size: .6rem; }
   .sketch-metrics strong { color: var(--studio-fg); font-size: 1.55rem; font-weight: 400; line-height: 1.5; font-variant-numeric: tabular-nums; }
-  .sketch-metrics .metric-note { font-size: .5rem; color: var(--studio-faint); line-height: 1.6; }
+  .sketch-metrics .metric-note { font-size: .5rem; color: var(--studio-faint); line-height: 1.6; min-height: 3.2em; }
   .sketch-metrics svg { width: 76px; height: 20px; fill: none; stroke: var(--studio-copper); stroke-width: 1.1; opacity: .7; }
+  .scenario-controls { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; border-top: 1px solid #777b8540; margin-top: 14px; padding-top: 5px; }
+  .scenario-controls button { display: flex; align-items: center; justify-content: center; gap: 7px; min-width: 0; min-height: 44px; padding: 4px 0; border: 0; background: none; color: var(--studio-muted); font: .6rem/1.6 var(--pitch-mono); text-align: center; }
+  .scenario-controls button>span { font-size: .48rem; color: var(--studio-faint); }
+  .scenario-controls button[aria-pressed="true"], .scenario-controls button:hover { color: var(--studio-accent); }
+  .scenario-controls button[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 6px; }
+  .scenario-controls button:focus-visible { outline-offset: 0; border-radius: 3px; }
   figcaption { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; margin-top: 8px; font-size: .56rem; color: var(--studio-faint); }
   figcaption button { padding: 0 2px; min-height: 44px; flex: none; border: 0; background: none; color: var(--studio-muted); font: inherit; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: #81858d; }
   figcaption button:disabled { text-decoration: none; cursor: default; }
   [data-running="false"] .route-packet { animation-play-state: paused; }
   @keyframes send-packet { from { stroke-dashoffset: 5; } to { stroke-dashoffset: -95; } }
-  @media(max-width:1000px) and (min-width:761px) { .phoenix-workflow { padding-inline: 0; }.workflow-sketch { padding: 20px 15px; }.sketch-metrics { gap: 9px; }figcaption { font-size: .5rem; } }
-  @media(max-width:760px) { .phoenix-workflow { padding: 40px 0 5px; max-width: 520px; width: 100%; margin-inline: auto; }.desert-lines { top: -40px; }.workflow-sketch { padding: 23px; } }
-  @media(max-width:360px) { .workflow-sketch { padding: 20px 14px; }.sketch-heading { font-size: .57rem; }.sketch-metrics { gap: 8px; }.sketch-route li { font-size: .55rem; }figcaption { flex-wrap: wrap; justify-content: flex-start; gap: 0 14px; font-size: .55rem; } }
+  @media(max-width:1000px) and (min-width:761px) { .phoenix-workflow { padding: 25px 14px 10px; }.workflow-sketch { padding: 20px 13px; }.sketch-metrics { gap: 9px; }figcaption { font-size: .5rem; }.scenario-controls button>span { display: none; } }
+  @media(max-width:760px) { .phoenix-workflow { padding: 30px 18px 12px; max-width: 520px; width: 100%; margin-inline: auto; }.desert-lines { top: -65px; }.workflow-sketch { padding: 23px; } }
+  @media(max-width:400px) { .phoenix-workflow { padding: 24px 14px 10px; }.workflow-sketch { padding: 20px 12px; }.sketch-heading { font-size: .57rem; }.sketch-metrics { gap: 8px; }.sketch-route li { font-size: .55rem; }.scenario-controls button { font-size: .56rem; }.scenario-controls button>span { display: none; }figcaption { flex-wrap: wrap; justify-content: flex-start; gap: 0 14px; font-size: .52rem; } }
   @media(prefers-reduced-motion:reduce) { .route-packet { animation: none; display: none; }.step-symbol { transition: none; } }
 </style>

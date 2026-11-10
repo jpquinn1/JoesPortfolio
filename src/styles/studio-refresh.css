@@ -1,6 +1,31 @@
-/* Sonoran charcoal theme. Keep the original Q, Inter body and monospaced headings. */
-html.studio-technical-root { color-scheme: dark; }
+/* Pale stone with charcoal sections. Keep the original Q and typography. */
+html.studio-technical-root { color-scheme: light; }
 body.studio-technical {
+  --studio-bg: #f3f1eb;
+  --studio-surface: #ece9e2;
+  --studio-raised: #e2dfd8;
+  --studio-inset: #faf9f5;
+  --studio-border: #d0cdc5;
+  --studio-border-strong: #7c7e82;
+  --studio-fg: #292a2d;
+  --studio-muted: #585c63;
+  --studio-faint: #676a70;
+  --studio-accent: #23685d;
+  --studio-accent-soft: #e0e8e1;
+  --studio-accent-line: #9cbbb0;
+  --studio-copper: #935b36;
+  --studio-warning: #8c5d10;
+  --studio-warning-soft: #f0e4ce;
+  --studio-shadow: #292a2d12;
+  --studio-charcoal: var(--studio-fg);
+  --studio-paper: var(--studio-bg);
+  --studio-line: var(--studio-border);
+  --studio-sand: var(--studio-accent);
+  --pitch-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  background: var(--studio-bg);
+  color: var(--studio-fg);
+}
+.studio-technical :is(.studio-dark, .phoenix-workflow, .project-slide) {
   --studio-bg: #292a2d;
   --studio-surface: #303236;
   --studio-raised: #383a3f;
@@ -21,29 +46,29 @@ body.studio-technical {
   --studio-paper: var(--studio-bg);
   --studio-line: var(--studio-border);
   --studio-sand: var(--studio-accent);
-  --pitch-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+  color-scheme: dark;
   background: var(--studio-bg);
   color: var(--studio-fg);
 }
-body.studio-technical ::selection { background: var(--studio-accent); color: #04201c; }
+body.studio-technical ::selection { background: #80e1cd; color: #04201c; }
 body.studio-technical :focus-visible { outline-color: var(--studio-accent); }
-.studio-technical .studio-header { background: #292a2df2; backdrop-filter: blur(16px); border-color: var(--studio-border); }
+.studio-technical .studio-header { background: #f3f1ebf2; backdrop-filter: blur(16px); border-color: var(--studio-border); }
 .studio-technical .studio-nav { min-height: 84px; }
 .studio-technical .studio-nav-links a { font-family: var(--pitch-mono); font-size: .72rem; color: var(--studio-muted); }
 .studio-technical .studio-nav-links a:hover { color: var(--studio-accent); }
-.studio-technical .studio-button { background: var(--studio-accent); border-color: var(--studio-accent); color: #04201c; border-radius: 7px; font-family: var(--pitch-mono); }
-.studio-technical .studio-button:hover { background: #2dd4bf; border-color: #2dd4bf; transform: none; }
+.studio-technical .studio-button { background: var(--studio-fg); border-color: var(--studio-fg); color: var(--studio-bg); border-radius: 7px; font-family: var(--pitch-mono); }
+.studio-technical .studio-button:hover { background: var(--studio-accent); border-color: var(--studio-accent); transform: none; }
 .studio-technical .nav-cta { background: var(--studio-accent-soft); border-color: var(--studio-accent-line); color: var(--studio-accent); }
-.studio-technical .nav-cta:hover { color: #04201c; }
+.studio-technical .nav-cta:hover { color: var(--studio-bg); }
 .studio-technical .studio-text-link { color: var(--studio-muted); text-decoration-color: var(--studio-border-strong); }
 .studio-technical .studio-text-link:hover { color: var(--studio-accent); text-decoration-color: var(--studio-accent); }
-.studio-technical .studio-dark { color: var(--studio-fg); background: var(--studio-surface); }
+.studio-technical .studio-dark { color: var(--studio-fg); background: var(--studio-bg); }
 .studio-technical .studio-mobile-nav summary { font-family: var(--pitch-mono); }
 .studio-technical .studio-mobile-nav>div { background: var(--studio-surface); border-color: var(--studio-border); }
 .studio-technical .studio-mobile-nav a { font: .86rem var(--pitch-mono); }
 .studio-technical .studio-footer { background: var(--studio-bg); border-color: var(--studio-border); }
 .studio-technical .footer-top>div,.studio-technical .footer-bottom { font-family: var(--pitch-mono); }
-.studio-technical .skip-link { background: var(--studio-accent); color: #04201c; }
+.studio-technical .skip-link { background: var(--studio-accent); color: var(--studio-bg); }
 
 .studio-refresh { font-family: var(--font-inter), Arial, sans-serif; }
 .studio-refresh .pitch-shell { max-width: 1120px; }
@@ -71,7 +96,7 @@ body.studio-technical :focus-visible { outline-color: var(--studio-accent); }
 .studio-refresh .outcomes-section { border-top: 1px solid var(--studio-border); }
 .studio-refresh .services-heading { display: grid; grid-template-columns: 1.25fr 1fr; gap: 60px; align-items: end; }
 .studio-refresh .services-heading>p:not(.eyebrow) { max-width: 370px; margin: 0; }
-.studio-refresh .pilot-section { background: var(--studio-surface); border-block: 1px solid var(--studio-border); }
+.studio-refresh .pilot-section { background: var(--studio-bg); border-block: 1px solid var(--studio-border); }
 .studio-refresh .pilot-section .approach-steps { margin-top: 32px; }
 .studio-refresh .pilot-example { display: flex; align-items: center; justify-content: space-between; gap: 35px; margin-top: 38px; padding: 25px 28px; border: 1px solid var(--studio-accent-line); border-radius: 10px; background: var(--studio-inset); }
 .studio-refresh .pilot-example>div { max-width: 630px; }
@@ -109,7 +134,7 @@ body.studio-technical :focus-visible { outline-color: var(--studio-accent); }
 .studio-refresh .project-slide-summary { margin: 12px 0 0; max-width: 630px; font-size: .86rem; }
 .studio-refresh .project-tools .tech-stack { justify-content: flex-start; }
 .studio-refresh .project-tools .tech-icon { background: #e2e8f0; border-color: transparent; }
-.studio-refresh .partnership-section { background: var(--studio-surface); border-block: 1px solid var(--studio-border); }
+.studio-refresh .partnership-section { background: var(--studio-bg); border-block: 1px solid var(--studio-border); }
 .studio-refresh .founder-grid { display: grid; grid-template-columns: 280px 1fr; gap: 80px; align-items: center; }
 .studio-refresh .founder-photo img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; object-position: 50% 35%; border: 1px solid var(--studio-border); border-radius: 10px; filter: saturate(.7); }
 .studio-refresh .founder-grid .pitch-heading { margin: 0; }
