@@ -1,0 +1,192 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "astro",
+  "installCommand": "npm ci",
+  "buildCommand": "node --test tests/*.test.js && npm run build && node scripts/check-studio-build.mjs",
+  "outputDirectory": "dist",
+  "routes": [
+    {
+      "src": "^/(.*)$",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.quinnsoftwarestudio.com"
+        }
+      ],
+      "headers": {
+        "Location": "https://quinnsoftwarestudio.com/$1"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/studio/?$",
+      "has": [
+        {
+          "type": "host",
+          "value": "joequinn.dev"
+        }
+      ],
+      "headers": {
+        "Location": "https://quinnsoftwarestudio.com/"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/studio/privacy/?$",
+      "has": [
+        {
+          "type": "host",
+          "value": "joequinn.dev"
+        }
+      ],
+      "headers": {
+        "Location": "https://quinnsoftwarestudio.com/privacy"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/studio/work/(.+?)/?$",
+      "has": [
+        {
+          "type": "host",
+          "value": "joequinn.dev"
+        }
+      ],
+      "headers": {
+        "Location": "https://quinnsoftwarestudio.com/work/$1"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/studio/?$",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.joequinn.dev"
+        }
+      ],
+      "headers": {
+        "Location": "https://quinnsoftwarestudio.com/"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/studio/privacy/?$",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.joequinn.dev"
+        }
+      ],
+      "headers": {
+        "Location": "https://quinnsoftwarestudio.com/privacy"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/studio/work/(.+?)/?$",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.joequinn.dev"
+        }
+      ],
+      "headers": {
+        "Location": "https://quinnsoftwarestudio.com/work/$1"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/studio/?$",
+      "has": [
+        {
+          "type": "host",
+          "value": "quinnsoftwarestudio.com"
+        }
+      ],
+      "headers": {
+        "Location": "https://quinnsoftwarestudio.com/"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/studio/privacy/?$",
+      "has": [
+        {
+          "type": "host",
+          "value": "quinnsoftwarestudio.com"
+        }
+      ],
+      "headers": {
+        "Location": "https://quinnsoftwarestudio.com/privacy"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/studio/work/(.+?)/?$",
+      "has": [
+        {
+          "type": "host",
+          "value": "quinnsoftwarestudio.com"
+        }
+      ],
+      "headers": {
+        "Location": "https://quinnsoftwarestudio.com/work/$1"
+      },
+      "status": 308
+    },
+    {
+      "src": "^/$",
+      "has": [
+        {
+          "type": "host",
+          "value": "quinnsoftwarestudio.com"
+        }
+      ],
+      "dest": "/studio/index.html"
+    },
+    {
+      "src": "^/privacy/?$",
+      "has": [
+        {
+          "type": "host",
+          "value": "quinnsoftwarestudio.com"
+        }
+      ],
+      "dest": "/studio/privacy/index.html"
+    },
+    {
+      "src": "^/work/([^/]+)/?$",
+      "has": [
+        {
+          "type": "host",
+          "value": "quinnsoftwarestudio.com"
+        }
+      ],
+      "dest": "/studio/work/$1/index.html"
+    },
+    {
+      "src": "^/sitemap(?:-index)?\\.xml$",
+      "has": [
+        {
+          "type": "host",
+          "value": "quinnsoftwarestudio.com"
+        }
+      ],
+      "dest": "/studio/sitemap.xml"
+    },
+    {
+      "src": "^/robots\\.txt$",
+      "has": [
+        {
+          "type": "host",
+          "value": "quinnsoftwarestudio.com"
+        }
+      ],
+      "dest": "/studio/robots.txt"
+    },
+    {
+      "handle": "filesystem"
+    }
+  ]
+}

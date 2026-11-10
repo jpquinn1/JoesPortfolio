@@ -1,5 +1,6 @@
 ---
 import { studioWorkflows } from '../../data/studio-workflows';
+import { studioHref } from '../../lib/studio-urls';
 ---
 
 <div class="workflow-explorer" data-workflow-explorer>
@@ -37,7 +38,7 @@ import { studioWorkflows } from '../../data/studio-workflows';
               <h4>A representative solution</h4>
               <p>{workflow.solution}</p>
               <div class="guardrail"><span aria-hidden="true">↳</span><p>{workflow.guardrail}</p></div>
-              <a href="/studio#contact">Discuss this type of workflow <span aria-hidden="true">↗</span></a>
+              <a href={studioHref('#contact')}>Discuss this type of workflow <span aria-hidden="true">↗</span></a>
             </div>
             <div class="example-interface">
               <div class="interface-top"><span class="interface-mark" aria-hidden="true">Q</span><span>Studio / Workflow sample</span></div>

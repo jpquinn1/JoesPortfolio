@@ -62,6 +62,8 @@ export function createInquiryHandler({ env = process.env, fetchImpl = fetch, now
       new URL(request.url).origin,
       'https://joequinn.dev',
       'https://www.joequinn.dev',
+      'https://quinnsoftwarestudio.com',
+      'https://www.quinnsoftwarestudio.com',
       ...(env.STUDIO_CONTACT_ORIGINS || '').split(',').map((value) => value.trim()).filter(Boolean),
     ]);
     if (!origin || !allowedOrigins.has(origin)) return reply(403, 'Please send your inquiry from this website.');
@@ -91,12 +93,20 @@ export function createInquiryHandler({ env = process.env, fetchImpl = fetch, now
     const inquiry = validateInquiry(body);
     if (!inquiry) return reply(400, 'Please provide your name, a valid email, and a problem description of 20–4,000 characters.');
     if (env.STUDIO_CONTACT_DELIVERY !== 'enabled' || !env.RESEND_API_KEY || !env.STUDIO_CONTACT_FROM) {
-      return reply(503, 'Online delivery is not available yet. Please use the email option below.');
+      return reply(503, 'Online delivery is temporarily unavailable. Your text is still here; please email Joe using the option below.');
     }
 
     const content = `New project inquiry — Quinn Software Studio\n\nName: ${inquiry.name}\nCompany: ${inquiry.company || 'Not provided'}\nEmail: ${inquiry.email}\n\nWhat needs to work better:\n${inquiry.problem}`;
-    // Retry identical content safely even after an interrupted browser request.
-    const idempotencyKey = createHash('sha256').update(JSON.stringify(inquiry) + ':' + Math.floor(time / 86_400_000)).digest('hex');
+    const message = {
+      from: env.STUDIO_CONTACT_FROM,
+      to: [env.STUDIO_CONTACT_TO || 'joe@quinnsoftwarestudio.com'],
+      reply_to: inquiry.email,
+      subject: `Studio project inquiry from ${inquiry.name}`,
+      text: content,
+    };
+    // Resend retains keys for 24 hours. Hash the full message so retries stay
+    // stable across midnight and sender/recipient changes cannot reuse a key.
+    const idempotencyKey = createHash('sha256').update(JSON.stringify(message)).digest('hex');
     try {
       const result = await fetchImpl('https://api.resend.com/emails', {
         method: 'POST',
@@ -105,19 +115,13 @@ export function createInquiryHandler({ env = process.env, fetchImpl = fetch, now
           'Content-Type': 'application/json',
           'Idempotency-Key': `studio-${idempotencyKey}`,
         },
-        body: JSON.stringify({
-          from: env.STUDIO_CONTACT_FROM,
-          to: [env.STUDIO_CONTACT_TO || 'joepaquinn@gmail.com'],
-          reply_to: inquiry.email,
-          subject: `Studio project inquiry from ${inquiry.name}`,
-          text: content,
-        }),
+        body: JSON.stringify(message),
         signal: AbortSignal.timeout(10_000),
       });
       if (!result.ok) return reply(502, 'Your inquiry could not be sent. Your text is still here; please use the email option below.');
       const receipt = await result.json();
       if (typeof receipt.id !== 'string' || !receipt.id) return reply(502, 'Delivery could not be confirmed. Please use the email option below.');
-      return reply(200, 'Your inquiry has been sent. Thanks for sharing what you are working on — Joe will reply by email.');
+      return reply(200, 'Inquiry sent. Joe will reply by email to arrange a short conversation about your workflow.');
     } catch {
       // Never log contact details, request bodies, provider responses, or credentials.
       return reply(502, 'Delivery could not be confirmed. Your text is still here; please use the email option below.');

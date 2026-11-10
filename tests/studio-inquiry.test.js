@@ -4,10 +4,10 @@ import { createInquiryHandler } from '../api/studio-inquiry.js';
 
 const valid = { name: 'Alex Morgan', company: 'Example Workshop', email: 'alex@example.com', problem: 'We need to connect our job board and equipment checks.', website: '' };
 const env = { STUDIO_CONTACT_DELIVERY: 'enabled', RESEND_API_KEY: 'test-only-key', STUDIO_CONTACT_FROM: 'Studio <studio@example.com>' };
-function request(body = valid, { headers = {}, method = 'POST', raw } = {}) {
-  return new Request('https://joequinn.dev/api/studio-inquiry', {
+function request(body = valid, { headers = {}, method = 'POST', raw, origin = 'https://quinnsoftwarestudio.com' } = {}) {
+  return new Request(`${origin}/api/studio-inquiry`, {
     method,
-    headers: { origin: 'https://joequinn.dev', 'content-type': 'application/json', ...headers },
+    headers: { origin, 'content-type': 'application/json', ...headers },
     ...(method !== 'GET' ? { body: raw ?? JSON.stringify(body) } : {}),
   });
 }
@@ -22,7 +22,7 @@ test('a valid inquiry sends only to the configured owner, preserves literal cont
   assert.equal(response.status, 200);
   assert.equal((await response.json()).ok, true);
   assert.equal(sent.url, 'https://api.resend.com/emails');
-  assert.deepEqual(sent.body.to, ['joepaquinn@gmail.com']);
+  assert.deepEqual(sent.body.to, ['joe@quinnsoftwarestudio.com']);
   assert.equal(sent.body.reply_to, valid.email);
   assert.ok(sent.body.text.includes('<script>Example</script>'));
   assert.equal(sent.body.html, undefined);
@@ -72,7 +72,7 @@ test('missing configuration, rejection, missing receipt, and network failure can
   }
 });
 
-test('credentials alone cannot enable delivery while email-draft mode is selected', async () => {
+test('credentials alone cannot bypass the runtime delivery switch', async () => {
   for (const setting of [undefined, '', 'disabled']) {
     const handler = createInquiryHandler({
       env: { ...env, STUDIO_CONTACT_DELIVERY: setting },
@@ -84,13 +84,45 @@ test('credentials alone cannot enable delivery while email-draft mode is selecte
   }
 });
 
+test('studio, portfolio, and preview submissions notify the configured business inbox', async () => {
+  for (const origin of ['https://quinnsoftwarestudio.com', 'https://www.quinnsoftwarestudio.com', 'https://joequinn.dev', 'https://www.joequinn.dev', 'https://studio-preview.vercel.app']) {
+    let sent;
+    const handler = createInquiryHandler({
+      env: { ...env, STUDIO_CONTACT_TO: 'owner@example.com' },
+      fetchImpl: async (_, options) => {
+        sent = JSON.parse(options.body);
+        return Response.json({ id: 'mail-123' });
+      },
+    });
+    const response = await handler(request(valid, { origin }));
+    assert.equal(response.status, 200, origin);
+    assert.deepEqual(sent.to, ['owner@example.com']);
+    assert.equal(sent.from, env.STUDIO_CONTACT_FROM);
+    assert.equal(sent.reply_to, valid.email);
+  }
+});
+
+test('partial delivery configuration fails without contacting the provider', async () => {
+  for (const key of ['RESEND_API_KEY', 'STUDIO_CONTACT_FROM']) {
+    const handler = createInquiryHandler({
+      env: { ...env, [key]: '' },
+      fetchImpl: async () => { assert.fail('Incomplete configuration reached provider'); },
+    });
+    const response = await handler(request());
+    assert.equal(response.status, 503);
+    assert.equal((await response.json()).ok, false);
+  }
+});
+
 test('retries of an identical inquiry use the same provider idempotency key', async () => {
   const keys = [];
-  const handler = createInquiryHandler({ env, now: () => 100_000, fetchImpl: async (_, options) => {
+  let time = 86_399_000;
+  const handler = createInquiryHandler({ env, now: () => time, fetchImpl: async (_, options) => {
     keys.push(options.headers['Idempotency-Key']);
     return Response.json({ id: 'mail-123' });
   } });
   await handler(request());
+  time += 2000; // A retry just after UTC midnight must not send a duplicate.
   await handler(request());
   await handler(request({ ...valid, problem: 'A different problem with our maintenance handover process.' }));
   assert.equal(keys[0], keys[1]);

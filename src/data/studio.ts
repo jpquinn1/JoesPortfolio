@@ -1,5 +1,3 @@
-import { SOCIALS } from '../consts';
-
 /**
  * Studio copy lives here so it can be reviewed without editing page components.
  * Sources and publication review items: docs/studio-content-review.md.
@@ -7,9 +5,9 @@ import { SOCIALS } from '../consts';
  */
 export const brand = {
   name: 'Quinn Software Studio',
-  headline: 'Software that makes operations run better.',
+  headline: 'Less manual admin for service & production teams.',
   description:
-    'Custom applications, practical automation, and connected systems built around the way your business actually works.',
+    'Forms, workflow automation, and connected tools that reduce repeated data entry, organize client follow-ups, and help teams track equipment issues.',
   location: 'Phoenix, Arizona',
   locationLine:
     'Independent software engineering based in Phoenix, Arizona. Working with businesses locally and beyond.',
@@ -17,8 +15,8 @@ export const brand = {
 };
 
 export const contact = {
-  email: SOCIALS.email.replace('mailto:', ''),
-  emailHref: SOCIALS.email,
+  email: 'joe@quinnsoftwarestudio.com',
+  emailHref: 'mailto:joe@quinnsoftwarestudio.com',
 };
 
 export const founder = {
