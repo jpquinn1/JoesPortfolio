@@ -3,7 +3,9 @@
 The portfolio and Quinn Software Studio share the existing Vercel project,
 [`joequinn/joes-portfolio`](https://vercel.com/joequinn/joes-portfolio), connected to
 [`jpquinn1/JoesPortfolio`](https://github.com/jpquinn1/JoesPortfolio).
-No second hosting project, paid hosting add-on, or deployment token is needed.
+No second hosting project or deployment token is needed. The owner upgraded the
+existing team to Pro for business hosting on November 10, 2026. This repository
+does not configure billing, subscriptions, or usage budgets.
 
 ## Public addresses
 

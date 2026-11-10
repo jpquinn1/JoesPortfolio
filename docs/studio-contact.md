@@ -13,7 +13,7 @@ A success message appears only after the server receives a successful Resend res
 Set these variables in the existing `joes-portfolio` Vercel project’s **Production** environment:
 
 - `RESEND_API_KEY`: server-only sending key for the verified Studio sender domain.
-- `STUDIO_CONTACT_FROM`: an authorized sender, such as `Quinn Software Studio <inquiries@quinnsoftwarestudio.com>`.
+- `STUDIO_CONTACT_FROM`: `Quinn Software Studio <inquiries@notify.quinnsoftwarestudio.com>`.
 - `STUDIO_CONTACT_DELIVERY`: `enabled`.
 - `STUDIO_CONTACT_TO`: `joe@quinnsoftwarestudio.com` (also the runtime default).
 - `STUDIO_CONTACT_ORIGINS`: optional comma-separated additional exact origins. Both Studio domains, both portfolio domains, and the current request origin are accepted already.
@@ -41,6 +41,6 @@ Inquiry content is sent as plain text. The function does not log form bodies, em
 
 Run `node --test tests/studio-inquiry.test.js`. These tests do not send email. They cover recipient control, reply-to, invalid inputs, body limits, origins, provider failures, configuration, idempotent retries, and rate limiting.
 
-Browser QA on November 10, 2026 exercised the real function with an injected provider response: success confirmation, retained text and email fallback on failure, and the mobile layout at 390px and 320px. Production sender configuration and actual inbox delivery remain pending account access; do not describe them as verified until the live test is completed.
+Browser QA on November 10, 2026 exercised the real function with an injected provider response: success confirmation, retained text and email fallback on failure, and the mobile layout at 390px and 320px. The verified sender uses `notify.quinnsoftwarestudio.com`; its sending-only key is restricted to that subdomain. Actual inbox delivery must be verified separately after deployment using the procedure above.
 
 References: [Vercel Node functions](https://vercel.com/docs/functions/runtimes/node-js), [Resend send-email API](https://resend.com/docs/api-reference/emails/send-email).
