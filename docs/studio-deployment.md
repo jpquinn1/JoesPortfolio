@@ -66,6 +66,10 @@ Production builds also require `STUDIO_CONTACT_DELIVERY=enabled`, a nonempty
 publication and reports only the missing variable names. Local and preview builds
 can validate the site without email secrets.
 There is no second GitHub Actions deploy job and no duplicate deploy credential.
+Vercel uses its default lockfile-aware installer so restored Astro image caches
+in `node_modules/.astro` survive dependency installation. Avoid overriding that
+step with `npm ci`, which deletes the cached image variants along with
+`node_modules`. GitHub CI still uses a clean `npm ci` to validate the lockfile.
 
 Run the complete local verification with:
 
