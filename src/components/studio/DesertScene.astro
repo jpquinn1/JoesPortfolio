@@ -1,19 +1,118 @@
-<div class="desert-background" aria-hidden="true">
-  <div class="desert-pin">
-    <div class="desert-vignette">
-      <img src="/studio/desert-field-low-poly.webp" width="1536" height="1024" alt="" decoding="async" />
-      <svg viewBox="0 0 900 600" fill="none">
-        <circle class="weather-signal" cx="94" cy="240" r="45" stroke="#75827c" stroke-width="1" stroke-dasharray="3 10"/>
-        <path class="shot-trace" d="M480 186Q650 176 815 230" stroke="#984725" stroke-width="1.3"/>
-        <path class="freight-signal" d="M639 440L751 420L824 466L708 500Z" stroke="#75827c" stroke-width="1" stroke-dasharray="6 8"/>
-        <path class="workshop-signal" d="M650 250L760 234L800 340L686 375Z" stroke="#75827c" stroke-dasharray="3 8"/>
-      </svg>
-    </div>
-  </div>
+<div class="desert-environment" id="desert-scene" data-desert-scene data-running="false" aria-hidden="true">
+  <div class="sun-track"><div class="desert-sun" data-desert-sun></div></div>
+  <svg class="desert-landscape landscape-wide" viewBox="0 0 1600 900" preserveAspectRatio="none" fill="none">
+    <path class="distant-ridge" d="M-30 665 80 627 155 640 251 572 300 599 366 528 431 601 487 580 584 652 668 625 735 643 817 561 878 597 950 580 1030 633 1122 601 1190 630 1285 548 1344 593 1412 572 1505 649 1630 617V900H-30Z"/>
+    <path class="ridge-fold" d="m155 640 96-68 25 63 90-107 31 102 90-50 42 77m206-14 82-82 26 83 107-64 43 80m197-30 95-82 34 88 93-64 46 84"/>
+    <path class="near-ridge" d="M-30 716q200-55 410-11t404 10 420-5 426 27V900H-30Z"/>
+    <path class="terrain-contour" d="M-30 760q210-52 414-10t418 14 413 2 415 23M-30 802q230-49 435-7t407 14 426 2 392 23"/>
+    <g class="desert-cactus"><path d="M1452 671V371q0-18 13-18t13 18v126h19q17 0 17-18v-56q0-10 8-10t8 10v65q0 33-33 33h-19v150M1452 560h-19q-36 0-36-39v-62q0-10 8-10t8 10v58q0 19 20 19h19Z"/><path class="cactus-rib" d="M1465 378v293m-60-203v51q0 29 29 29h18m26-39h19q25 0 25-27v-50"/></g>
+    <g class="desert-cactus"><path d="M76 690V524q0-11 8-11t8 11v69h14q12 0 12-14v-28q0-7 5-7t5 7v35q0 21-22 21H92v83M76 632H63q-24 0-24-25v-31q0-7 5-7t5 7v29q0 14 14 14h13Z"/></g>
+    <path class="sensor-route" d="M87 707Q360 672 724 705T1472 690" pathLength="1000"/>
+    <path class="sensor-packet" d="M87 707Q360 672 724 705T1472 690" pathLength="1000"/>
+    <g class="sensor-node" transform="translate(87 707)"><circle class="sensor-ring" r="11"/><circle r="3"/></g>
+    <g class="sensor-node" transform="translate(724 705)"><circle class="sensor-ring" r="11"/><circle r="3"/></g>
+    <g class="sensor-node" transform="translate(1472 690)"><circle class="sensor-ring" r="11"/><circle r="3"/></g>
+  </svg>
+  <svg class="desert-landscape landscape-narrow" viewBox="0 0 480 900" preserveAspectRatio="none" fill="none">
+    <path class="distant-ridge" d="M-30 622 29 604 68 610 117 576 147 592 194 538 235 592 263 577 311 612 350 599 377 608 414 578 449 601 510 590V900H-30Z"/>
+    <path class="ridge-fold" d="m68 610 49-34 15 40 62-78 18 78 51-39 29 48m85-17 37-30 16 44 19-21"/>
+    <path class="near-ridge" d="M-30 660q83-30 169-10t171 6 200 9V900H-30Z"/>
+    <path class="terrain-contour" d="M-30 705q94-29 180-8t169 7 191 9M-30 754q102-28 191-7t168 7 181 13"/>
+    <g class="desert-cactus"><path d="M415 608V345q0-13 10-13t10 13v99h12q12 0 12-13v-43q0-8 6-8t6 8v48q0 25-24 25h-12v147M415 500h-14q-27 0-27-29v-47q0-8 6-8t6 8v44q0 15 15 15h14Z"/><path class="cactus-rib" d="M425 350v258m-45-177v38q0 23 21 23h14m20-40h12q18 0 18-18v-39"/></g>
+    <g class="desert-cactus"><path d="M25 632V551q0-7 5-7t5 7v34h7q6 0 6-7v-14q0-4 3-4t3 4v18q0 11-12 11h-7v39M25 606h-7q-12 0-12-13v-16q0-4 3-4t3 4v15q0 7 7 7h6Z"/></g>
+    <path class="sensor-route" d="M31 663Q118 642 246 671T431 655" pathLength="1000"/>
+    <path class="sensor-packet" d="M31 663Q118 642 246 671T431 655" pathLength="1000"/>
+    <g class="sensor-node" transform="translate(31 663)"><circle class="sensor-ring" r="10"/><circle r="2.5"/></g>
+    <g class="sensor-node" transform="translate(431 655)"><circle class="sensor-ring" r="10"/><circle r="2.5"/></g>
+  </svg>
 </div>
+
+<script>
+  const scene = document.querySelector<HTMLElement>('[data-desert-scene]');
+  if (scene) {
+    const button = document.querySelector<HTMLButtonElement>('[data-desert-toggle]')!;
+    const elevation = document.querySelector<HTMLElement>('[data-sun-elevation]')!;
+    const packets = document.querySelector<HTMLElement>('[data-desert-packets]')!;
+    const preference = matchMedia('(prefers-reduced-motion: reduce)');
+    let paused = preference.matches;
+    let progress = 0;
+    let scrollRange = 1;
+    let sceneHeight = innerHeight;
+    let frame = 0;
+    let packetCount = 128;
+    let timer: ReturnType<typeof setInterval> | undefined;
+    const paintSun = () => {
+      scene.style.setProperty('--sun-y', `${progress * sceneHeight * .62}px`);
+      scene.style.setProperty('--sun-x', `${progress * -24}px`);
+      scene.style.setProperty('--sun-hue', String(39 - progress * 20));
+      elevation.textContent = `${Math.round(64 - progress * 68)}°`;
+    };
+    const update = () => {
+      frame = 0;
+      if (paused || preference.matches || document.hidden) return;
+      progress = Math.min(1, Math.max(0, scrollY / scrollRange));
+      paintSun();
+    };
+    const schedule = () => { if (!frame && !paused && !preference.matches && !document.hidden) frame = requestAnimationFrame(update); };
+    const measure = () => {
+      scrollRange = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      sceneHeight = scene.clientHeight;
+      paintSun();
+      schedule();
+    };
+    const sync = () => {
+      clearInterval(timer);
+      cancelAnimationFrame(frame);
+      frame = 0;
+      const running = !paused && !preference.matches && !document.hidden;
+      scene.dataset.running = String(running);
+      document.body.dataset.ambientMotion = running ? 'on' : 'off';
+      button.disabled = preference.matches;
+      button.textContent = preference.matches ? 'Reduced motion' : paused ? 'Play scene' : 'Pause scene';
+      if (running) {
+        schedule();
+        timer = setInterval(() => { packetCount += 3; packets.textContent = String(packetCount); }, 4200);
+      }
+    };
+    button.hidden = false;
+    button.addEventListener('click', () => { paused = !paused; sync(); });
+    preference.addEventListener('change', () => { paused = preference.matches; sync(); });
+    document.addEventListener('visibilitychange', sync);
+    addEventListener('scroll', schedule, { passive: true });
+    addEventListener('resize', measure, { passive: true });
+    new ResizeObserver(measure).observe(document.body);
+    addEventListener('pagehide', () => { clearInterval(timer); cancelAnimationFrame(frame); frame = 0; scene.dataset.running = 'false'; document.body.dataset.ambientMotion = 'off'; });
+    addEventListener('pageshow', () => { measure(); sync(); });
+    const reveal = new IntersectionObserver(entries => {
+      for (const entry of entries) if (entry.isIntersecting) {
+        if (!paused && !preference.matches) entry.target.classList.add('is-revealed');
+        reveal.unobserve(entry.target);
+      }
+    }, { threshold: .12 });
+    document.querySelectorAll('.outcome-card, .approach-steps li, .founder-grid').forEach(element => { element.setAttribute('data-reveal', ''); reveal.observe(element); });
+    measure();
+    sync();
+  }
+</script>
+
 <style>
-  .desert-background{position:absolute;inset:0;z-index:-1;pointer-events:none}.desert-pin{position:sticky;top:85px;height:calc(100svh - 85px);min-height:350px}.desert-vignette{position:absolute;right:3vw;bottom:6vh;width:min(39vw,500px);opacity:.37;mix-blend-mode:multiply}.desert-vignette img{display:block;width:100%;height:auto;mask-image:radial-gradient(ellipse at 50% 50%,#000 42%,transparent 74%)}svg{position:absolute;inset:0;width:100%;height:100%}.weather-signal{transform-origin:94px 240px;animation:orbit 40s linear infinite;opacity:.45}.shot-trace,.freight-signal,.workshop-signal{opacity:0}.freight-signal{animation:freight 12s linear infinite}:global([data-shot="true"]) .shot-trace{animation:shot 1.4s ease-out both}:global([data-active-channel="freight"]) .freight-signal,:global([data-active-channel="workshop"]) .workshop-signal{opacity:.7}:global([data-motion="paused"]) svg *{animation-play-state:paused!important}
-  @keyframes orbit{to{transform:rotate(360deg)}}@keyframes freight{to{stroke-dashoffset:-56}}@keyframes shot{0%{stroke-dasharray:0 500;opacity:.8}70%{stroke-dasharray:500 500;opacity:.8}100%{stroke-dasharray:500 500;opacity:0}}
-  @media(max-width:760px){.desert-pin{top:77px;height:calc(100svh - 77px)}.desert-vignette{right:-6vw;bottom:9vh;width:min(76vw,390px);opacity:.25}}
-  @media(prefers-reduced-motion:reduce){svg *{animation:none!important}.desert-pin{position:absolute;top:0;height:min(800px,100svh)}}
+  .desert-environment { position: fixed; inset: 0; height: 100vh; height: 100svh; z-index: -1; pointer-events: none; overflow: hidden; --sun-y: 0px; --sun-x: 0px; --sun-hue: 39; }
+  .sun-track { position: absolute; inset: 0; mask-image: linear-gradient(#000 0 59%,transparent 77%); }
+  .desert-sun { position: absolute; top: 14%; right: 5.5%; width: clamp(80px,8vw,128px); aspect-ratio: 1; border-radius: 50%; background: hsl(var(--sun-hue) 70% 69% / .38); box-shadow: 0 0 65px 28px hsl(var(--sun-hue) 70% 65% / .065); transform: translate3d(var(--sun-x),var(--sun-y),0); transition: transform .16s linear,background .2s; }
+  .desert-landscape { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .landscape-narrow { display: none; }
+  .distant-ridge { fill: #dcc5a52e; stroke: #9c866b38; stroke-width: 1.2; stroke-linejoin: round; }
+  .ridge-fold { stroke: #9c866b24; stroke-width: 1; stroke-linejoin: round; }
+  .near-ridge { fill: #d3b59312; stroke: #a7917625; stroke-width: 1; }
+  .terrain-contour { stroke: #a7917625; stroke-width: 1; }
+  .desert-cactus { fill: #8a9e892a; stroke: #74897070; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+  .cactus-rib { fill: none; stroke: #74897045; stroke-width: 1; }
+  .sensor-route { stroke: #23685d26; stroke-width: 1; stroke-dasharray: 3 7; }
+  .sensor-packet { stroke: #23685d80; stroke-width: 2; stroke-dasharray: 9 991; animation: desert-packet 13s linear infinite; }
+  .sensor-node { fill: #23685d75; }.sensor-ring { fill: none; stroke: #23685d70; stroke-width: 1; transform-origin: 0 0; animation: desert-signal 4.2s ease-out infinite; }
+  [data-running="false"] :is(.sensor-packet,.sensor-ring) { animation-play-state: paused; }
+  @keyframes desert-packet { to { stroke-dashoffset: -1000; } }
+  @keyframes desert-signal { from { opacity: .6; transform: scale(.45); } to { opacity: 0; transform: scale(1.5); } }
+  @media(max-width:760px) { .landscape-wide { display: none; }.landscape-narrow { display: block; }.desert-sun { right: 7%; top: 15%; width: 75px; }.desert-cactus { stroke-width: 1.4; } }
+  @media(prefers-reduced-motion:reduce) { .desert-sun { transition: none; }.sensor-packet,.sensor-ring { animation: none; }.sensor-packet { display: none; } }
 </style>
