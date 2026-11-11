@@ -1,191 +1,44 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "astro",
-  "buildCommand": "node --test tests/*.test.js && npm run build && node scripts/check-studio-build.mjs",
+  "buildCommand": "npm run check",
   "outputDirectory": "dist",
-  "routes": [
+  "redirects": [
     {
-      "src": "^/(.*)$",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.quinnsoftwarestudio.com"
-        }
-      ],
-      "headers": {
-        "Location": "https://quinnsoftwarestudio.com/$1"
-      },
-      "status": 308
+      "source": "/studio",
+      "destination": "https://quinnsoftwarestudio.com/",
+      "permanent": true
     },
     {
-      "src": "^/studio/?$",
-      "has": [
-        {
-          "type": "host",
-          "value": "joequinn.dev"
-        }
-      ],
-      "headers": {
-        "Location": "https://quinnsoftwarestudio.com/"
-      },
-      "status": 308
+      "source": "/studio/privacy",
+      "destination": "https://quinnsoftwarestudio.com/privacy",
+      "permanent": true
     },
     {
-      "src": "^/studio/privacy/?$",
-      "has": [
-        {
-          "type": "host",
-          "value": "joequinn.dev"
-        }
-      ],
-      "headers": {
-        "Location": "https://quinnsoftwarestudio.com/privacy"
-      },
-      "status": 308
+      "source": "/studio/work/:slug",
+      "destination": "https://quinnsoftwarestudio.com/work/:slug",
+      "permanent": true
     },
     {
-      "src": "^/studio/work/(.+?)/?$",
-      "has": [
-        {
-          "type": "host",
-          "value": "joequinn.dev"
-        }
-      ],
-      "headers": {
-        "Location": "https://quinnsoftwarestudio.com/work/$1"
-      },
-      "status": 308
+      "source": "/studio/sitemap.xml",
+      "destination": "https://quinnsoftwarestudio.com/sitemap.xml",
+      "permanent": true
     },
     {
-      "src": "^/studio/?$",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.joequinn.dev"
-        }
-      ],
-      "headers": {
-        "Location": "https://quinnsoftwarestudio.com/"
-      },
-      "status": 308
+      "source": "/studio/robots.txt",
+      "destination": "https://quinnsoftwarestudio.com/robots.txt",
+      "permanent": true
     },
     {
-      "src": "^/studio/privacy/?$",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.joequinn.dev"
-        }
-      ],
-      "headers": {
-        "Location": "https://quinnsoftwarestudio.com/privacy"
-      },
-      "status": 308
-    },
+      "source": "/studio/:asset*",
+      "destination": "https://quinnsoftwarestudio.com/studio/:asset*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
     {
-      "src": "^/studio/work/(.+?)/?$",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.joequinn.dev"
-        }
-      ],
-      "headers": {
-        "Location": "https://quinnsoftwarestudio.com/work/$1"
-      },
-      "status": 308
-    },
-    {
-      "src": "^/studio/?$",
-      "has": [
-        {
-          "type": "host",
-          "value": "quinnsoftwarestudio.com"
-        }
-      ],
-      "headers": {
-        "Location": "https://quinnsoftwarestudio.com/"
-      },
-      "status": 308
-    },
-    {
-      "src": "^/studio/privacy/?$",
-      "has": [
-        {
-          "type": "host",
-          "value": "quinnsoftwarestudio.com"
-        }
-      ],
-      "headers": {
-        "Location": "https://quinnsoftwarestudio.com/privacy"
-      },
-      "status": 308
-    },
-    {
-      "src": "^/studio/work/(.+?)/?$",
-      "has": [
-        {
-          "type": "host",
-          "value": "quinnsoftwarestudio.com"
-        }
-      ],
-      "headers": {
-        "Location": "https://quinnsoftwarestudio.com/work/$1"
-      },
-      "status": 308
-    },
-    {
-      "src": "^/$",
-      "has": [
-        {
-          "type": "host",
-          "value": "quinnsoftwarestudio.com"
-        }
-      ],
-      "dest": "/studio/index.html"
-    },
-    {
-      "src": "^/privacy/?$",
-      "has": [
-        {
-          "type": "host",
-          "value": "quinnsoftwarestudio.com"
-        }
-      ],
-      "dest": "/studio/privacy/index.html"
-    },
-    {
-      "src": "^/work/([^/]+)/?$",
-      "has": [
-        {
-          "type": "host",
-          "value": "quinnsoftwarestudio.com"
-        }
-      ],
-      "dest": "/studio/work/$1/index.html"
-    },
-    {
-      "src": "^/sitemap(?:-index)?\\.xml$",
-      "has": [
-        {
-          "type": "host",
-          "value": "quinnsoftwarestudio.com"
-        }
-      ],
-      "dest": "/studio/sitemap.xml"
-    },
-    {
-      "src": "^/robots\\.txt$",
-      "has": [
-        {
-          "type": "host",
-          "value": "quinnsoftwarestudio.com"
-        }
-      ],
-      "dest": "/studio/robots.txt"
-    },
-    {
-      "handle": "filesystem"
+      "source": "/api/studio-inquiry",
+      "destination": "https://quinnsoftwarestudio.com/api/studio-inquiry"
     }
   ]
 }

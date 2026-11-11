@@ -3,13 +3,14 @@
   "type": "module",
   "version": "0.0.1",
   "engines": {
-    "node": ">=22.12.0"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "npm run build && node scripts/check-portfolio-build.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.0",

@@ -25,13 +25,6 @@ const projects = defineCollection({
 			title: z.string(),
 			// Short blurb shown on the project card.
 			description: z.string(),
-			// Plain-language presentation and ordering for the Studio audience.
-			studio: z.object({
-				title: z.string(),
-				description: z.string(),
-				order: z.number(),
-				contribution: z.string().optional(),
-			}).optional(),
 			// Large screenshot/preview for the card and case study header.
 			screenshot: image(),
 			screenshotAlt: z.string().optional(),

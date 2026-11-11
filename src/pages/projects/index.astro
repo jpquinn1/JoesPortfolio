@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { STUDIO_URL } from '../../consts';
 import Layout from '../../layouts/Layout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import '../../styles/portfolio-work.css';
@@ -31,5 +32,5 @@ const personal = projects.filter(({ data }) => data.category === 'personal');
     <p class="work-section-intro">Independent experiments in daily routines, self-hosting, and personal workflows.</p>
     <div class="work-grid">{personal.map((project) => <ProjectCard href={`/projects/${project.id}`} {...project.data} />)}</div>
   </section>}
-  <div class="work-section work-closing"><p>Have a practical problem to solve?</p><a href="/studio#contact" class="work-text-link">Work with me <span aria-hidden="true">↗</span></a></div>
+  <div class="work-section work-closing"><p>Have a practical problem to solve?</p><a href={`${STUDIO_URL}#contact`} class="work-text-link">Work with me <span aria-hidden="true">↗</span></a></div>
 </Layout>

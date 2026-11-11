@@ -1,6 +1,7 @@
 // Global site metadata. Imported anywhere via the `import` keyword.
 
 export const SITE_TITLE = 'Joe Quinn';
+export const STUDIO_URL = 'https://quinnsoftwarestudio.com/';
 export const SITE_DESCRIPTION =
   'Operations Engineer & Technical Systems Builder. I build practical software and field systems across radar data, automation, dashboards, networking, computer vision, and physical device workflows.';
 
