@@ -13,10 +13,7 @@ export default defineConfig({
   site: 'https://joequinn.dev',
   integrations: [
     mdx(),
-    sitemap({
-      // Studio has its own canonical domain and sitemap on the same deployment.
-      filter: (page) => !new URL(page).pathname.startsWith('/studio'),
-    }),
+    sitemap(),
     react(),
   ],
 

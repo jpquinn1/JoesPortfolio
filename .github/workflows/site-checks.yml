@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Test and build
+    name: Build and verify the portfolio
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,9 +23,4 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - name: Test inquiry handling and domain routing
-        run: node --test tests/*.test.js
-      - name: Build both websites
-        run: npm run build
-      - name: Check production pages and canonical URLs
-        run: node scripts/check-studio-build.mjs
+      - run: npm run check
