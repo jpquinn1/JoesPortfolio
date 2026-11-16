@@ -1,54 +1,77 @@
 ---
 title: "Radar Relay IoT"
-description: "Embedded firmware, Azure services and commissioning tools for remote radar health monitoring and controlled power recovery."
-screenshot: "../../assets/projects/captures/radar-relay-iot.png"
-screenshotAlt: "Radar Relay fleet dashboard showing grouped sites and controller status"
+description: "C++ controller firmware, Azure IoT services and a commissioning app for power-cycling range radars remotely, with signed over-the-air updates and fail-safe power."
+screenshot: "../../assets/projects/captures/radar-relay-iot-framed.jpg"
+screenshotAlt: "Radar Relay fleet dashboard with a controller's firmware card and connection history, framed over a driving range at dusk"
 category: "professional"
-role: "Device, cloud & desktop development"
-status: "Engineering / bench stage"
+role: "Firmware, cloud & tooling development"
+status: "Engineering · test environment"
 highlights:
-  - "Device identity and provisioning"
-  - "Telemetry and controlled power recovery"
-  - "Desktop commissioning and signed releases"
+  - "Fail-safe relay control on Arduino Opta and ESP32-S3"
+  - "Signed OTA with automatic rollback"
+  - "Ethernet-to-Wi-Fi failover, bench-verified"
 tools:
   - "cpp"
+  - "esp32"
   - "azure"
+  - "mqtt"
   - "typescript"
   - "react"
-  - "terraform"
   - "python"
+  - "terraform"
 tags:
-  - "Embedded systems"
+  - "Embedded firmware"
+  - "Device fleet"
   - "Azure IoT"
-  - "Device operations"
-order: 2
+order: 1
 featured: true
-mediaNote: "Actual dashboard running in fixture mode with a simulated fleet. Counts illustrate the interface, not a deployed fleet."
+mediaNote: "The dashboard and installer running offline against their built-in fake fleet and fake boards; nothing reaches a device or the cloud. Fixture site names are generic. The dusk range is a generated backdrop."
 gallery:
-  - image: "../../assets/projects/captures/radar-relay-iot-detail.png"
-    alt: "Radar Relay controller detail with telemetry charts and device state"
-    caption: "Controller detail brings telemetry and device state together. Shown with fixture data."
+  - image: "../../assets/projects/captures/radar-relay-failover-power.png"
+    alt: "Two dashboard cards: a controller running on its Wi-Fi backup with path-change details, and radar power controls noting that relay state is commanded, not verified"
+    caption: "Left, failover is visible to operators: the controller reports which path carries its cloud connection, and why. Right, power commands keep requested, reported and verified as separate facts. A relay state is never treated as proof that the radar is on."
+  - image: "../../assets/projects/captures/radar-relay-health-firmware.png"
+    alt: "Two dashboard cards: controller health with reset reason, watchdog resets and MQTT reconnects, and firmware state with bootloader, signed release and canary status"
+    caption: "Device health from the controller's heartbeat, alongside its firmware: bootloader, update keys, the newest approved signed release, and whether this unit is a canary."
+  - image: "../../assets/projects/captures/opta-installer-firmware.png"
+    alt: "Installer firmware step showing the approved release with its signature and digest verified before flashing"
+    caption: "The desktop installer flashes over USB only after it has checked the release's signature and digest."
+  - image: "../../assets/projects/captures/opta-installer-commit-failed.png"
+    alt: "Installer provisioning steps with an injected failure while committing configuration to the board"
+    caption: "Provisioning is a list of resumable steps. Here a failure has been injected into a fake board, and the installer shows exactly where it stopped."
+  - image: "../../assets/projects/captures/opta-installer-verify.png"
+    alt: "Installer verify step separating backend records, results reported over USB and what the cloud observed"
+    caption: "The verify step keeps three kinds of evidence apart: backend records, what the board reported over USB, and what the cloud actually observed."
 ---
 
 ## Context
 
-A remotely deployed radar may need a physical power cycle even when its network connection is unreliable. The surrounding control system needs to make that action deliberate, observable and recoverable.
+A range radar sometimes needs a hard power cycle, and the site may be hours away. A small controller beside the radar can do it through a relay. Remote power control raises the stakes, though: a bug, a lost network or a bad update must never leave a radar switched off.
 
 ## What I built
 
-- **Controller firmware:** relay state, watchdogs, telemetry and hardware abstractions for Opta and ESP32 development.
-- **Cloud services:** device inventory, assignment, provisioning and command lifecycle APIs using Azure Functions and Cosmos DB.
-- **Operator tools:** a React dashboard and a Python-backed desktop commissioning application.
-- **Delivery tooling:** infrastructure definitions, signed firmware artifacts and repeatable installation workflows.
+- **Controller firmware (C++):** a power state machine for an Arduino Opta driving an industrial relay. It runs an 8-second hardware watchdog, with a breadcrumb in RTC memory before every blocking call. It reads RS-485 temperature and humidity sensors. An ESP32-S3 port on ESP-IDF provisions, reports and updates, with relay switching deliberately left off.
+- **Cloud connection:** zero-touch provisioning through Azure's Device Provisioning Service, then MQTT over TLS to IoT Hub, carrying heartbeats, events and device twins. Power cycles are commands with their own lifecycle.
+- **Signed over-the-air updates:** ES256-signed release manifests, resumable HTTPS downloads and an MCUboot test swap. A new image confirms itself only after three minutes of healthy watchdog feeding, a live cloud session and a completed twin exchange. Otherwise it reverts. Fleet rollouts go one controller at a time, canary first, and pause automatically on a failure.
+- **Network failover:** Ethernet stays preferred. When it can't reach the cloud, the controller moves to a Wi-Fi backup and moves back once Ethernet is healthy.
+- **Backend and dashboard:** TypeScript Azure Functions, Cosmos DB and Event Hub ingestion behind a React operator dashboard, covering sites, assignment, commands, firmware jobs and connection history.
+- **Commissioning app:** a Python desktop installer that flashes over USB (DFU), verifies signed releases, provisions the board step by step and prints QR labels. A simulation mode uses fake boards and a fake backend.
+- **Delivery:** Terraform for the Azure resources, and CI that runs host tests, Opta and ESP32 builds, and link-time guards; for example, the update code cannot reach the relay driver.
 
 ## Design decisions
 
-A controller, its network address and the radar it serves are separate identities. That allows hardware to move or be replaced without rewriting its history.
+Radar power has to fail safe. The relay's normally closed contact carries the radar's power, so a dead or unplugged controller leaves the radar on. Every boot ends with the radar on, and the hardware layer limits any off period to 120 seconds. An interrupted power cycle is never resumed.
 
-Commands also have a lifecycle. Requesting a power cycle, receiving an acknowledgement and observing completion are different facts. The UI preserves those differences instead of presenting a successful request as a completed physical action.
+Bench debugging shaped much of the design:
 
-## Project overview
+- A breadcrumb identified an MQTT reconnect that hung during a firmware download, so the reconnect was moved out of the download's way.
+- The MQTT client mishandled the zero-length acknowledgements IoT Hub sends, and dropped the first byte of the next packet.
+- A TLS session to blob storage outlived the watchdog, so it moved to its own thread.
+- A socket reader starved the flash-storage worker until its priority was raised, which an A/B run on hardware confirmed.
+- Reporting power state only on change cut traffic from about 18,800 to 1,500 messages a day.
 
-This project joins embedded software, cloud architecture and the practical steps required to put a device into service. It began with a local Ethernet/relay prototype and expanded into provisioning, fleet views, desktop installation and engineering release management.
+## Where it stands
 
-Recent work includes ESP32 Ethernet/Wi-Fi failover and signed firmware update paths. Hosted and bench progress is documented, while field acceptance remains staged. The system's central design requirement is that loss of the controller or cloud connection must not remove radar power. Hardware qualification and broader rollout are separate milestones from implementing the software.
+Two Opta controllers and one ESP32-S3 run in a test Azure environment, and one controller has run at a range during a first field release. On the bench, signed OTA updates have succeeded through the deployed backend and dashboard. The Opta has failed over from Ethernet to Wi-Fi in about 3 seconds, the ESP32-S3 in about 9. Firmware, backend, dashboard and installer carry roughly 2,700 automated tests between them.
+
+Not done yet: physical site acceptance, a one-hour soak, relay endurance testing, measured confirmation that the radar actually has power, backup power, and any production rollout.

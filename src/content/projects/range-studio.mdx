@@ -1,58 +1,74 @@
 ---
 title: "Range Studio"
-description: "A desktop workspace for planning radar layouts, exploring terrain, and turning simulation results into clear engineering reports."
-screenshot: "../../assets/projects/captures/range-studio.png"
-screenshotAlt: "Range Studio showing 3D terrain, radar placement and simulated shot trajectories"
+description: "A desktop app for designing driving ranges: lay out bays, radars and infrastructure on real terrain, simulate every shot, and hand contractors a plan."
+screenshot: "../../assets/projects/captures/range-studio-framed.jpg"
+screenshotAlt: "Range Studio's 3D infrastructure view of an example range among surrounding buildings, with a second window showing terrain, nets and radars"
 cardVideo:
-  src: "/projects/range-studio/range-animation.mp4"
-  poster: "../../assets/projects/range-animation-poster.jpg"
-  label: "Watch range animation · 9 sec"
+  src: "/projects/range-studio/range-studio-reel.mp4"
+  poster: "../../assets/projects/range-studio-reel-poster.jpg"
+  label: "Terrain, wiring & surroundings in 3D · 11 sec"
 category: "professional"
 role: "Application design & development"
-status: "Internal beta"
+status: "Internal beta · v0.1.16"
 highlights:
-  - "Geospatial site and terrain editing"
-  - "3D views and animated flythroughs"
-  - "Saved designs and exportable reports"
+  - "Plan, profile and 3D views of one site model"
+  - "Infrastructure drafting with connection checks"
+  - "Signed releases plus a 125-video tutorial suite"
 tools:
-  - "python"
   - "typescript"
   - "react"
+  - "python"
   - "fastapi"
-  - "qt"
 tags:
   - "Desktop software"
-  - "Geospatial"
+  - "Geospatial & 3D"
   - "Simulation integration"
-order: 1
+order: 2
 featured: true
-mediaNote: "Built-in Flythrough using a bundled test range and synthetic terrain. Shots and coverage indicators show simulation output."
+mediaNote: "Clips from the tutorial suite, recorded by driving the real app against example and fictional ranges. Map and terrain attributions are kept as the app shows them."
 gallery:
-  - image: "../../assets/projects/captures/range-studio-detail.png"
-    alt: "Range Studio split view with a site plan and terrain profile"
-    caption: "One project, two perspectives: the site plan and terrain profile share the same geometry and simulation results."
+  - image: "../../assets/projects/captures/range-studio-framed.jpg"
+    alt: "Range Studio's infrastructure view and a terrain view, framed over a driving range at dusk"
+    caption: "The Infrastructure view in 3D, and a fictional range rebuilt on fetched terrain. The dusk range behind the windows is a generated backdrop."
+  - image: "../../assets/projects/captures/range-studio-connections.jpg"
+    alt: "Connections panel listing which radars have power and data along the drafted routes"
+    caption: "Drafting checks itself: Connections reports which radars have power and data along the routes, and which route ends are connected to nothing."
+  - image: "../../assets/projects/captures/range-studio-terrain.jpg"
+    alt: "Terrain panel showing the elevation source, grid size, origin datum and credit"
+    caption: "Fetched terrain shows its source, grid, datum and credit, so the heights under a design are traceable."
+  - image: "../../assets/projects/captures/range-studio-environment.jpg"
+    alt: "3D view of buildings around a site, with a popover showing where one building's height came from"
+    caption: "Surrounding buildings and trees come from open map data. Each one says where its height came from, and none of them feed the simulation."
+  - image: "../../assets/projects/captures/range-studio-profile.jpg"
+    alt: "Profile view showing radar coverage, terrain and simulated ball flights from a bay"
+    caption: "The profile view: ground, each radar's beam and the simulated flights from one bay, with an exaggerated vertical scale for small slopes."
+  - image: "../../assets/projects/captures/range-studio-surroundings.jpg"
+    alt: "Photorealistic 3D city tiles around an example range"
+    caption: "Photorealistic 3D surroundings for context, with an adjustable fit to the project's own terrain."
 ---
 
 ## Context
 
-Operations managers and installers need to explain to customers and contractors how a range will work on their site and how it will be installed. Range Studio brings site geometry, terrain, radar placement and infrastructure into a shared visual plan, then uses simulated shots to check radar coverage and tracking capability.
+Range designers and installers need to show a customer and a contractor how a driving range will work on their site, and how it will be built. Range Studio brings the site's terrain, bays, radars, nets and infrastructure into one model. It then runs simulated shots to check radar coverage before anything is installed.
 
 ## What I built
 
-- **One design workspace:** edit radars, bays, fences and infrastructure against a georeferenced site.
-- **Multiple views:** move between plan, profile and 3D context, or watch an animated range flythrough using the same project model.
-- **A simulation bridge:** translate application geometry into the inputs expected by the shared radar engine.
-- **Site communication:** use the layout, simulated shots and reports to explain the proposed installation to customers and contractors.
-- **Useful deliverables:** save versioned projects and export PDF, spreadsheet and image reports.
+- **One site model, several views:** plan, profile, split and 3D views of the same geometry. The 3D view includes a flythrough.
+- **Infrastructure drafting:** huts, power and fibre routes connected at both ends, posts on nets and walls, and radar poles. A Connections check reports which radars have power and data.
+- **Terrain and surroundings:** public elevation data with its source and datum shown, buildings and trees from open map data, and photorealistic 3D tiles that can be fitted to the project's own ground.
+- **Results:** quick and full simulations, a Pass/Fail coverage verdict, per-shot problems, a trajectory inspector, shot profiles, and PDF, spreadsheet and image reports.
+- **Shared projects:** Microsoft sign-in, SharePoint and OneDrive folders, history and versions, so a team works from the same copy.
+- **Delivery:** Azure Pipelines builds a notarized macOS app and a Windows installer. Range Studio ships both inside the support tool's beta and on its own.
+- **Tutorial suite:** 13 sections, 87 lessons and 125 short captioned videos, about 45 minutes in all. I built tooling that drives the real web UI in headless Chrome over the DevTools protocol, then draws the window frame, cursor, callouts, captions and zoom. The same tooling builds a searchable guide site with an interactive guide to the window's controls.
 
 ## Design decisions
 
-The React interface runs with a local Python service inside a desktop shell. Long-running simulation and terrain work stays separate from the editing experience. Saved results carry input and engine context, so a report can explain what produced it.
+The React interface runs with a local Python service inside a desktop shell. Long-running simulation and terrain work stays out of the editing loop. Saved results carry their inputs and engine context, so a report can explain what produced it.
 
-Visual context and simulation inputs also have distinct responsibilities. A detailed map can help someone understand a site without silently changing the engineering model beneath it.
+The radar simulation itself belongs to another team's shared engine. Only one adapter module may import it, and CI enforces that boundary. My work is the application around it: the domain model, editing, geospatial and 3D views, reporting, sharing and release.
 
-## Project overview
+Visual context and engineering inputs are kept separate. Photoreal tiles, buildings and trees help people understand a site, but they never quietly change the model that gets simulated.
 
-Range Studio evolved from an earlier Python/Qt companion into a broader desktop application. My work covers the application architecture, domain models, editing workflows, geospatial integration, reporting and release coordination. The underlying radar simulation foundations are shared Trackman components.
+## Where it stands
 
-The current application is in internal beta. That stage includes operator feedback, cross-platform packaging and careful handling of changes to saved projects. The goal is a practical design workflow: make geometry easier to inspect, preserve decisions, and give an engineer something understandable to review.
+Range Studio is in internal beta. Version 0.1.16, released in November 2026, is used by internal testers on macOS and Windows. The web and Python code have about 4,600 and 9,000 automated tests. Some results are not yet validated: the reference shot sets are waiting on an engine-side update before the Pass rule can be checked against them.

@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import TechStack from '../components/TechStack.astro';
 import '../styles/portfolio-work.css';
 const experience = [
-  { company: 'TrackMan', logo: '/images/logos/trackman.png', dates: 'March 2026 – Present', role: 'Operations Engineer — Software Development and Support', bullets: ['Engineering desktop tools for range design, radar data, and operator workflows.', 'Cloud-connected device control, telemetry, and alert-to-ticket automation.', 'macOS release maintenance, cross-platform packaging, and field troubleshooting.'] },
+  { company: 'TrackMan', logo: '/images/logos/trackman.png', dates: 'March 2026 – Present', role: 'Operations Engineer — Software Development and Support', bullets: ['C++ firmware, signed OTA updates and fleet tooling for remote radar power control.', 'An iOS AR app that draws radar ball traces over a live camera and records what it saw.', 'Range design and simulation desktop tools, release pipelines, and CAD for field hardware.'] },
   { company: 'PGA TOUR · ShotLink', logo: '/images/logos/pga-tour.png', dates: 'March 2025 – February 2026', role: 'Technical Support Analyst / Development', bullets: ['Raspberry Pi provisioning, configuration tools, and AWS IoT integrations.', 'Tournament operations applications, API integrations, and radar telemetry.', 'Live-event technical monitoring and practical support for field teams.'] },
   { company: 'PGA TOUR · ShotLink', logo: '/images/logos/pga-tour.png', dates: 'May 2024 – March 2025', role: 'Field Technician', bullets: ['On-site tournament technology setup and troubleshooting.', 'Teamwork and technical communication in live production environments.'] },
 ];
@@ -23,8 +23,8 @@ const experience = [
   </section>
 
   <section class="work-section work-personal-section" aria-labelledby="approach-title">
-    <div class="experience-intro"><div><p class="section-label">How I work</p><h2 id="approach-title">Understand the problem.<br />Build the useful part.</h2></div><div><p>I like working across boundaries: equipment and software, field teams and developers, an unfamiliar domain and a repeatable workflow. That means learning the system, testing assumptions, and documenting the decisions that matter.</p><p class="mt-4">Alongside application development, I explore camera calibration, radar geometry, and CAD prototypes for field equipment.</p></div></div>
-    <div class="focus-tools"><p class="work-fact-label">Regularly in the toolkit</p><TechStack tools={['python', 'typescript', 'react', 'aws', 'azure', 'docker', 'git']} /></div>
+    <div class="experience-intro"><div><p class="section-label">How I work</p><h2 id="approach-title">Understand the problem.<br />Build the useful part.</h2></div><div><p>I like working across boundaries: equipment and software, field teams and developers, an unfamiliar domain and a repeatable workflow. That means learning the system, testing assumptions, and documenting the decisions that matter.</p><p class="mt-4">Most of my recent work sits where hardware meets software: controller firmware debugged on the bench, camera calibration and AR, and CAD for the enclosures and mounts the equipment needs. I plan work as small, testable pieces, and I rely on CI, tests and written decision logs to keep it honest.</p></div></div>
+    <div class="focus-tools"><p class="work-fact-label">Regularly in the toolkit</p><TechStack tools={['cpp', 'python', 'swift', 'typescript', 'react', 'azure', 'aws', 'git']} /></div>
   </section>
 
   <section class="work-section work-personal-section" aria-labelledby="beyond-title">

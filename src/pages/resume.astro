@@ -12,11 +12,12 @@ const experience = [
     company: 'TrackMan', location: 'Phoenix, AZ', dates: 'March 2026 – Present',
     role: 'Operations Engineer — Software Development and Support',
     bullets: [
-      'Developed Range Studio, combining geospatial site data, shared radar-simulation services, and exportable reports in an internal desktop application.',
-      'Built Grafana-to-Zendesk automation with asynchronous AWS processing, DynamoDB incident state, and support-context enrichment.',
-      'Designed and implemented an Azure-connected radar-control system spanning firmware, provisioning, APIs, a dashboard, and desktop commissioning; engineering validation is ongoing.',
-      'Maintain macOS releases of Range Support Tool 2, including packaging, signing, notarization, and cross-platform pipeline integration.',
-      'Added ShotLink metadata indexing and Azure recording browsing to an existing broadcast-analysis workbench.',
+      'Built C++ firmware for Arduino Opta and ESP32-S3 radar power controllers: watchdog and RTC breadcrumbs, MQTT over TLS to Azure IoT Hub, ES256-signed OTA with MCUboot rollback, and Ethernet-to-Wi-Fi failover in about 3 s on the bench. Running in a test environment; field acceptance pending.',
+      'Built the fleet side of the same system: TypeScript Azure Functions, a React operator dashboard, a Python USB commissioning app, Terraform, and canary-first firmware rollouts. Found hardware/software bugs on the bench, such as MQTT packet framing and watchdog-starved TLS sessions, and fixed them.',
+      'Developing AR Tracing Studio, an iOS R&D app that draws radar ball traces over a live ARKit camera with Metal and records HEVC video with per-frame pose and intrinsics; 508 automated tests.',
+      'Built Range Studio, a React/TypeScript and Python desktop app for designing driving ranges and simulating radar coverage, now at v0.1.16 for internal testers. Built a tutorial pipeline that drives the real UI in headless Chrome to produce 125 captioned lesson videos.',
+      'Designed ESP32 radar retrofit enclosures and KiCad mains boards (CadQuery, scripted clearance checks; design stage) and 3D-printed field mounts in Fusion 360.',
+      'Built Grafana-to-Zendesk alert automation on AWS; maintain macOS releases of Range Support Tool 2, including packaging, signing and notarization.',
     ],
   },
   {
@@ -36,9 +37,11 @@ const experience = [
   },
 ];
 const selected = [
-  { title: 'Range Studio', href: '/projects/range-studio', detail: 'Desktop · Geospatial · Simulation integration' },
-  { title: 'Radar relay IoT', href: '/projects/radar-relay-iot', detail: 'Embedded · Azure · Commissioning' },
-  { title: 'Support automation', href: '/projects/grafana-zendesk-alert-automation', detail: 'AWS · Grafana · Zendesk' },
+  { title: 'Radar Relay IoT', href: '/projects/radar-relay-iot', detail: 'C++ firmware · Signed OTA · Azure IoT' },
+  { title: 'AR Tracing Studio', href: '/projects/ar-tracing-studio', detail: 'Swift · ARKit · Metal · HEVC capture' },
+  { title: 'Range Studio', href: '/projects/range-studio', detail: 'Desktop · Geospatial & 3D · Simulation' },
+  { title: 'Field hardware', href: '/projects/field-hardware-cad', detail: 'CadQuery · KiCad · Fusion 360' },
+  { title: 'Raspberry Pi fleet', href: '/projects/iot-edge-fleet-tooling', detail: 'AWS IoT · MQTT · S3 updates' },
 ];
 const coursework = 'Algorithms, Computer Networking, Network Security, Software Engineering, Systems, Computer Vision, Wireless Networks, Capstone: Knowledge Base Systems / RAG, Digital Logic Design, Process Engineering for Manufacturing Operations';
 ---
@@ -49,8 +52,8 @@ const coursework = 'Algorithms, Computer Networking, Network Security, Software 
     <header class="work-page-header !px-0 !pt-10">
       <p class="section-label">Resume / November 2026</p>
       <h1>Joseph Quinn</h1>
-      <p>Software &amp; connected field systems.</p>
-      <p class="resume-summary">Operations engineer and Computer Science &amp; Engineering graduate. I build applications, device integrations, and support workflows for environments where equipment, data, and people need to work together.</p>
+      <p>Software for devices, cameras &amp; field systems.</p>
+      <p class="resume-summary">Operations engineer and Computer Science &amp; Engineering graduate (Ohio State, 2024). I write software where hardware meets the field: embedded firmware and device fleets, camera and AR tracing, and engineering desktop tools. I debug on the bench and install on site.</p>
       <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-muted">
         <a href={SOCIALS.email} class="hover:text-accent">{SOCIALS.email.replace('mailto:', '')}</a>
         <a href={SOCIALS.linkedin} target="_blank" rel="noopener noreferrer" class="hover:text-accent">LinkedIn ↗</a>
@@ -58,7 +61,7 @@ const coursework = 'Algorithms, Computer Networking, Network Security, Software 
       </div>
     </header>
 
-    <section class="resume-section" aria-labelledby="resume-tools"><h2 id="resume-tools" class="section-label">Core toolkit</h2><TechStack tools={['python', 'typescript', 'react', 'fastapi', 'azure', 'aws', 'docker', 'terraform', 'postgresql', 'git']} /><p class="mt-5 max-w-3xl text-sm leading-relaxed text-muted">Device provisioning and telemetry · Serverless APIs · Grafana / Prometheus / Splunk · Python desktop tools · C++ firmware · Cross-platform packaging</p></section>
+    <section class="resume-section" aria-labelledby="resume-tools"><h2 id="resume-tools" class="section-label">Core toolkit</h2><TechStack tools={['cpp', 'python', 'swift', 'typescript', 'react', 'azure', 'aws', 'mqtt', 'terraform', 'docker', 'git']} /><p class="mt-5 max-w-3xl text-sm leading-relaxed text-muted">C++ firmware (Arduino Opta, ESP32 / ESP-IDF) · MQTT, device provisioning &amp; signed OTA · ARKit, Metal &amp; AVFoundation · Camera calibration · Python tools · CadQuery, KiCad &amp; Fusion 360 · CI and cross-platform packaging</p></section>
 
     <section class="resume-section" aria-labelledby="resume-experience"><h2 id="resume-experience" class="section-label">Professional experience</h2><div class="experience-timeline">{experience.map((job) => <div class="experience-job"><div><p class="experience-job-date">{job.dates}</p><p class="mt-2 text-xs text-faint">{job.location}</p></div><div><h3>{job.company}</h3><p class="experience-job-role">{job.role}</p><ul>{job.bullets.map((bullet) => <li>{bullet}</li>)}</ul></div></div>)}</div></section>
 

@@ -1,0 +1,71 @@
+---
+title: "Field Hardware Prototypes"
+description: "CAD for the hardware around the software: ESP32 radar power-control enclosures with their own mains circuit boards, and 3D-printed mounts for field networking gear."
+screenshot: "../../assets/projects/captures/field-hardware-cad.jpg"
+screenshotAlt: "Six CAD renders: a radar retrofit enclosure open and closed, a relay circuit board, a braced cart mount, a tablet handle mount and a router bracket"
+category: "professional"
+role: "Mechanical & electrical design"
+status: "Design & fit studies"
+highlights:
+  - "ESP32 + UPS enclosures with clearance checks"
+  - "Two KiCad mains boards with spacing checks by net class"
+  - "Printed ASA mounts iterated from field constraints"
+tools:
+  - "fusion360"
+  - "cadquery"
+  - "kicad"
+  - "python"
+tags:
+  - "Hardware prototyping"
+  - "CAD"
+  - "PCB design"
+order: 3
+featured: true
+mediaNote: "Renders exported from the actual CAD models: CadQuery and KiCad for the enclosures and boards, Fusion 360 for the mounts. The blurred range behind them is a generated backdrop."
+gallery:
+  - image: "../../assets/projects/cad/retrofit-open-iso.png"
+    alt: "Open radar retrofit enclosure with an Olimex ESP32 PoE board, relay, IEC inlet and outlet, RJ45 hood and cord grip labelled"
+    caption: "A radar retrofit box with its lid off: an ESP32 PoE controller on a raised shelf, the relay, the IEC power inlet and outlet, and a sealed RJ45 hood."
+  - image: "../../assets/projects/cad/retrofit-under-shelf.png"
+    alt: "Top view under the shelf showing the Li-ion UPS board, 18650 cell, relay driver and 5 V supply"
+    caption: "Under the shelf: a load-sharing Li-ion UPS with an 18650 cell and thermistor, the relay driver and the 5 V supply."
+  - image: "../../assets/projects/cad/relay-deck-iso.png"
+    alt: "KiCad 3D render of the relay deck circuit board with relay, fuses, flyback diode and indicator LED"
+    caption: "The relay deck from KiCad. It switches both poles, so the radar stays powered while the coil is off. It carries the fuses, a flyback diode and a “radar off” LED."
+  - image: "../../assets/projects/cad/mains-carrier-iso.png"
+    alt: "KiCad 3D render of the mains carrier board holding an enclosed 5 V power supply module"
+    caption: "The mains carrier holds the 5 V supply. Both boards passed scripted creepage and clearance checks by net class; they are designed but not yet built."
+  - image: "../../assets/projects/cad/cart-braced.png"
+    alt: "Fusion 360 render of a braced pole mount clamped to a cart basket with straps"
+    caption: "A braced mast mount for a cart's basket. Carts change weekly and can't be measured in advance, so the design adjusts on the cart rather than relying on custom shims."
+  - image: "../../assets/projects/cad/cart-foot-detail.png"
+    alt: "Detail render of a slotted ASA foot plate with a threaded brace rod and clamp"
+    caption: "The slotted ASA foot of the selected design, with a steel brace and standard through-bolt."
+  - image: "../../assets/projects/cad/tablet-mount-iso.png"
+    alt: "Render of a tablet handle mount with a flat base plate and four mounting holes"
+    caption: "A handle mount for a field tablet, modelled in Fusion 360 and sliced for printing in ASA."
+  - image: "../../assets/projects/cad/router-plate-drawing.png"
+    alt: "Dimensioned drawing of a slotted router plate showing bolt slots and mounting holes"
+    caption: "A slotted router plate, drawn from the manufacturer's bracket drawing so the bolts land wherever the holes fall."
+---
+
+## Context
+
+Software that controls equipment in the field also needs a box to live in, a power supply, and somewhere to mount the network gear. In these projects I took the hardware side as far as accurate CAD, bills of materials and print-ready files. That way it can be built and reviewed with the constraints already worked out.
+
+## What I built
+
+- **Radar retrofit boxes:** pole-mounted connection boxes that sit between a range radar and its site power and network. They let the fleet power-cycle the radar through a relay and report a loss of mains on backup power. There are four variants: supercaps, an ESP32-S3 with a UPS and a network switch, an industrial ESP32 PoE board with a Li-ion UPS, and a DIN-rail carrier for existing connection boxes.
+- **Mains circuit boards:** a mains carrier and a relay deck in KiCad, with Gerbers, a BOM and a build package. Scripted checks cover creepage and clearance by net class, board edges, screw heads and the fit of each board in the enclosure CAD.
+- **Scripted CAD:** the enclosures are CadQuery models. Revisions come from changing parameters, and the fit checks run again each time. One check keeps the mains terminals at least 15 mm from the ESP32's antenna, even at the worst seating tolerance.
+- **Field mounts:** Fusion 360 designs for mounting a satellite internet mast on cart baskets, an outdoor router on small poles, and a tablet on a handle. Each comes with fit checks in Fusion, slicing for ASA, and purchase lists.
+
+## Design decisions
+
+The enclosures follow the same fail-safe rule as the [radar relay firmware](/projects/radar-relay-iot): the relay's normally closed contacts keep the radar powered when the controller is off or missing. The DIN-rail variant keeps all mains wiring on listed DIN parts and metal rail, so no mains voltage touches printed plastic.
+
+Each mount revision is recorded with the field constraint that drove it. Released kits are withdrawn when a constraint changes, rather than being patched in place.
+
+## Where it stands
+
+The retrofit boxes are CAD fit studies. They have not been printed or bench-tested. The mains boards are designed and checked but not ordered, and they stay bench-only until someone qualified has reviewed them. Earlier mount parts have been printed. The hardware for the selected cart-mount design is in hand, and field testing is next. None of this is presented as certified or licensed engineering.
