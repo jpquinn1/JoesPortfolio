@@ -65,6 +65,10 @@
 .work-gallery { display: grid; gap: 34px; }
 .work-gallery figure { margin: 0; }
 .work-gallery .work-gallery-portrait { width: min(100%, 480px); margin-inline: auto; }
+.work-gallery--multi-portrait { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.work-gallery--multi-portrait > figure { grid-column: span 6; }
+.work-gallery--multi-portrait > .work-gallery-portrait { grid-column: span 2; width: auto; margin-inline: 0; }
+@media (max-width: 640px) { .work-gallery--multi-portrait > .work-gallery-portrait { grid-column: span 3; } }
 .work-gallery img { width: 100%; height: auto; border: 1px solid var(--color-border-strong); border-radius: 12px; }
 .work-overview-section { display: grid; grid-template-columns: .38fr 1fr; gap: 70px; padding-top: 65px; scroll-margin-top: 70px; }
 .work-overview-aside { align-self: start; position: sticky; top: 110px; }

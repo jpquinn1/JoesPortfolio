@@ -8,11 +8,17 @@ const names: Record<string, string> = {
   opencv: 'OpenCV', cpp: 'C++', qt: 'Qt', raspberrypi: 'Raspberry Pi',
   nextjs: 'Next.js', astro: 'Astro', tailwindcss: 'Tailwind CSS', nodejs: 'Node.js',
   blender: 'Blender', vite: 'Vite', csharp: 'C#', dotnetcore: '.NET',
+  swift: 'Swift', arkit: 'ARKit', metal: 'Metal', mqtt: 'MQTT', esp32: 'ESP32',
+  fusion360: 'Fusion 360', cadquery: 'CadQuery', kicad: 'KiCad',
+};
+// Named tools without a bundled logo render as a monogram tile instead of a missing image.
+const monograms: Record<string, string> = {
+  swift: 'Sw', arkit: 'AR', metal: 'Mt', mqtt: 'MQ', esp32: 'E32', fusion360: 'F360', cadquery: 'CQ', kicad: 'Ki',
 };
 ---
 <ul class:list={['tech-stack', { 'tech-stack--compact': compact }]} aria-label="Tools and technologies">
   {tools.map(tool => <li>
-    {names[tool] && <span class="tech-icon"><img src={`/images/tools/${tool}.svg`} width="24" height="24" alt="" loading="lazy" decoding="async" /></span>}
+    {monograms[tool] ? <span class="tech-icon tech-icon--mono" aria-hidden="true">{monograms[tool]}</span> : names[tool] && <span class="tech-icon"><img src={`/images/tools/${tool}.svg`} width="24" height="24" alt="" loading="lazy" decoding="async" /></span>}
     <span>{names[tool] ?? tool}</span>
   </li>)}
 </ul>
@@ -21,6 +27,8 @@ const names: Record<string, string> = {
   .tech-stack li{display:inline-flex;align-items:center;gap:.55rem;min-height:36px;font-size:.8rem;line-height:1.3;font-weight:500}
   .tech-icon{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:9px;background:#f6f7f7;border:1px solid #dfe5e8}
   .tech-icon img{width:23px;height:23px;object-fit:contain}
+  .tech-icon--mono{font-family:var(--font-jetbrains-mono),monospace;font-size:.68rem;font-weight:600;letter-spacing:-.02em;color:#24313a}
+  .tech-stack--compact .tech-icon--mono{font-size:.55rem}
   .tech-stack--compact{gap:.45rem .8rem}
   .tech-stack--compact li{font-size:.75rem;min-height:25px;gap:.4rem}
   .tech-stack--compact .tech-icon{width:25px;height:25px;border-radius:6px}

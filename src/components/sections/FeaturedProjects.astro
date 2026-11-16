@@ -4,7 +4,7 @@ import ProjectCard from '../ProjectCard.astro';
 import '../../styles/portfolio-work.css';
 
 const projects = (await getCollection('projects', ({ data }) => data.featured)).sort((a, b) => a.data.order - b.data.order);
-const professional = projects.filter(({ data }) => data.category !== 'personal').slice(0, 4);
+const professional = projects.filter(({ data }) => data.category !== 'personal').slice(0, 6);
 const personal = projects.filter(({ data }) => data.category === 'personal').slice(0, 2);
 ---
 
@@ -16,7 +16,7 @@ const personal = projects.filter(({ data }) => data.category === 'personal').sli
     </div>
     <a href="/projects" class="work-text-link">All projects <span aria-hidden="true">↗</span></a>
   </div>
-  <p class="work-section-intro">Professional applications and contributions, from connected devices to the tools used to support them.</p>
+  <p class="work-section-intro">Professional work at the hardware boundary: device firmware and fleets, camera and AR tracing, engineering desktop tools and the hardware that holds it all together.</p>
   <div class="work-grid">
     {professional.map((project) => <ProjectCard href={`/projects/${project.id}`} {...project.data} />)}
   </div>
